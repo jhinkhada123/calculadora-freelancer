@@ -8,19 +8,6 @@
 
     <!-- CDN principal (Tailwind) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- jsPDF via cdnjs -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-      integrity="sha512-hqVxT1vYqLZqu4YlJ3N5kzV4qT7qYu1T5RwS6t0T2VUqG1Hx5HY9q9f6cI63ufjADce/Rn0lyT2cCwG8kr3h3Q=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <!-- garante que window.jsPDF aponte para a classe correta, caso apenas window.jspdf exista -->
-    <script>
-      if (window.jspdf && window.jspdf.jsPDF && !window.jsPDF) {
-        window.jsPDF = window.jspdf.jsPDF;
-      }
-    </script>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -435,6 +422,9 @@
       role="status"
       aria-live="polite"
     ></div>
+
+    <!-- jsPDF via cdnjs: carregado no fim para garantir que window.jspdf exista antes do script principal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
       const STORAGE_KEY = "freela_precificacao_v1";
