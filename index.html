@@ -6,8 +6,17 @@
     <meta name="color-scheme" content="dark" />
     <title>Calculadora de Precificação Freelancer</title>
 
+    <!-- CDN principal (Tailwind) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-hqVxT1vYqLZqu4YlJ3N5kzV4qT7qYu1T5RwS6t0T2VUqG1Hx5HY9q9f6cI63ufjADce/Rn0lyT2cCwG8kr3h3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- CDN base (cdnjs) -->
+    <script src="https://cdnjs.cloudflare.com"></script>
+    <!-- jsPDF via cdnjs -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+      integrity="sha512-hqVxT1vYqLZqu4YlJ3N5kzV4qT7qYu1T5RwS6t0T2VUqG1Hx5HY9q9f6cI63ufjADce/Rn0lyT2cCwG8kr3h3Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -769,8 +778,8 @@
         }
 
         try {
-          const jspdf = window.jspdf || window.jsPDF || {};
-          const JsPDFClass = jspdf.jsPDF || jspdf.JsPDF || jspdf.JSPDF || window.jsPDF;
+          const jspdf = window.jspdf;
+          const JsPDFClass = jspdf && jspdf.jsPDF;
           if (!JsPDFClass) {
             showToast("Biblioteca jsPDF não foi carregada.");
             return;
