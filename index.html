@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Calculadora de Precificação Freelancer</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            boxShadow: {
+              soft: "0 12px 40px rgba(0,0,0,.35)",
+            },
+            colors: {
+              ink: {
+                950: "#070A12",
+                900: "#0B1020",
+                800: "#111A33",
+                700: "#16224A",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* melhora a legibilidade do input number no dark */
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
+    <div
+      class="pointer-events-none fixed inset-0 bg-[radial-gradient(1000px_circle_at_20%_-10%,rgba(99,102,241,.35),transparent_60%),radial-gradient(900px_circle_at_80%_10%,rgba(16,185,129,.25),transparent_55%),radial-gradient(900px_circle_at_60%_120%,rgba(236,72,153,.22),transparent_60%)]"
+    ></div>
+
+    <header class="relative">
+      <div class="mx-auto max-w-6xl px-4 py-10 sm:py-12">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div class="space-y-2">
+            <p
+              class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+              Precificação profissional em minutos
+            </p>
+            <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Calculadora de Precificação para Freelancers
+            </h1>
+            <p class="max-w-2xl text-sm text-slate-300">
+              Calcule uma taxa/hora sustentável com base em renda desejada, custos, impostos e sua
+              capacidade real de trabalho faturável. Inclui estimativa rápida para projetos.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              id="btnReset"
+              class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 hover:bg-white/10"
+              type="button"
+            >
+              Resetar
+            </button>
+            <button
+              id="btnShare"
+              class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300/60"
+              type="button"
+            >
+              Copiar link com dados
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative">
+      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 pb-14 lg:grid-cols-12">
+        <!-- Inputs -->
+        <section class="lg:col-span-7">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft backdrop-blur">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="text-base font-semibold">Entradas</h2>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-300">Moeda</span>
+                <select
+                  id="currency"
+                  class="rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300/50"
+                >
+                  <option value="BRL" selected>BRL (R$)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="targetIncome">Renda líquida desejada / mês</label>
+                <input
+                  id="targetIncome"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  step="100"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                />
+                <p class="text-xs text-slate-400">
+                  Quanto você quer “levar pra casa” por mês.
+                </p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="monthlyCosts">Custos fixos do negócio / mês</label>
+                <input
+                  id="monthlyCosts"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  step="50"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                />
+                <p class="text-xs text-slate-400">Softwares, internet, coworking, contabilidade, etc.</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="taxRate">Impostos sobre faturamento</label>
+                <div class="relative">
+                  <input
+                    id="taxRate"
+                    type="number"
+                    min="0"
+                    max="70"
+                    step="0.5"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                  <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
+                </div>
+                <p class="text-xs text-slate-400">Ex.: 6% (MEI), 15%–20% (PJ), etc.</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="profitMargin">Margem de lucro</label>
+                <div class="relative">
+                  <input
+                    id="profitMargin"
+                    type="number"
+                    min="0"
+                    max="200"
+                    step="0.5"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                  <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
+                </div>
+                <p class="text-xs text-slate-400">Reserva, crescimento, equipamentos, metas futuras.</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="buffer">Buffer de risco/atrasos</label>
+                <div class="relative">
+                  <input
+                    id="buffer"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.5"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                  <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
+                </div>
+                <p class="text-xs text-slate-400">Protege contra retrabalho, mudanças e imprevistos.</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="utilization">Taxa de horas faturáveis</label>
+                <div class="relative">
+                  <input
+                    id="utilization"
+                    type="number"
+                    min="10"
+                    max="100"
+                    step="1"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                  <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
+                </div>
+                <p class="text-xs text-slate-400">Nem tudo é faturável: vendas, admin, estudos, etc.</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="hoursPerDay">Horas/dia</label>
+                <input
+                  id="hoursPerDay"
+                  type="number"
+                  min="1"
+                  max="16"
+                  step="0.5"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                />
+                <p class="text-xs text-slate-400">Carga diária de trabalho total.</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-sm text-slate-200" for="daysPerWeek">Dias/semana</label>
+                <input
+                  id="daysPerWeek"
+                  type="number"
+                  min="1"
+                  max="7"
+                  step="1"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                />
+                <p class="text-xs text-slate-400">Seu ritmo semanal típico.</p>
+              </div>
+
+              <div class="space-y-2 sm:col-span-2">
+                <label class="text-sm text-slate-200" for="vacationWeeks">Semanas de folga/ano</label>
+                <div class="relative">
+                  <input
+                    id="vacationWeeks"
+                    type="number"
+                    min="0"
+                    max="20"
+                    step="0.5"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                </div>
+                <p class="text-xs text-slate-400">
+                  Férias + pausas planejadas (ex.: 4 semanas).
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 class="text-sm font-semibold">Estimativa de projeto</h3>
+                  <p class="text-xs text-slate-400">Use sua taxa/hora calculada para fechar um preço.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button
+                    id="btnCopyProject"
+                    type="button"
+                    class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10"
+                    title="Copia o valor do projeto"
+                  >
+                    Copiar valor
+                  </button>
+                </div>
+              </div>
+
+              <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="projectHours">Horas estimadas</label>
+                  <input
+                    id="projectHours"
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="scopeRisk">Risco/escopo (extra)</label>
+                  <div class="relative">
+                    <input
+                      id="scopeRisk"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.5"
+                      class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    />
+                    <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="discount">Desconto</label>
+                  <div class="relative">
+                    <input
+                      id="discount"
+                      type="number"
+                      min="0"
+                      max="90"
+                      step="0.5"
+                      class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    />
+                    <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
+                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight">—</p>
+                  <p id="projectHint" class="mt-1 text-xs text-slate-400">Preencha as horas para estimar.</p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p class="text-xs text-slate-400">Texto rápido para proposta</p>
+                  <p id="proposalText" class="mt-2 text-sm text-slate-200">—</p>
+                  <button
+                    id="btnCopyProposal"
+                    type="button"
+                    class="mt-3 w-full rounded-xl bg-emerald-500/90 px-3 py-2 text-xs font-medium text-emerald-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200/50"
+                  >
+                    Copiar texto
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Outputs -->
+        <aside class="lg:col-span-5">
+          <div class="sticky top-6 space-y-6">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft backdrop-blur">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h2 class="text-base font-semibold">Resultado</h2>
+                  <p class="mt-1 text-xs text-slate-400">Atualiza automaticamente conforme você ajusta as entradas.</p>
+                </div>
+                <button
+                  id="btnCopyHourly"
+                  type="button"
+                  class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10"
+                  title="Copia a taxa/hora"
+                >
+                  Copiar taxa/hora
+                </button>
+              </div>
+
+              <div class="mt-5 grid grid-cols-1 gap-3">
+                <div class="rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+                  <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
+                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight">—</p>
+                  <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p class="text-xs text-slate-400">Taxa/dia (8h)</p>
+                    <p id="dailyRate" class="mt-1 text-lg font-semibold">—</p>
+                  </div>
+                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p class="text-xs text-slate-400">Horas faturáveis/mês</p>
+                    <p id="billableHours" class="mt-1 text-lg font-semibold">—</p>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
+                  <p id="revenueTarget" class="mt-1 text-lg font-semibold">—</p>
+                  <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft backdrop-blur">
+              <h3 class="text-sm font-semibold">Como é calculado</h3>
+              <ol class="mt-3 space-y-2 text-sm text-slate-200">
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                  <p class="text-xs text-slate-400">1) Custo mensal (pessoal + negócio)</p>
+                  <p id="stepCost" class="mt-1 font-medium">—</p>
+                </li>
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                  <p class="text-xs text-slate-400">2) Ajuste por impostos</p>
+                  <p id="stepTax" class="mt-1 font-medium">—</p>
+                </li>
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                  <p class="text-xs text-slate-400">3) Lucro + buffer</p>
+                  <p id="stepProfit" class="mt-1 font-medium">—</p>
+                </li>
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                  <p class="text-xs text-slate-400">4) Divide pelas horas faturáveis</p>
+                  <p id="stepHours" class="mt-1 font-medium">—</p>
+                </li>
+              </ol>
+
+              <div class="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-slate-300">
+                Dica: se sua taxa/hora ficou alta, normalmente é porque a taxa de horas faturáveis está baixa,
+                as folgas/ano são altas, ou seus custos/impostos estão subestimados.
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="relative border-t border-white/10">
+      <div class="mx-auto max-w-6xl px-4 py-8">
+        <p class="text-xs text-slate-400">
+          Feito para uso local. Tailwind via CDN (requer internet para carregar estilos).
+        </p>
+      </div>
+    </footer>
+
+    <div
+      id="toast"
+      class="pointer-events-none fixed bottom-5 left-1/2 z-50 hidden -translate-x-1/2 rounded-full border border-white/10 bg-ink-900/90 px-4 py-2 text-sm text-slate-100 shadow-soft backdrop-blur"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <script>
+      const STORAGE_KEY = "freela_precificacao_v1";
+
+      const $ = (id) => document.getElementById(id);
+
+      const els = {
+        currency: $("currency"),
+        targetIncome: $("targetIncome"),
+        monthlyCosts: $("monthlyCosts"),
+        taxRate: $("taxRate"),
+        profitMargin: $("profitMargin"),
+        buffer: $("buffer"),
+        utilization: $("utilization"),
+        hoursPerDay: $("hoursPerDay"),
+        daysPerWeek: $("daysPerWeek"),
+        vacationWeeks: $("vacationWeeks"),
+
+        projectHours: $("projectHours"),
+        scopeRisk: $("scopeRisk"),
+        discount: $("discount"),
+
+        hourlyRate: $("hourlyRate"),
+        dailyRate: $("dailyRate"),
+        billableHours: $("billableHours"),
+        revenueTarget: $("revenueTarget"),
+        revenueBreakdown: $("revenueBreakdown"),
+
+        stepCost: $("stepCost"),
+        stepTax: $("stepTax"),
+        stepProfit: $("stepProfit"),
+        stepHours: $("stepHours"),
+
+        projectPrice: $("projectPrice"),
+        projectHint: $("projectHint"),
+        proposalText: $("proposalText"),
+
+        btnCopyHourly: $("btnCopyHourly"),
+        btnCopyProject: $("btnCopyProject"),
+        btnCopyProposal: $("btnCopyProposal"),
+        btnShare: $("btnShare"),
+        btnReset: $("btnReset"),
+
+        toast: $("toast"),
+      };
+
+      function clamp(n, min, max) {
+        if (Number.isNaN(n)) return min;
+        return Math.min(max, Math.max(min, n));
+      }
+
+      function toNum(value) {
+        const n = Number(String(value ?? "").replace(",", "."));
+        return Number.isFinite(n) ? n : 0;
+      }
+
+      function getLocaleForCurrency(curr) {
+        if (curr === "BRL") return "pt-BR";
+        if (curr === "EUR") return "pt-PT";
+        return "en-US";
+      }
+
+      function fmtMoney(amount, curr) {
+        const locale = getLocaleForCurrency(curr);
+        return new Intl.NumberFormat(locale, { style: "currency", currency: curr }).format(amount);
+      }
+
+      function fmtNumber(n, digits = 0) {
+        return new Intl.NumberFormat("pt-BR", {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits,
+        }).format(n);
+      }
+
+      function showToast(message) {
+        els.toast.textContent = message;
+        els.toast.classList.remove("hidden");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => els.toast.classList.add("hidden"), 1800);
+      }
+
+      function getStateFromInputs() {
+        return {
+          currency: els.currency.value,
+          targetIncome: toNum(els.targetIncome.value),
+          monthlyCosts: toNum(els.monthlyCosts.value),
+          taxRate: clamp(toNum(els.taxRate.value), 0, 70),
+          profitMargin: clamp(toNum(els.profitMargin.value), 0, 200),
+          buffer: clamp(toNum(els.buffer.value), 0, 100),
+          utilization: clamp(toNum(els.utilization.value), 10, 100),
+          hoursPerDay: clamp(toNum(els.hoursPerDay.value), 1, 16),
+          daysPerWeek: clamp(toNum(els.daysPerWeek.value), 1, 7),
+          vacationWeeks: clamp(toNum(els.vacationWeeks.value), 0, 20),
+
+          projectHours: clamp(toNum(els.projectHours.value), 0, 100000),
+          scopeRisk: clamp(toNum(els.scopeRisk.value), 0, 100),
+          discount: clamp(toNum(els.discount.value), 0, 90),
+        };
+      }
+
+      function setInputsFromState(s) {
+        els.currency.value = s.currency ?? "BRL";
+        els.targetIncome.value = s.targetIncome ?? 9000;
+        els.monthlyCosts.value = s.monthlyCosts ?? 1200;
+        els.taxRate.value = s.taxRate ?? 12;
+        els.profitMargin.value = s.profitMargin ?? 15;
+        els.buffer.value = s.buffer ?? 10;
+        els.utilization.value = s.utilization ?? 60;
+        els.hoursPerDay.value = s.hoursPerDay ?? 6;
+        els.daysPerWeek.value = s.daysPerWeek ?? 5;
+        els.vacationWeeks.value = s.vacationWeeks ?? 4;
+
+        els.projectHours.value = s.projectHours ?? 30;
+        els.scopeRisk.value = s.scopeRisk ?? 15;
+        els.discount.value = s.discount ?? 0;
+      }
+
+      function compute(s) {
+        // capacidade anual -> mensal
+        const workingWeeks = Math.max(0, 52 - s.vacationWeeks);
+        const hoursPerWeek = s.hoursPerDay * s.daysPerWeek;
+        const hoursPerMonth = (workingWeeks * hoursPerWeek) / 12;
+        const billableHours = hoursPerMonth * (s.utilization / 100);
+
+        const baseNeed = s.targetIncome + s.monthlyCosts; // valor "líquido" desejado + custos
+        const taxFactor = 1 - s.taxRate / 100;
+        const afterTaxRevenue = taxFactor > 0 ? baseNeed / taxFactor : Infinity;
+
+        const profitFactor = 1 + s.profitMargin / 100;
+        const bufferFactor = 1 + s.buffer / 100;
+        const revenueTarget = afterTaxRevenue * profitFactor * bufferFactor;
+
+        const hourly = billableHours > 0 ? revenueTarget / billableHours : Infinity;
+        const daily = hourly * 8;
+
+        const projectMultiplier = 1 + s.scopeRisk / 100;
+        const projectGross = s.projectHours * hourly * projectMultiplier;
+        const projectNet = projectGross * (1 - s.discount / 100);
+
+        return {
+          workingWeeks,
+          hoursPerMonth,
+          billableHours,
+          baseNeed,
+          afterTaxRevenue,
+          revenueTarget,
+          hourly,
+          daily,
+          projectNet,
+          projectGross,
+        };
+      }
+
+      function safeText(node, text) {
+        node.textContent = text;
+      }
+
+      function updateUI() {
+        const s = getStateFromInputs();
+        const r = compute(s);
+
+        // normalize inputs (clamp)
+        els.taxRate.value = s.taxRate;
+        els.profitMargin.value = s.profitMargin;
+        els.buffer.value = s.buffer;
+        els.utilization.value = s.utilization;
+        els.hoursPerDay.value = s.hoursPerDay;
+        els.daysPerWeek.value = s.daysPerWeek;
+        els.vacationWeeks.value = s.vacationWeeks;
+        els.scopeRisk.value = s.scopeRisk;
+        els.discount.value = s.discount;
+
+        const curr = s.currency;
+
+        const hourlyOk = Number.isFinite(r.hourly) && r.hourly >= 0;
+        safeText(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+        safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
+        safeText(
+          els.billableHours,
+          Number.isFinite(r.billableHours) ? `${fmtNumber(r.billableHours, 1)} h` : "—"
+        );
+
+        safeText(els.revenueTarget, Number.isFinite(r.revenueTarget) ? fmtMoney(r.revenueTarget, curr) : "—");
+        safeText(
+          els.revenueBreakdown,
+          `Base: ${fmtMoney(r.baseNeed, curr)} • Impostos: ${fmtNumber(s.taxRate, 1)}% • Lucro: ${fmtNumber(
+            s.profitMargin,
+            1
+          )}% • Buffer: ${fmtNumber(s.buffer, 1)}%`
+        );
+
+        safeText(els.stepCost, `${fmtMoney(s.targetIncome, curr)} + ${fmtMoney(s.monthlyCosts, curr)} = ${fmtMoney(r.baseNeed, curr)}`);
+
+        if (Number.isFinite(r.afterTaxRevenue)) {
+          safeText(
+            els.stepTax,
+            `${fmtMoney(r.baseNeed, curr)} ÷ (1 − ${fmtNumber(s.taxRate, 1)}%) = ${fmtMoney(r.afterTaxRevenue, curr)}`
+          );
+        } else {
+          safeText(els.stepTax, "Impostos inválidos (taxa muito alta).");
+        }
+
+        if (Number.isFinite(r.revenueTarget)) {
+          safeText(
+            els.stepProfit,
+            `${fmtMoney(r.afterTaxRevenue, curr)} × (1 + ${fmtNumber(s.profitMargin, 1)}%) × (1 + ${fmtNumber(
+              s.buffer,
+              1
+            )}%) = ${fmtMoney(r.revenueTarget, curr)}`
+          );
+        } else {
+          safeText(els.stepProfit, "—");
+        }
+
+        safeText(
+          els.stepHours,
+          `Semanas úteis/ano: ${fmtNumber(r.workingWeeks, 1)} • Horas/mês: ${fmtNumber(r.hoursPerMonth, 1)} • Faturáveis: ${fmtNumber(
+            r.billableHours,
+            1
+          )}`
+        );
+
+        // Projeto
+        const projectOk = hourlyOk && s.projectHours > 0 && Number.isFinite(r.projectNet);
+        safeText(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
+        safeText(
+          els.projectHint,
+          projectOk
+            ? `(${fmtNumber(s.projectHours, 0)}h × taxa/hora) com +${fmtNumber(s.scopeRisk, 1)}% risco e −${fmtNumber(s.discount, 1)}% desconto.`
+            : "Preencha as horas para estimar."
+        );
+
+        if (projectOk) {
+          const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
+          const texto = `Proposta: ${fmtMoney(r.projectNet, curr)} (estimativa de ${fmtNumber(
+            s.projectHours,
+            0
+          )}h, com margem para risco). Prazo sugerido: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
+          safeText(els.proposalText, texto);
+        } else {
+          safeText(els.proposalText, "—");
+        }
+
+        persistState(s);
+      }
+
+      function persistState(s) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+        } catch {
+          // ignore
+        }
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function copyToClipboard(text, okMsg) {
+        if (!text) return;
+        navigator.clipboard
+          .writeText(text)
+          .then(() => showToast(okMsg))
+          .catch(() => showToast("Não foi possível copiar."));
+      }
+
+      function buildShareUrl(s) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams();
+        const keys = [
+          "currency",
+          "targetIncome",
+          "monthlyCosts",
+          "taxRate",
+          "profitMargin",
+          "buffer",
+          "utilization",
+          "hoursPerDay",
+          "daysPerWeek",
+          "vacationWeeks",
+          "projectHours",
+          "scopeRisk",
+          "discount",
+        ];
+        for (const k of keys) params.set(k, String(s[k] ?? ""));
+        url.search = params.toString();
+        return url.toString();
+      }
+
+      function applyQueryParams() {
+        const url = new URL(window.location.href);
+        const p = url.searchParams;
+        if ([...p.keys()].length === 0) return false;
+
+        const s = {
+          currency: p.get("currency") ?? "BRL",
+          targetIncome: toNum(p.get("targetIncome")),
+          monthlyCosts: toNum(p.get("monthlyCosts")),
+          taxRate: toNum(p.get("taxRate")),
+          profitMargin: toNum(p.get("profitMargin")),
+          buffer: toNum(p.get("buffer")),
+          utilization: toNum(p.get("utilization")),
+          hoursPerDay: toNum(p.get("hoursPerDay")),
+          daysPerWeek: toNum(p.get("daysPerWeek")),
+          vacationWeeks: toNum(p.get("vacationWeeks")),
+          projectHours: toNum(p.get("projectHours")),
+          scopeRisk: toNum(p.get("scopeRisk")),
+          discount: toNum(p.get("discount")),
+        };
+        setInputsFromState({ ...defaultState(), ...s });
+        return true;
+      }
+
+      function defaultState() {
+        return {
+          currency: "BRL",
+          targetIncome: 9000,
+          monthlyCosts: 1200,
+          taxRate: 12,
+          profitMargin: 15,
+          buffer: 10,
+          utilization: 60,
+          hoursPerDay: 6,
+          daysPerWeek: 5,
+          vacationWeeks: 4,
+          projectHours: 30,
+          scopeRisk: 15,
+          discount: 0,
+        };
+      }
+
+      function resetAll() {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch {
+          // ignore
+        }
+        setInputsFromState(defaultState());
+        updateUI();
+        showToast("Resetado.");
+      }
+
+      function wireEvents() {
+        const inputs = [
+          els.currency,
+          els.targetIncome,
+          els.monthlyCosts,
+          els.taxRate,
+          els.profitMargin,
+          els.buffer,
+          els.utilization,
+          els.hoursPerDay,
+          els.daysPerWeek,
+          els.vacationWeeks,
+          els.projectHours,
+          els.scopeRisk,
+          els.discount,
+        ];
+        for (const el of inputs) {
+          el.addEventListener("input", updateUI);
+          el.addEventListener("change", updateUI);
+        }
+
+        els.btnCopyHourly.addEventListener("click", () => {
+          const s = getStateFromInputs();
+          const r = compute(s);
+          if (!Number.isFinite(r.hourly)) return showToast("Nada para copiar.");
+          copyToClipboard(fmtMoney(r.hourly, s.currency), "Taxa/hora copiada.");
+        });
+
+        els.btnCopyProject.addEventListener("click", () => {
+          const s = getStateFromInputs();
+          const r = compute(s);
+          if (!Number.isFinite(r.projectNet) || s.projectHours <= 0) return showToast("Nada para copiar.");
+          copyToClipboard(fmtMoney(r.projectNet, s.currency), "Valor do projeto copiado.");
+        });
+
+        els.btnCopyProposal.addEventListener("click", () => {
+          const text = els.proposalText.textContent;
+          if (!text || text === "—") return showToast("Nada para copiar.");
+          copyToClipboard(text, "Texto copiado.");
+        });
+
+        els.btnShare.addEventListener("click", () => {
+          const s = getStateFromInputs();
+          const url = buildShareUrl(s);
+          copyToClipboard(url, "Link copiado.");
+        });
+
+        els.btnReset.addEventListener("click", resetAll);
+      }
+
+      // init
+      (function init() {
+        const applied = applyQueryParams();
+        if (!applied) {
+          const saved = loadState();
+          setInputsFromState(saved ? { ...defaultState(), ...saved } : defaultState());
+        }
+        wireEvents();
+        updateUI();
+      })();
+    </script>
+  </body>
+</html>
+
