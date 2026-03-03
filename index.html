@@ -8,8 +8,6 @@
 
     <!-- CDN principal (Tailwind) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- CDN base (cdnjs) -->
-    <script src="https://cdnjs.cloudflare.com"></script>
     <!-- jsPDF via cdnjs -->
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
@@ -54,6 +52,7 @@
         -moz-appearance: textfield;
       }
     </style>
+    <script src="https://cdnjs.cloudflare.com"></script>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
     <div
@@ -784,17 +783,12 @@
         }
 
         try {
-          const jspdf = window.jspdf;
-          const JsPDFClass =
-            (jspdf && jspdf.jsPDF) ||
-            window.jsPDF ||
-            (typeof window.JSPDF === "function" ? window.JSPDF : null);
-          if (!JsPDFClass) {
+          if (!window.jspdf || !window.jspdf.jsPDF) {
             showToast("Biblioteca jsPDF não foi carregada.");
             return;
           }
-
-          const doc = new JsPDFClass({ unit: "pt", format: "a4" });
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({ unit: "pt", format: "a4" });
           const margin = 56;
           let y = margin;
 
