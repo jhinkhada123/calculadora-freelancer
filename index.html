@@ -260,6 +260,28 @@
                 </div>
               </div>
 
+              <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="clientName">Nome do Cliente</label>
+                  <input
+                    id="clientName"
+                    type="text"
+                    maxlength="140"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                  <p class="text-xs text-slate-400">Esse nome aparecerá no PDF.</p>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="validityDate">Data de validade da proposta</label>
+                  <input
+                    id="validityDate"
+                    type="date"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                  <p class="text-xs text-slate-400">Ex.: validade de 7 a 15 dias.</p>
+                </div>
+              </div>
+
               <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="projectHours">Horas estimadas</label>
@@ -443,6 +465,9 @@
         daysPerWeek: $("daysPerWeek"),
         vacationWeeks: $("vacationWeeks"),
 
+        clientName: $("clientName"),
+        validityDate: $("validityDate"),
+
         projectHours: $("projectHours"),
         scopeRisk: $("scopeRisk"),
         discount: $("discount"),
@@ -520,6 +545,9 @@
           daysPerWeek: clamp(toNum(els.daysPerWeek.value), 1, 7),
           vacationWeeks: clamp(toNum(els.vacationWeeks.value), 0, 20),
 
+          clientName: (els.clientName.value || "").trim(),
+          validityDate: els.validityDate.value || "",
+
           projectHours: clamp(toNum(els.projectHours.value), 0, 100000),
           scopeRisk: clamp(toNum(els.scopeRisk.value), 0, 100),
           discount: clamp(toNum(els.discount.value), 0, 90),
@@ -537,6 +565,9 @@
         els.hoursPerDay.value = s.hoursPerDay ?? 6;
         els.daysPerWeek.value = s.daysPerWeek ?? 5;
         els.vacationWeeks.value = s.vacationWeeks ?? 4;
+
+        els.clientName.value = s.clientName ?? "";
+        els.validityDate.value = s.validityDate ?? "";
 
         els.projectHours.value = s.projectHours ?? 30;
         els.scopeRisk.value = s.scopeRisk ?? 15;
@@ -711,6 +742,8 @@
           "hoursPerDay",
           "daysPerWeek",
           "vacationWeeks",
+          "clientName",
+          "validityDate",
           "projectHours",
           "scopeRisk",
           "discount",
@@ -736,6 +769,8 @@
           hoursPerDay: toNum(p.get("hoursPerDay")),
           daysPerWeek: toNum(p.get("daysPerWeek")),
           vacationWeeks: toNum(p.get("vacationWeeks")),
+          clientName: p.get("clientName") ?? "",
+          validityDate: p.get("validityDate") ?? "",
           projectHours: toNum(p.get("projectHours")),
           scopeRisk: toNum(p.get("scopeRisk")),
           discount: toNum(p.get("discount")),
@@ -756,6 +791,8 @@
           hoursPerDay: 6,
           daysPerWeek: 5,
           vacationWeeks: 4,
+          clientName: "",
+          validityDate: "",
           projectHours: 30,
           scopeRisk: 15,
           discount: 0,
@@ -789,6 +826,14 @@
           y += 26;
           doc.setFont("helvetica", "normal");
           doc.setFontSize(11);
+          if (s.clientName) {
+            doc.text(`Cliente: ${s.clientName}`, margin, y);
+            y += 16;
+          }
+          if (s.validityDate) {
+            doc.text(`Validade da proposta: ${s.validityDate}`, margin, y);
+            y += 16;
+          }
           doc.text(`Moeda: ${curr}`, margin, y);
 
           y += 22;
@@ -894,6 +939,8 @@
           els.hoursPerDay,
           els.daysPerWeek,
           els.vacationWeeks,
+          els.clientName,
+          els.validityDate,
           els.projectHours,
           els.scopeRisk,
           els.discount,
