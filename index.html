@@ -17,6 +17,12 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+    <!-- garante que window.jsPDF aponte para a classe correta, caso apenas window.jspdf exista -->
+    <script>
+      if (window.jspdf && window.jspdf.jsPDF && !window.jsPDF) {
+        window.jsPDF = window.jspdf.jsPDF;
+      }
+    </script>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -779,7 +785,10 @@
 
         try {
           const jspdf = window.jspdf;
-          const JsPDFClass = jspdf && jspdf.jsPDF;
+          const JsPDFClass =
+            (jspdf && jspdf.jsPDF) ||
+            window.jsPDF ||
+            (typeof window.JSPDF === "function" ? window.JSPDF : null);
           if (!JsPDFClass) {
             showToast("Biblioteca jsPDF não foi carregada.");
             return;
