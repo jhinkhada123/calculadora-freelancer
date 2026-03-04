@@ -6,7 +6,6 @@
     <meta name="color-scheme" content="dark" />
     <title>Calculadora de Precificação Freelancer</title>
 
-    <!-- CDN principal (Tailwind) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -39,7 +38,6 @@
         -moz-appearance: textfield;
       }
     </style>
-    <script src="https://cdnjs.cloudflare.com"></script>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
     <div
@@ -382,7 +380,7 @@
 
                 <div class="grid grid-cols-2 gap-3">
                   <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p class="text-xs text-slate-400">Taxa/dia (8h)</p>
+                    <p id="dailyLabel" class="text-xs text-slate-400">Taxa/dia</p>
                     <p id="dailyRate" class="mt-1 text-lg font-semibold">—</p>
                   </div>
                   <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -486,6 +484,7 @@
         projectPrice: $("projectPrice"),
         projectHint: $("projectHint"),
         proposalText: $("proposalText"),
+        dailyLabel: $("dailyLabel"),
 
         btnCopyHourly: $("btnCopyHourly"),
         btnCopyProject: $("btnCopyProject"),
@@ -575,13 +574,12 @@
       }
 
       function compute(s) {
-        // capacidade anual -> mensal
         const workingWeeks = Math.max(0, 52 - s.vacationWeeks);
         const hoursPerWeek = s.hoursPerDay * s.daysPerWeek;
         const hoursPerMonth = (workingWeeks * hoursPerWeek) / 12;
         const billableHours = hoursPerMonth * (s.utilization / 100);
 
-        const baseNeed = s.targetIncome + s.monthlyCosts; // valor "líquido" desejado + custos
+        const baseNeed = s.targetIncome + s.monthlyCosts;
         const taxFactor = 1 - s.taxRate / 100;
         const afterTaxRevenue = taxFactor > 0 ? baseNeed / taxFactor : Infinity;
 
@@ -590,7 +588,7 @@
         const revenueTarget = afterTaxRevenue * profitFactor * bufferFactor;
 
         const hourly = billableHours > 0 ? revenueTarget / billableHours : Infinity;
-        const daily = hourly * 8;
+        const daily = hourly * s.hoursPerDay;
 
         const projectMultiplier = 1 + s.scopeRisk / 100;
         const projectGross = s.projectHours * hourly * projectMultiplier;
@@ -634,6 +632,9 @@
         const hourlyOk = Number.isFinite(r.hourly) && r.hourly >= 0;
         safeText(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
         safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
+        if (els.dailyLabel) {
+          safeText(els.dailyLabel, `Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h)`);
+        }
         safeText(
           els.billableHours,
           Number.isFinite(r.billableHours) ? `${fmtNumber(r.billableHours, 1)} h` : "—"
@@ -876,7 +877,7 @@
           y += 16;
           doc.text(`Taxa/hora sugerida: ${fmtMoney(r.hourly, curr)}`, margin, y);
           y += 16;
-          doc.text(`Taxa/dia (8h): ${fmtMoney(r.daily, curr)}`, margin, y);
+          doc.text(`Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h): ${fmtMoney(r.daily, curr)}`, margin, y);
 
           const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
           if (projectOk) {
