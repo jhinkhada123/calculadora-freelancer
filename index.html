@@ -492,6 +492,7 @@
     <script>
       const STORAGE_KEY = "freela_precificacao_v1";
       let logoDataUrl = null;
+      let calcCardStash = null;
 
       const $ = (id) => document.getElementById(id);
 
@@ -777,7 +778,7 @@
         safeText(
           els.projectHint,
           projectOk
-            ? `(${fmtNumber(s.projectHours, 0)}h × taxa/hora) com +${fmtNumber(s.scopeRisk, 1)}% risco e −${fmtNumber(s.discount, 1)}% desconto.`
+            ? `(${fmtNumber(s.projectHours, 0)}h × taxa/hora) com +${fmtNumber(s.scopeRisk, 1)}% margem de escopo e −${fmtNumber(s.discount, 1)}% desconto.`
             : "Preencha as horas para estimar."
         );
 
@@ -798,9 +799,19 @@
           els.configWrapper.classList.toggle("hidden", !!s.proposalMode);
         }
         if (els.calcCard) {
-          const hideCalc = !!s.proposalMode;
-          els.calcCard.classList.toggle("hidden", hideCalc);
-          els.calcCard.setAttribute("aria-hidden", hideCalc ? "true" : "false");
+          if (s.proposalMode) {
+            if (!calcCardStash && els.calcCard.parentNode) {
+              const parent = els.calcCard.parentNode;
+              const nextSibling = els.calcCard.nextSibling;
+              parent.removeChild(els.calcCard);
+              calcCardStash = { node: els.calcCard, parent, nextSibling };
+            }
+          } else {
+            if (calcCardStash) {
+              calcCardStash.parent.insertBefore(calcCardStash.node, calcCardStash.nextSibling);
+              calcCardStash = null;
+            }
+          }
         }
       }
 
@@ -970,9 +981,10 @@
             const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
             doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
             y += 28;
-            const proposta = els.proposalText.textContent && els.proposalText.textContent !== "—"
+            const propostaRaw = els.proposalText.textContent && els.proposalText.textContent !== "—"
               ? els.proposalText.textContent
               : "";
+            const proposta = propostaRaw.replace(/\brisco\b/gi, "").trim() || propostaRaw;
             if (proposta) {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(12);
@@ -1004,7 +1016,7 @@
             }
             doc.setFont("helvetica", "normal");
             doc.setFontSize(9);
-            doc.text("Validade do Orçamento: 15 dias", margin, pageHeight - margin);
+            doc.text("Proposta válida por 7 dias. Para iniciar o projeto, favor confirmar por este canal.", margin, pageHeight - margin);
           } else {
             if (logoDataUrl) {
               const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
