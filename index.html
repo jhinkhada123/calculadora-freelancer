@@ -699,7 +699,7 @@
         });
       }
 
-      function resizeImageToMaxWidth(dataUrl, maxWidth) {
+      function resizeImageFromObjectUrl(objectUrl, maxWidth, usePng) {
         return new Promise((resolve, reject) => {
           const img = new Image();
           img.onload = () => {
@@ -715,28 +715,44 @@
               canvas.height = h;
               const ctx = canvas.getContext("2d");
               if (!ctx) {
-                resolve({ dataUrl, resized: false });
+                URL.revokeObjectURL(objectUrl);
+                resolve(null);
                 return;
               }
               ctx.drawImage(img, 0, 0, w, h);
-              resolve({ dataUrl: canvas.toDataURL("image/jpeg", 0.85), resized: true });
+              const dataUrl = usePng
+                ? canvas.toDataURL("image/png")
+                : canvas.toDataURL("image/jpeg", 0.85);
+              URL.revokeObjectURL(objectUrl);
+              resolve({ dataUrl, resized: true });
             } catch (e) {
+              URL.revokeObjectURL(objectUrl);
               reject(e);
             }
           };
-          img.onerror = () => reject(new Error("Image load failed"));
-          img.src = dataUrl;
+          img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error("Image load failed"));
+          };
+          img.src = objectUrl;
         });
+      }
+
+      function logoUsePng(file) {
+        const t = (file.type || "").toLowerCase();
+        return t.includes("png") || t.includes("webp");
       }
 
       async function prepareLogoDataUrl(file) {
         try {
-          const dataUrl = await readFileAsDataUrl(file);
-          if (!dataUrl || !dataUrl.startsWith("data:image/")) return null;
           if (file.size <= LOGO_MAX_KB * 1024) {
+            const dataUrl = await readFileAsDataUrl(file);
+            if (!dataUrl || !dataUrl.startsWith("data:image/")) return null;
             return { dataUrl, resized: false };
           }
-          return await resizeImageToMaxWidth(dataUrl, LOGO_MAX_WIDTH_PX);
+          const objectUrl = URL.createObjectURL(file);
+          const usePng = logoUsePng(file);
+          return await resizeImageFromObjectUrl(objectUrl, LOGO_MAX_WIDTH_PX, usePng);
         } catch (_) {
           return null;
         }
@@ -975,29 +991,30 @@
           .catch(() => showToast("Não foi possível copiar."));
       }
 
+      const QUERY_PARAM_KEYS = [
+        "currency",
+        "targetIncome",
+        "monthlyCosts",
+        "taxRate",
+        "profitMargin",
+        "buffer",
+        "utilization",
+        "hoursPerDay",
+        "daysPerWeek",
+        "vacationWeeks",
+        "professionalName",
+        "clientName",
+        "validityDate",
+        "projectHours",
+        "scopeRisk",
+        "discount",
+        "proposalMode",
+      ];
+
       function buildShareUrl(s) {
         const url = new URL(window.location.href);
         const params = new URLSearchParams();
-        const keys = [
-          "currency",
-          "targetIncome",
-          "monthlyCosts",
-          "taxRate",
-          "profitMargin",
-          "buffer",
-          "utilization",
-          "hoursPerDay",
-          "daysPerWeek",
-          "vacationWeeks",
-          "professionalName",
-          "clientName",
-          "validityDate",
-          "projectHours",
-          "scopeRisk",
-          "discount",
-          "proposalMode",
-        ];
-        for (const k of keys) params.set(k, String(s[k] ?? ""));
+        for (const k of QUERY_PARAM_KEYS) params.set(k, String(s[k] ?? ""));
         url.search = params.toString();
         return url.toString();
       }
@@ -1005,9 +1022,11 @@
       function applyQueryParams() {
         const url = new URL(window.location.href);
         const p = url.searchParams;
-        if ([...p.keys()].length === 0) return false;
+        const hasValidKey = QUERY_PARAM_KEYS.some((k) => p.has(k));
+        if (!hasValidKey) return false;
 
-        const s = { ...defaultState() };
+        const baseState = { ...defaultState(), ...(loadState() || {}) };
+        const s = { ...baseState };
         if (p.has("currency")) s.currency = sanitizeCurrency(p.get("currency") || "BRL");
         if (p.has("targetIncome")) s.targetIncome = toNum(p.get("targetIncome"));
         if (p.has("monthlyCosts")) s.monthlyCosts = toNum(p.get("monthlyCosts"));
