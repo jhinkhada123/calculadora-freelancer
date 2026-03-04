@@ -569,7 +569,7 @@
           hasLogo: !!logoDataUrl,
           logoDataUrl: logoDataUrl || null
         };
-        downloadJson("freela-config.json", payload);
+        downloadJson("configuracoes_calculadora_backup.txt", payload);
         showToast("Configurações exportadas.");
       }
 
@@ -791,10 +791,7 @@
 
         if (projectOk) {
           const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
-          const texto = `Proposta: ${fmtMoney(r.projectNet, curr)} (estimativa de ${fmtNumber(
-            s.projectHours,
-            0
-          )}h, com escopo e prazo definidos). Prazo sugerido: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
+          const texto = `Proposta para execução completa do projeto conforme escopo definido. Valor: ${fmtMoney(r.projectNet, curr)}. Prazo sugerido: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
           safeText(els.proposalText, texto);
         } else {
           safeText(els.proposalText, "—");
