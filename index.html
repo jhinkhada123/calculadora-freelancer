@@ -208,7 +208,7 @@
               </div>
 
               <div class="space-y-2">
-                <label class="text-sm text-slate-200" for="buffer">Buffer de risco/atrasos</label>
+                <label class="text-sm text-slate-200" for="buffer">Buffer (atrasos/imprevistos)</label>
                 <div class="relative">
                   <input
                     id="buffer"
@@ -345,7 +345,7 @@
                   />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm text-slate-200" for="scopeRisk">Risco/escopo (extra)</label>
+                  <label class="text-sm text-slate-200" for="scopeRisk">Margem de escopo (%)</label>
                   <div class="relative">
                     <input
                       id="scopeRisk"
@@ -978,7 +978,7 @@
 
         if (projectOk) {
           const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
-          const texto = `Proposta para execução completa do projeto conforme escopo definido. Valor: ${fmtMoney(r.projectNet, curr)}. Prazo sugerido: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
+          const texto = `Proposta comercial para execução do projeto conforme escopo acordado. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
           safeText(els.proposalText, texto);
         } else {
           safeText(els.proposalText, "—");
@@ -1219,7 +1219,10 @@
             }
             doc.setFont("helvetica", "normal");
             doc.setFontSize(9);
-            doc.text("Proposta válida por 7 dias. Para iniciar o projeto, favor confirmar por este canal.", margin, pageHeight - margin);
+            const validadeTexto = (s.validityDate && String(s.validityDate).trim())
+              ? `Proposta válida até ${String(s.validityDate).trim()}.`
+              : "Proposta válida por 7 dias.";
+            doc.text(`${validadeTexto} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, pageHeight - margin);
           } else {
             if (logoDataUrl) {
               const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
@@ -1255,7 +1258,7 @@
             y += 16;
             doc.text(`Margem de lucro: ${fmtNumber(s.profitMargin, 1)}%`, margin, y);
             y += 16;
-            doc.text(`Buffer de risco/atrasos: ${fmtNumber(s.buffer, 1)}%`, margin, y);
+            doc.text(`Buffer (atrasos/imprevistos): ${fmtNumber(s.buffer, 1)}%`, margin, y);
             y += 24;
             doc.setFont("helvetica", "bold");
             doc.text("Capacidade de trabalho", margin, y);
@@ -1289,7 +1292,7 @@
               y += 18;
               doc.text(`Horas estimadas: ${fmtNumber(s.projectHours, 0)}h`, margin, y);
               y += 16;
-              doc.text(`Risco/escopo extra: ${fmtNumber(s.scopeRisk, 1)}%`, margin, y);
+              doc.text(`Margem de escopo: ${fmtNumber(s.scopeRisk, 1)}%`, margin, y);
               y += 16;
               doc.text(`Desconto aplicado: ${fmtNumber(s.discount, 1)}%`, margin, y);
               y += 16;
@@ -1308,7 +1311,10 @@
             }
             doc.setFont("helvetica", "normal");
             doc.setFontSize(9);
-            doc.text("Proposta válida por 7 dias. Para iniciar o projeto, favor confirmar por este canal.", margin, pageHeight - margin);
+            const validadeTextoRelatorio = (s.validityDate && String(s.validityDate).trim())
+              ? `Proposta válida até ${String(s.validityDate).trim()}.`
+              : "Proposta válida por 7 dias.";
+            doc.text(`${validadeTextoRelatorio} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, pageHeight - margin);
           }
 
           doc.save("proposta-freelancer.pdf");
