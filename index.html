@@ -837,12 +837,20 @@
         // Projeto
         const projectOk = hourlyOk && s.projectHours > 0 && Number.isFinite(r.projectNet);
         safeText(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
-        safeText(
-          els.projectHint,
-          projectOk
-            ? `(${fmtNumber(s.projectHours, 0)}h × taxa/hora) com +${fmtNumber(s.scopeRisk, 1)}% margem de escopo e −${fmtNumber(s.discount, 1)}% desconto.`
-            : "Preencha as horas para estimar."
-        );
+        if (els.projectHint) {
+          if (s.proposalMode) {
+            safeText(els.projectHint, "");
+            els.projectHint.classList.add("hidden");
+          } else {
+            els.projectHint.classList.remove("hidden");
+            safeText(
+              els.projectHint,
+              projectOk
+                ? `(${fmtNumber(s.projectHours, 0)}h × taxa/hora) com +${fmtNumber(s.scopeRisk, 1)}% margem de escopo e −${fmtNumber(s.discount, 1)}% desconto.`
+                : "Preencha as horas para estimar."
+            );
+          }
+        }
 
         if (projectOk) {
           const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
