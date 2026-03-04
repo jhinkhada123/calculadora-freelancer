@@ -471,11 +471,11 @@
                   <p id="stepCost" class="mt-1 font-medium">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
-                  <p class="text-xs text-slate-400">2) Ajuste por impostos</p>
+                  <p class="text-xs text-slate-400">2) Percentual total (imposto + lucro + buffer)</p>
                   <p id="stepTax" class="mt-1 font-medium">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
-                  <p class="text-xs text-slate-400">3) Lucro + buffer</p>
+                  <p class="text-xs text-slate-400">3) Base × (1 + %) = Faturamento alvo</p>
                   <p id="stepProfit" class="mt-1 font-medium">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
@@ -645,15 +645,26 @@
         return Number.isFinite(n) ? n : 0;
       }
 
+      function sanitizeCurrency(value) {
+        const v = (value ?? "").toString().trim().toUpperCase();
+        return (v === "BRL" || v === "USD" || v === "EUR") ? v : "BRL";
+      }
+
       function getLocaleForCurrency(curr) {
-        if (curr === "BRL") return "pt-BR";
-        if (curr === "EUR") return "pt-PT";
+        const c = sanitizeCurrency(curr);
+        if (c === "BRL") return "pt-BR";
+        if (c === "EUR") return "pt-PT";
         return "en-US";
       }
 
       function fmtMoney(amount, curr) {
-        const locale = getLocaleForCurrency(curr);
-        return new Intl.NumberFormat(locale, { style: "currency", currency: curr }).format(amount);
+        const currency = sanitizeCurrency(curr);
+        try {
+          const locale = getLocaleForCurrency(currency);
+          return new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
+        } catch (_) {
+          return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
+        }
       }
 
       function fmtMoneyPdf(amount, curr) {
@@ -676,9 +687,64 @@
         showToast._t = setTimeout(() => els.toast.classList.add("hidden"), 1800);
       }
 
+      const LOGO_MAX_KB = 500;
+      const LOGO_MAX_WIDTH_PX = 300;
+
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+          reader.onerror = () => reject(new Error("FileReader failed"));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function resizeImageToMaxWidth(dataUrl, maxWidth) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              let w = img.naturalWidth || img.width;
+              let h = img.naturalHeight || img.height;
+              if (w > maxWidth) {
+                h = Math.round((h * maxWidth) / w);
+                w = maxWidth;
+              }
+              const canvas = document.createElement("canvas");
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext("2d");
+              if (!ctx) {
+                resolve({ dataUrl, resized: false });
+                return;
+              }
+              ctx.drawImage(img, 0, 0, w, h);
+              resolve({ dataUrl: canvas.toDataURL("image/jpeg", 0.85), resized: true });
+            } catch (e) {
+              reject(e);
+            }
+          };
+          img.onerror = () => reject(new Error("Image load failed"));
+          img.src = dataUrl;
+        });
+      }
+
+      async function prepareLogoDataUrl(file) {
+        try {
+          const dataUrl = await readFileAsDataUrl(file);
+          if (!dataUrl || !dataUrl.startsWith("data:image/")) return null;
+          if (file.size <= LOGO_MAX_KB * 1024) {
+            return { dataUrl, resized: false };
+          }
+          return await resizeImageToMaxWidth(dataUrl, LOGO_MAX_WIDTH_PX);
+        } catch (_) {
+          return null;
+        }
+      }
+
       function getStateFromInputs() {
         return {
-          currency: els.currency.value,
+          currency: sanitizeCurrency(els.currency.value),
           targetIncome: toNum(els.targetIncome.value),
           monthlyCosts: toNum(els.monthlyCosts.value),
           taxRate: clamp(toNum(els.taxRate.value), 0, 70),
@@ -701,7 +767,7 @@
       }
 
       function setInputsFromState(s) {
-        els.currency.value = s.currency ?? "BRL";
+        els.currency.value = sanitizeCurrency(s.currency ?? "BRL");
         els.targetIncome.value = s.targetIncome ?? 9000;
         els.monthlyCosts.value = s.monthlyCosts ?? 1200;
         els.taxRate.value = s.taxRate ?? 12;
@@ -734,12 +800,8 @@
         const billableHours = hoursPerMonth * (s.utilization / 100);
 
         const baseNeed = s.targetIncome + s.monthlyCosts;
-        const taxFactor = 1 - s.taxRate / 100;
-        const afterTaxRevenue = taxFactor > 0 ? baseNeed / taxFactor : Infinity;
-
-        const profitFactor = 1 + s.profitMargin / 100;
-        const bufferFactor = 1 + s.buffer / 100;
-        const revenueTarget = afterTaxRevenue * profitFactor * bufferFactor;
+        const totalPercent = s.taxRate + s.profitMargin + s.buffer;
+        const revenueTarget = baseNeed * (1 + totalPercent / 100);
 
         const hourly = billableHours > 0 ? revenueTarget / billableHours : Infinity;
         const daily = hourly * s.hoursPerDay;
@@ -753,7 +815,7 @@
           hoursPerMonth,
           billableHours,
           baseNeed,
-          afterTaxRevenue,
+          totalPercent,
           revenueTarget,
           hourly,
           daily,
@@ -797,30 +859,23 @@
         safeText(els.revenueTarget, Number.isFinite(r.revenueTarget) ? fmtMoney(r.revenueTarget, curr) : "—");
         safeText(
           els.revenueBreakdown,
-          `Base: ${fmtMoney(r.baseNeed, curr)} • Impostos: ${fmtNumber(s.taxRate, 1)}% • Lucro: ${fmtNumber(
+          `Base: ${fmtMoney(r.baseNeed, curr)} • Total: ${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(
             s.profitMargin,
             1
-          )}% • Buffer: ${fmtNumber(s.buffer, 1)}%`
+          )}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`
         );
 
         safeText(els.stepCost, `${fmtMoney(s.targetIncome, curr)} + ${fmtMoney(s.monthlyCosts, curr)} = ${fmtMoney(r.baseNeed, curr)}`);
 
-        if (Number.isFinite(r.afterTaxRevenue)) {
-          safeText(
-            els.stepTax,
-            `${fmtMoney(r.baseNeed, curr)} ÷ (1 − ${fmtNumber(s.taxRate, 1)}%) = ${fmtMoney(r.afterTaxRevenue, curr)}`
-          );
-        } else {
-          safeText(els.stepTax, "Impostos inválidos (taxa muito alta).");
-        }
+        safeText(
+          els.stepTax,
+          `${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(s.profitMargin, 1)}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`
+        );
 
         if (Number.isFinite(r.revenueTarget)) {
           safeText(
             els.stepProfit,
-            `${fmtMoney(r.afterTaxRevenue, curr)} × (1 + ${fmtNumber(s.profitMargin, 1)}%) × (1 + ${fmtNumber(
-              s.buffer,
-              1
-            )}%) = ${fmtMoney(r.revenueTarget, curr)}`
+            `${fmtMoney(r.baseNeed, curr)} × (1 + ${fmtNumber(r.totalPercent, 1)}%) = ${fmtMoney(r.revenueTarget, curr)}`
           );
         } else {
           safeText(els.stepProfit, "—");
@@ -952,26 +1007,25 @@
         const p = url.searchParams;
         if ([...p.keys()].length === 0) return false;
 
-        const s = {
-          currency: p.get("currency") ?? "BRL",
-          targetIncome: toNum(p.get("targetIncome")),
-          monthlyCosts: toNum(p.get("monthlyCosts")),
-          taxRate: toNum(p.get("taxRate")),
-          profitMargin: toNum(p.get("profitMargin")),
-          buffer: toNum(p.get("buffer")),
-          utilization: toNum(p.get("utilization")),
-          hoursPerDay: toNum(p.get("hoursPerDay")),
-          daysPerWeek: toNum(p.get("daysPerWeek")),
-          vacationWeeks: toNum(p.get("vacationWeeks")),
-          professionalName: p.get("professionalName") ?? "",
-          clientName: p.get("clientName") ?? "",
-          validityDate: p.get("validityDate") ?? "",
-          projectHours: toNum(p.get("projectHours")),
-          scopeRisk: toNum(p.get("scopeRisk")),
-          discount: toNum(p.get("discount")),
-          proposalMode: p.get("proposalMode") === "true",
-        };
-        setInputsFromState({ ...defaultState(), ...s });
+        const s = { ...defaultState() };
+        if (p.has("currency")) s.currency = sanitizeCurrency(p.get("currency") || "BRL");
+        if (p.has("targetIncome")) s.targetIncome = toNum(p.get("targetIncome"));
+        if (p.has("monthlyCosts")) s.monthlyCosts = toNum(p.get("monthlyCosts"));
+        if (p.has("taxRate")) s.taxRate = toNum(p.get("taxRate"));
+        if (p.has("profitMargin")) s.profitMargin = toNum(p.get("profitMargin"));
+        if (p.has("buffer")) s.buffer = toNum(p.get("buffer"));
+        if (p.has("utilization")) s.utilization = toNum(p.get("utilization"));
+        if (p.has("hoursPerDay")) s.hoursPerDay = toNum(p.get("hoursPerDay"));
+        if (p.has("daysPerWeek")) s.daysPerWeek = toNum(p.get("daysPerWeek"));
+        if (p.has("vacationWeeks")) s.vacationWeeks = toNum(p.get("vacationWeeks"));
+        if (p.has("professionalName")) s.professionalName = p.get("professionalName") ?? "";
+        if (p.has("clientName")) s.clientName = p.get("clientName") ?? "";
+        if (p.has("validityDate")) s.validityDate = p.get("validityDate") ?? "";
+        if (p.has("projectHours")) s.projectHours = toNum(p.get("projectHours"));
+        if (p.has("scopeRisk")) s.scopeRisk = toNum(p.get("scopeRisk"));
+        if (p.has("discount")) s.discount = toNum(p.get("discount"));
+        if (p.has("proposalMode")) s.proposalMode = p.get("proposalMode") === "true";
+        setInputsFromState(s);
         return true;
       }
 
@@ -1267,15 +1321,20 @@
         }
 
         if (els.logoInput) {
-          els.logoInput.addEventListener("change", (event) => {
+          els.logoInput.addEventListener("change", async (event) => {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-              logoDataUrl = typeof reader.result === "string" ? reader.result : null;
-              showToast("Logo carregada.");
-            };
-            reader.readAsDataURL(file);
+            try {
+              const result = await prepareLogoDataUrl(file);
+              if (result && result.dataUrl) {
+                logoDataUrl = result.dataUrl;
+                showToast(result.resized ? "Logo carregada (redimensionada)." : "Logo carregada.");
+              } else {
+                showToast("Falha ao carregar a logo.");
+              }
+            } catch (_) {
+              showToast("Falha ao carregar a logo.");
+            }
           });
         }
 
