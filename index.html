@@ -884,36 +884,73 @@
           const pageHeight = doc.internal.pageSize.getHeight();
           let y = margin;
 
-          if (logoDataUrl) {
-            const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
-            const logoWidth = 120;
-            const logoHeight = 40;
-            doc.addImage(logoDataUrl, format, pageWidth - margin - logoWidth, margin - 10, logoWidth, logoHeight);
-          }
-
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(18);
-          doc.text("Proposta de Prestação de Serviços", margin, y);
-
-          y += 26;
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(11);
-          if (s.professionalName) {
-            doc.text(`Profissional: ${s.professionalName}`, margin, y);
+          if (proposalMode) {
+            if (logoDataUrl) {
+              const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
+              const logoWidth = 120;
+              const logoHeight = 40;
+              doc.addImage(logoDataUrl, format, pageWidth - margin - logoWidth, margin - 10, logoWidth, logoHeight);
+            }
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18);
+            doc.text("Proposta de Prestação de Serviços", margin, y);
+            y += 28;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
+            if (s.clientName) {
+              doc.text(`Cliente / Projeto: ${s.clientName}`, margin, y);
+              y += 18;
+            }
+            if (s.validityDate) {
+              doc.text(`Data: ${s.validityDate}`, margin, y);
+              y += 18;
+            }
             y += 16;
-          }
-          if (s.clientName) {
-            doc.text(`Cliente: ${s.clientName}`, margin, y);
-            y += 16;
-          }
-          doc.text(`Moeda: ${curr}`, margin, y);
-
-          y += 24;
-
-          if (!proposalMode) {
+            doc.setFont("helvetica", "bold");
+            doc.text("Escopo", margin, y);
+            doc.setFont("helvetica", "normal");
+            y += 18;
+            doc.text(`Horas estimadas: ${fmtNumber(s.projectHours, 0)}h`, margin, y);
+            y += 28;
+            const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
+            if (projectOk) {
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(16);
+              doc.text(`Valor total: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(11);
+              y += 28;
+              const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
+              doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
+            }
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.text("Validade do Orçamento: 15 dias", margin, pageHeight - margin);
+          } else {
+            if (logoDataUrl) {
+              const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
+              const logoWidth = 120;
+              const logoHeight = 40;
+              doc.addImage(logoDataUrl, format, pageWidth - margin - logoWidth, margin - 10, logoWidth, logoHeight);
+            }
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18);
+            doc.text("Proposta de Prestação de Serviços", margin, y);
+            y += 26;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
+            if (s.professionalName) {
+              doc.text(`Profissional: ${s.professionalName}`, margin, y);
+              y += 16;
+            }
+            if (s.clientName) {
+              doc.text(`Cliente: ${s.clientName}`, margin, y);
+              y += 16;
+            }
+            doc.text(`Moeda: ${curr}`, margin, y);
+            y += 24;
             doc.setFont("helvetica", "bold");
             doc.text("Resumo de custos e metas", margin, y);
-
             doc.setFont("helvetica", "normal");
             y += 18;
             doc.text(`Renda líquida desejada/mês: ${fmtMoneyPdf(s.targetIncome, curr)}`, margin, y);
@@ -925,7 +962,6 @@
             doc.text(`Margem de lucro: ${fmtNumber(s.profitMargin, 1)}%`, margin, y);
             y += 16;
             doc.text(`Buffer de risco/atrasos: ${fmtNumber(s.buffer, 1)}%`, margin, y);
-
             y += 24;
             doc.setFont("helvetica", "bold");
             doc.text("Capacidade de trabalho", margin, y);
@@ -941,53 +977,47 @@
             y += 16;
             doc.text(`Horas faturáveis estimadas/mês: ${fmtNumber(r.billableHours, 1)}h`, margin, y);
             y += 24;
-          }
-
-          doc.setFont("helvetica", "bold");
-          doc.text("Resumo financeiro", margin, y);
-          doc.setFont("helvetica", "normal");
-          y += 18;
-          if (!proposalMode) {
+            doc.setFont("helvetica", "bold");
+            doc.text("Resumo financeiro", margin, y);
+            doc.setFont("helvetica", "normal");
+            y += 18;
             doc.text(`Faturamento alvo/mês: ${fmtMoneyPdf(r.revenueTarget, curr)}`, margin, y);
             y += 16;
-          }
-          doc.text(`Taxa/hora sugerida: ${fmtMoneyPdf(r.hourly, curr)}`, margin, y);
-          y += 16;
-          doc.text(`Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h): ${fmtMoneyPdf(r.daily, curr)}`, margin, y);
-
-          const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
-          if (projectOk) {
-            y += 24;
-            doc.setFont("helvetica", "bold");
-            doc.text("Projeto estimado", margin, y);
+            doc.text(`Taxa/hora sugerida: ${fmtMoneyPdf(r.hourly, curr)}`, margin, y);
+            y += 16;
+            doc.text(`Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h): ${fmtMoneyPdf(r.daily, curr)}`, margin, y);
+            const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
+            if (projectOk) {
+              y += 24;
+              doc.setFont("helvetica", "bold");
+              doc.text("Projeto estimado", margin, y);
+              doc.setFont("helvetica", "normal");
+              y += 18;
+              doc.text(`Horas estimadas: ${fmtNumber(s.projectHours, 0)}h`, margin, y);
+              y += 16;
+              doc.text(`Risco/escopo extra: ${fmtNumber(s.scopeRisk, 1)}%`, margin, y);
+              y += 16;
+              doc.text(`Desconto aplicado: ${fmtNumber(s.discount, 1)}%`, margin, y);
+              y += 16;
+              doc.text(`Preço sugerido do projeto: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
+            }
+            y += 36;
+            const proposta = els.proposalText.textContent && els.proposalText.textContent !== "—"
+              ? els.proposalText.textContent
+              : "";
+            if (proposta) {
+              doc.setFont("helvetica", "bold");
+              doc.text("Texto de proposta sugerido", margin, y);
+              doc.setFont("helvetica", "normal");
+              y += 18;
+              const maxWidth = 500;
+              const lines = doc.splitTextToSize(proposta, maxWidth);
+              doc.text(lines, margin, y);
+            }
             doc.setFont("helvetica", "normal");
-            y += 18;
-            doc.text(`Horas estimadas: ${fmtNumber(s.projectHours, 0)}h`, margin, y);
-            y += 16;
-            doc.text(`Risco/escopo extra: ${fmtNumber(s.scopeRisk, 1)}%`, margin, y);
-            y += 16;
-            doc.text(`Desconto aplicado: ${fmtNumber(s.discount, 1)}%`, margin, y);
-            y += 16;
-            doc.text(`Preço sugerido do projeto: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
+            doc.setFontSize(9);
+            doc.text("Validade do Orçamento: 15 dias", margin, pageHeight - margin);
           }
-
-          y += 36;
-          const proposta = els.proposalText.textContent && els.proposalText.textContent !== "—"
-            ? els.proposalText.textContent
-            : "";
-          if (proposta) {
-            doc.setFont("helvetica", "bold");
-            doc.text("Texto de proposta sugerido", margin, y);
-            doc.setFont("helvetica", "normal");
-            y += 18;
-            const maxWidth = 500;
-            const lines = doc.splitTextToSize(proposta, maxWidth);
-            doc.text(lines, margin, y);
-          }
-
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(9);
-          doc.text("Validade do Orçamento: 15 dias", margin, pageHeight - margin);
 
           doc.save("proposta-freelancer.pdf");
           showToast("PDF gerado.");
