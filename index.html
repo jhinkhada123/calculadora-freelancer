@@ -442,7 +442,7 @@
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+            <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
               <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
@@ -541,6 +541,7 @@
 
         proposalMode: $("proposalMode"),
         configWrapper: $("configWrapper"),
+        calcCard: $("calcCard"),
         logoInput: $("logoInput"),
 
         toast: $("toast"),
@@ -785,7 +786,7 @@
           const texto = `Proposta: ${fmtMoney(r.projectNet, curr)} (estimativa de ${fmtNumber(
             s.projectHours,
             0
-          )}h, com margem para risco). Prazo sugerido: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
+          )}h, com escopo e prazo definidos). Prazo sugerido: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
           safeText(els.proposalText, texto);
         } else {
           safeText(els.proposalText, "—");
@@ -795,6 +796,9 @@
 
         if (els.configWrapper) {
           els.configWrapper.classList.toggle("hidden", !!s.proposalMode);
+        }
+        if (els.calcCard) {
+          els.calcCard.classList.toggle("hidden", !!s.proposalMode);
         }
       }
 
@@ -959,7 +963,7 @@
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
             y += 18;
-            doc.text(`Horas estimadas: ${fmtNumber(s.projectHours, 0)}h`, margin, y);
+            doc.text("Escopo definido conforme objetivos e entregáveis acordados.", margin, y);
             y += 16;
             const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
             doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
