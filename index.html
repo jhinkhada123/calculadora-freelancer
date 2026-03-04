@@ -867,7 +867,13 @@
         const curr = s.currency;
         const proposalMode = !!s.proposalMode;
 
-        if (!Number.isFinite(r.hourly) || !Number.isFinite(r.revenueTarget)) {
+        if (proposalMode) {
+          const hasProject = s.projectHours > 0 && Number.isFinite(r.projectNet);
+          if (!hasProject) {
+            showToast("Preencha horas e valor do projeto antes de gerar a proposta.");
+            return;
+          }
+        } else if (!Number.isFinite(r.hourly) || !Number.isFinite(r.revenueTarget)) {
           showToast("Preencha os dados principais antes de gerar o PDF.");
           return;
         }
@@ -887,14 +893,12 @@
           if (proposalMode) {
             if (logoDataUrl) {
               const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
-              const logoWidth = 120;
-              const logoHeight = 40;
-              doc.addImage(logoDataUrl, format, pageWidth - margin - logoWidth, margin - 10, logoWidth, logoHeight);
+              const logoWidth = 180;
+              const logoHeight = 60;
+              const logoX = (pageWidth - logoWidth) / 2;
+              doc.addImage(logoDataUrl, format, logoX, y, logoWidth, logoHeight);
+              y += logoHeight + 24;
             }
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(18);
-            doc.text("Proposta de Prestação de Serviços", margin, y);
-            y += 28;
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
             if (s.clientName) {
@@ -903,25 +907,50 @@
             }
             if (s.validityDate) {
               doc.text(`Data: ${s.validityDate}`, margin, y);
-              y += 18;
+              y += 24;
             }
-            y += 16;
             doc.setFont("helvetica", "bold");
-            doc.text("Escopo", margin, y);
+            doc.setFontSize(12);
+            doc.text("Escopo da Solução", margin, y);
             doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
             y += 18;
             doc.text(`Horas estimadas: ${fmtNumber(s.projectHours, 0)}h`, margin, y);
+            y += 16;
+            const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
+            doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
             y += 28;
+            const proposta = els.proposalText.textContent && els.proposalText.textContent !== "—"
+              ? els.proposalText.textContent
+              : "";
+            if (proposta) {
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(12);
+              doc.text("Proposta", margin, y);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(11);
+              y += 18;
+              const maxWidth = pageWidth - 2 * margin;
+              const lines = doc.splitTextToSize(proposta, maxWidth);
+              doc.text(lines, margin, y);
+              y += lines.length * 14 + 24;
+            }
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("Investimento Total", margin, y);
+            doc.setFont("helvetica", "normal");
+            y += 20;
             const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
             if (projectOk) {
               doc.setFont("helvetica", "bold");
-              doc.setFontSize(16);
-              doc.text(`Valor total: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
+              doc.setFontSize(18);
+              doc.text(fmtMoneyPdf(r.projectNet, curr), margin, y);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(11);
-              y += 28;
-              const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
-              doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
+            } else {
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(11);
+              doc.text("Preencha as horas estimadas para calcular o investimento.", margin, y);
             }
             doc.setFont("helvetica", "normal");
             doc.setFontSize(9);
