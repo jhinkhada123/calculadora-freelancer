@@ -604,21 +604,43 @@
         const input = els.importConfigInput;
         if (!input) return;
         input.value = "";
-        input.onchange = () => {
+        input.onchange = async () => {
           const file = input.files && input.files[0];
           if (!file) return;
           const reader = new FileReader();
-          reader.onload = () => {
+          reader.onload = async () => {
             try {
               const raw = typeof reader.result === "string" ? reader.result : "";
               const payload = JSON.parse(raw);
               const data = payload.data != null ? payload.data : payload;
+              const logoFromPayload =
+                typeof payload?.logoDataUrl === "string"
+                  ? payload.logoDataUrl
+                  : (typeof data?.logoDataUrl === "string" ? data.logoDataUrl : null);
+              delete data.logoDataUrl;
               setInputsFromState({ ...defaultState(), ...data });
-              if (typeof payload.logoDataUrl === "string" && payload.logoDataUrl.startsWith("data:image/")) {
-                logoDataUrl = payload.logoDataUrl;
+
+              let logoIgnored = false;
+              if (logoFromPayload && logoFromPayload.startsWith("data:image/")) {
+                if (logoFromPayload.length > LOGO_IMPORT_MAX_CHARS) {
+                  logoIgnored = true;
+                  logoDataUrl = null;
+                } else {
+                  const normalized = await normalizeLogoDataUrl(logoFromPayload);
+                  if (normalized) {
+                    logoDataUrl = normalized;
+                  } else {
+                    logoIgnored = true;
+                    logoDataUrl = null;
+                  }
+                }
+              } else if (logoFromPayload != null) {
+                logoIgnored = true;
+                logoDataUrl = null;
               }
+
               updateUI();
-              showToast("Configurações importadas.");
+              showToast(logoIgnored ? "Configurações importadas. Logo ignorada (tamanho ou formato)." : "Configurações importadas.");
             } catch (e) {
               showToast("Arquivo inválido.");
             }
@@ -689,6 +711,37 @@
 
       const LOGO_MAX_KB = 500;
       const LOGO_MAX_WIDTH_PX = 300;
+      const LOGO_IMPORT_MAX_CHARS = 2 * 1024 * 1024;
+
+      function normalizeLogoDataUrl(dataUrl) {
+        if (!dataUrl || typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
+          return Promise.resolve(null);
+        }
+        if (dataUrl.startsWith("data:image/png") || dataUrl.startsWith("data:image/jpeg")) {
+          return Promise.resolve(dataUrl);
+        }
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const canvas = document.createElement("canvas");
+              canvas.width = img.naturalWidth || img.width;
+              canvas.height = img.naturalHeight || img.height;
+              const ctx = canvas.getContext("2d");
+              if (!ctx) {
+                resolve(null);
+                return;
+              }
+              ctx.drawImage(img, 0, 0);
+              resolve(canvas.toDataURL("image/png"));
+            } catch (_) {
+              resolve(null);
+            }
+          };
+          img.onerror = () => resolve(null);
+          img.src = dataUrl;
+        });
+      }
 
       function readFileAsDataUrl(file) {
         return new Promise((resolve, reject) => {
@@ -1346,8 +1399,13 @@
             try {
               const result = await prepareLogoDataUrl(file);
               if (result && result.dataUrl) {
-                logoDataUrl = result.dataUrl;
-                showToast(result.resized ? "Logo carregada (redimensionada)." : "Logo carregada.");
+                const normalized = await normalizeLogoDataUrl(result.dataUrl);
+                if (normalized) {
+                  logoDataUrl = normalized;
+                  showToast(result.resized ? "Logo carregada (redimensionada)." : "Logo carregada.");
+                } else {
+                  showToast("Falha ao carregar a logo.");
+                }
               } else {
                 showToast("Falha ao carregar a logo.");
               }
