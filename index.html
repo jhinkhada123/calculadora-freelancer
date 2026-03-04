@@ -6,12 +6,22 @@
     <meta name="color-scheme" content="dark" />
     <title>Calculadora de Precificação Freelancer</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
             boxShadow: {
               soft: "0 12px 40px rgba(0,0,0,.35)",
             },
@@ -28,7 +38,6 @@
       };
     </script>
     <style>
-      /* melhora a legibilidade do input number no dark */
       input[type="number"]::-webkit-outer-spin-button,
       input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -64,30 +73,46 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-3">
-            <button
-              id="btnReset"
-              class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 hover:bg-white/10"
-              type="button"
-            >
-              Resetar
-            </button>
-            <button
-              id="btnShare"
-              class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300/60"
-              type="button"
-            >
-              Copiar link com dados
-            </button>
+            <div class="flex items-center gap-3">
+              <label
+                class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800"
+              >
+                <input id="proposalMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
+                <span>Modo Proposta</span>
+              </label>
+              <label
+                class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800"
+              >
+                <span>Logo</span>
+                <input id="logoInput" type="file" accept="image/*" class="hidden" />
+              </label>
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                id="btnReset"
+                class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 hover:bg-white/10"
+                type="button"
+              >
+                Resetar
+              </button>
+              <button
+                id="btnShare"
+                class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300/60"
+                type="button"
+              >
+                Copiar link com dados
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </header>
 
     <main class="relative">
-      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 pb-14 lg:grid-cols-12">
+      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-14 lg:grid-cols-12">
         <!-- Inputs -->
         <section class="lg:col-span-7">
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft backdrop-blur">
+          <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
             <div class="flex items-center justify-between gap-3">
               <h2 class="text-base font-semibold">Entradas</h2>
               <div class="flex items-center gap-2">
@@ -103,7 +128,7 @@
               </div>
             </div>
 
-            <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div id="configWrapper" class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="targetIncome">Renda líquida desejada / mês</label>
                 <input
@@ -258,7 +283,17 @@
                 </div>
               </div>
 
-              <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="professionalName">Nome do Profissional</label>
+                  <input
+                    id="professionalName"
+                    type="text"
+                    maxlength="140"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  />
+                  <p class="text-xs text-slate-400">Seu nome ou nome da sua marca.</p>
+                </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="clientName">Nome do Cliente</label>
                   <input
@@ -354,8 +389,8 @@
 
         <!-- Outputs -->
         <aside class="lg:col-span-5">
-          <div class="sticky top-6 space-y-6">
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft backdrop-blur">
+          <div class="sticky top-6 space-y-7">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
               <div class="flex items-start justify-between gap-4">
                 <div>
                   <h2 class="text-base font-semibold">Resultado</h2>
@@ -397,7 +432,7 @@
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
               <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
@@ -443,11 +478,9 @@
       aria-live="polite"
     ></div>
 
-    <!-- jsPDF via cdnjs: carregado no fim para garantir que window.jspdf exista antes do script principal -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
     <script>
       const STORAGE_KEY = "freela_precificacao_v1";
+      let logoDataUrl = null;
 
       const $ = (id) => document.getElementById(id);
 
@@ -463,6 +496,7 @@
         daysPerWeek: $("daysPerWeek"),
         vacationWeeks: $("vacationWeeks"),
 
+        professionalName: $("professionalName"),
         clientName: $("clientName"),
         validityDate: $("validityDate"),
 
@@ -492,6 +526,10 @@
         btnPdf: $("btnPdf"),
         btnShare: $("btnShare"),
         btnReset: $("btnReset"),
+
+        proposalMode: $("proposalMode"),
+        configWrapper: $("configWrapper"),
+        logoInput: $("logoInput"),
 
         toast: $("toast"),
       };
@@ -544,6 +582,7 @@
           daysPerWeek: clamp(toNum(els.daysPerWeek.value), 1, 7),
           vacationWeeks: clamp(toNum(els.vacationWeeks.value), 0, 20),
 
+          professionalName: (els.professionalName.value || "").trim(),
           clientName: (els.clientName.value || "").trim(),
           validityDate: els.validityDate.value || "",
 
@@ -565,6 +604,7 @@
         els.daysPerWeek.value = s.daysPerWeek ?? 5;
         els.vacationWeeks.value = s.vacationWeeks ?? 4;
 
+        els.professionalName.value = s.professionalName ?? "";
         els.clientName.value = s.clientName ?? "";
         els.validityDate.value = s.validityDate ?? "";
 
@@ -702,6 +742,10 @@
         }
 
         persistState(s);
+
+        if (els.configWrapper) {
+          els.configWrapper.classList.toggle("hidden", !!s.proposalMode);
+        }
       }
 
       function persistState(s) {
@@ -743,6 +787,7 @@
           "hoursPerDay",
           "daysPerWeek",
           "vacationWeeks",
+          "professionalName",
           "clientName",
           "validityDate",
           "projectHours",
@@ -770,6 +815,7 @@
           hoursPerDay: toNum(p.get("hoursPerDay")),
           daysPerWeek: toNum(p.get("daysPerWeek")),
           vacationWeeks: toNum(p.get("vacationWeeks")),
+          professionalName: p.get("professionalName") ?? "",
           clientName: p.get("clientName") ?? "",
           validityDate: p.get("validityDate") ?? "",
           projectHours: toNum(p.get("projectHours")),
@@ -792,6 +838,7 @@
           hoursPerDay: 6,
           daysPerWeek: 5,
           vacationWeeks: 4,
+          professionalName: "",
           clientName: "",
           validityDate: "",
           projectHours: 30,
@@ -804,6 +851,7 @@
         const s = getStateFromInputs();
         const r = compute(s);
         const curr = s.currency;
+        const proposalMode = !!s.proposalMode;
 
         if (!Number.isFinite(r.hourly) || !Number.isFinite(r.revenueTarget)) {
           showToast("Preencha os dados principais antes de gerar o PDF.");
@@ -818,63 +866,77 @@
           const { jsPDF } = window.jspdf;
           const doc = new jsPDF({ unit: "pt", format: "a4" });
           const margin = 56;
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const pageHeight = doc.internal.pageSize.getHeight();
           let y = margin;
+
+          if (logoDataUrl) {
+            const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
+            const logoWidth = 120;
+            const logoHeight = 40;
+            doc.addImage(logoDataUrl, format, pageWidth - margin - logoWidth, margin - 10, logoWidth, logoHeight);
+          }
 
           doc.setFont("helvetica", "bold");
           doc.setFontSize(18);
-          doc.text("Proposta de Serviços - Freelancer", margin, y);
+          doc.text("Proposta de Prestação de Serviços", margin, y);
 
           y += 26;
           doc.setFont("helvetica", "normal");
           doc.setFontSize(11);
+          if (s.professionalName) {
+            doc.text(`Profissional: ${s.professionalName}`, margin, y);
+            y += 16;
+          }
           if (s.clientName) {
             doc.text(`Cliente: ${s.clientName}`, margin, y);
             y += 16;
           }
-          if (s.validityDate) {
-            doc.text(`Validade da proposta: ${s.validityDate}`, margin, y);
-            y += 16;
-          }
           doc.text(`Moeda: ${curr}`, margin, y);
 
-          y += 22;
-          doc.setFont("helvetica", "bold");
-          doc.text("Resumo de custos e metas", margin, y);
-
-          doc.setFont("helvetica", "normal");
-          y += 18;
-          doc.text(`Renda líquida desejada/mês: ${fmtMoney(s.targetIncome, curr)}`, margin, y);
-          y += 16;
-          doc.text(`Custos fixos do negócio/mês: ${fmtMoney(s.monthlyCosts, curr)}`, margin, y);
-          y += 16;
-          doc.text(`Impostos sobre faturamento: ${fmtNumber(s.taxRate, 1)}%`, margin, y);
-          y += 16;
-          doc.text(`Margem de lucro: ${fmtNumber(s.profitMargin, 1)}%`, margin, y);
-          y += 16;
-          doc.text(`Buffer de risco/atrasos: ${fmtNumber(s.buffer, 1)}%`, margin, y);
-
           y += 24;
-          doc.setFont("helvetica", "bold");
-          doc.text("Capacidade de trabalho", margin, y);
-          doc.setFont("helvetica", "normal");
-          y += 18;
-          doc.text(`Taxa de horas faturáveis: ${fmtNumber(s.utilization, 1)}%`, margin, y);
-          y += 16;
-          doc.text(`Horas/dia: ${fmtNumber(s.hoursPerDay, 1)}h`, margin, y);
-          y += 16;
-          doc.text(`Dias/semana: ${fmtNumber(s.daysPerWeek, 0)}`, margin, y);
-          y += 16;
-          doc.text(`Semanas de folga/ano: ${fmtNumber(s.vacationWeeks, 1)}`, margin, y);
-          y += 16;
-          doc.text(`Horas faturáveis estimadas/mês: ${fmtNumber(r.billableHours, 1)}h`, margin, y);
 
-          y += 24;
+          if (!proposalMode) {
+            doc.setFont("helvetica", "bold");
+            doc.text("Resumo de custos e metas", margin, y);
+
+            doc.setFont("helvetica", "normal");
+            y += 18;
+            doc.text(`Renda líquida desejada/mês: ${fmtMoney(s.targetIncome, curr)}`, margin, y);
+            y += 16;
+            doc.text(`Custos fixos do negócio/mês: ${fmtMoney(s.monthlyCosts, curr)}`, margin, y);
+            y += 16;
+            doc.text(`Impostos sobre faturamento: ${fmtNumber(s.taxRate, 1)}%`, margin, y);
+            y += 16;
+            doc.text(`Margem de lucro: ${fmtNumber(s.profitMargin, 1)}%`, margin, y);
+            y += 16;
+            doc.text(`Buffer de risco/atrasos: ${fmtNumber(s.buffer, 1)}%`, margin, y);
+
+            y += 24;
+            doc.setFont("helvetica", "bold");
+            doc.text("Capacidade de trabalho", margin, y);
+            doc.setFont("helvetica", "normal");
+            y += 18;
+            doc.text(`Taxa de horas faturáveis: ${fmtNumber(s.utilization, 1)}%`, margin, y);
+            y += 16;
+            doc.text(`Horas/dia: ${fmtNumber(s.hoursPerDay, 1)}h`, margin, y);
+            y += 16;
+            doc.text(`Dias/semana: ${fmtNumber(s.daysPerWeek, 0)}`, margin, y);
+            y += 16;
+            doc.text(`Semanas de folga/ano: ${fmtNumber(s.vacationWeeks, 1)}`, margin, y);
+            y += 16;
+            doc.text(`Horas faturáveis estimadas/mês: ${fmtNumber(r.billableHours, 1)}h`, margin, y);
+            y += 24;
+          }
+
           doc.setFont("helvetica", "bold");
           doc.text("Resumo financeiro", margin, y);
           doc.setFont("helvetica", "normal");
           y += 18;
-          doc.text(`Faturamento alvo/mês: ${fmtMoney(r.revenueTarget, curr)}`, margin, y);
-          y += 16;
+          if (!proposalMode) {
+            doc.text(`Faturamento alvo/mês: ${fmtMoney(r.revenueTarget, curr)}`, margin, y);
+            y += 16;
+          }
           doc.text(`Taxa/hora sugerida: ${fmtMoney(r.hourly, curr)}`, margin, y);
           y += 16;
           doc.text(`Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h): ${fmtMoney(r.daily, curr)}`, margin, y);
@@ -909,6 +971,10 @@
             doc.text(lines, margin, y);
           }
 
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          doc.text("Validade do Orçamento: 15 dias", margin, pageHeight - margin);
+
           doc.save("proposta-freelancer.pdf");
           showToast("PDF gerado.");
         } catch (err) {
@@ -940,6 +1006,7 @@
           els.hoursPerDay,
           els.daysPerWeek,
           els.vacationWeeks,
+          els.professionalName,
           els.clientName,
           els.validityDate,
           els.projectHours,
@@ -981,6 +1048,23 @@
 
         if (els.btnPdf) {
           els.btnPdf.addEventListener("click", generatePdf);
+        }
+
+        if (els.logoInput) {
+          els.logoInput.addEventListener("change", (event) => {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+              logoDataUrl = typeof reader.result === "string" ? reader.result : null;
+              showToast("Logo carregada.");
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        if (els.proposalMode) {
+          els.proposalMode.addEventListener("change", updateUI);
         }
       }
 
