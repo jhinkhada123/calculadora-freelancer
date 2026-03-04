@@ -573,6 +573,13 @@
         showToast("Configurações exportadas.");
       }
 
+      function getProposalTextForPdf() {
+        const raw = els.proposalText && els.proposalText.textContent ? String(els.proposalText.textContent).trim() : "";
+        if (raw === "" || raw === "—") return "";
+        const sanitized = raw.replace(/\brisco\b/gi, "").replace(/\brisk\b/gi, "").trim();
+        return sanitized || raw;
+      }
+
       function clamp(n, min, max) {
         if (Number.isNaN(n)) return min;
         return Math.min(max, Math.max(min, n));
@@ -981,10 +988,7 @@
             const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
             doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
             y += 28;
-            const propostaRaw = els.proposalText.textContent && els.proposalText.textContent !== "—"
-              ? els.proposalText.textContent
-              : "";
-            const proposta = propostaRaw.replace(/\brisco\b/gi, "").trim() || propostaRaw;
+            const proposta = getProposalTextForPdf();
             if (proposta) {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(12);
@@ -1093,9 +1097,7 @@
               doc.text(`Preço sugerido do projeto: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
             }
             y += 36;
-            const proposta = els.proposalText.textContent && els.proposalText.textContent !== "—"
-              ? els.proposalText.textContent
-              : "";
+            const proposta = getProposalTextForPdf();
             if (proposta) {
               doc.setFont("helvetica", "bold");
               doc.text("Texto de proposta sugerido", margin, y);
@@ -1107,7 +1109,7 @@
             }
             doc.setFont("helvetica", "normal");
             doc.setFontSize(9);
-            doc.text("Validade do Orçamento: 15 dias", margin, pageHeight - margin);
+            doc.text("Proposta válida por 7 dias. Para iniciar o projeto, favor confirmar por este canal.", margin, pageHeight - margin);
           }
 
           doc.save("proposta-freelancer.pdf");
