@@ -798,7 +798,9 @@
           els.configWrapper.classList.toggle("hidden", !!s.proposalMode);
         }
         if (els.calcCard) {
-          els.calcCard.classList.toggle("hidden", !!s.proposalMode);
+          const hideCalc = !!s.proposalMode;
+          els.calcCard.classList.toggle("hidden", hideCalc);
+          els.calcCard.setAttribute("aria-hidden", hideCalc ? "true" : "false");
         }
       }
 
