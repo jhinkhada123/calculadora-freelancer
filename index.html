@@ -478,6 +478,7 @@
       aria-live="polite"
     ></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
       const STORAGE_KEY = "freela_precificacao_v1";
       let logoDataUrl = null;
@@ -803,6 +804,7 @@
           "projectHours",
           "scopeRisk",
           "discount",
+          "proposalMode",
         ];
         for (const k of keys) params.set(k, String(s[k] ?? ""));
         url.search = params.toString();
@@ -831,6 +833,7 @@
           projectHours: toNum(p.get("projectHours")),
           scopeRisk: toNum(p.get("scopeRisk")),
           discount: toNum(p.get("discount")),
+          proposalMode: p.get("proposalMode") === "true",
         };
         setInputsFromState({ ...defaultState(), ...s });
         return true;
@@ -854,6 +857,7 @@
           projectHours: 30,
           scopeRisk: 15,
           discount: 0,
+          proposalMode: false,
         };
       }
 
