@@ -6,6 +6,7 @@
     <meta name="color-scheme" content="dark" />
     <title>Calculadora de Precificação Freelancer</title>
 
+    <!-- TODO: self-host fonts/CSS/JS para evitar dependência de CDNs (Google Fonts, Tailwind, cdnjs). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -49,6 +50,51 @@
     </style>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
+    <div
+      id="termsModal"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-ink-950/95 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="termsTitle"
+      style="display: none;"
+    >
+      <div class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-white/10 bg-ink-900 shadow-soft">
+        <h2 id="termsTitle" class="border-b border-white/10 px-5 py-4 text-lg font-semibold text-slate-100">Antes de começar</h2>
+        <div class="border-b border-white/10 px-5 py-4">
+          <p class="mb-3 text-sm text-slate-300">Resumo do que você está aceitando:</p>
+          <ul class="list-inside list-disc space-y-1.5 text-sm text-slate-300">
+            <li>Os números são estimativas para apoiar suas decisões; resultados podem variar.</li>
+            <li>Para decisões fiscais, contábeis ou jurídicas, consulte um profissional.</li>
+            <li>Dados da calculadora são salvos localmente no seu dispositivo. Este site pode carregar bibliotecas de terceiros (fontes, estilos, geração de PDF).</li>
+            <li>Você pode limpar os dados a qualquer momento nas configurações do navegador.</li>
+          </ul>
+          <p class="mt-3 text-xs text-slate-400">Termos completos abaixo. Role até o fim para habilitar o botão.</p>
+        </div>
+        <div
+          id="termsScroll"
+          class="flex-1 overflow-y-auto border-b border-white/10 px-5 py-4 text-sm text-slate-400"
+          style="max-height: 40vh;"
+          tabindex="0"
+        >
+          <h3 class="font-medium text-slate-300">1. Termos de Uso (texto completo)</h3>
+          <p class="mt-2">Esta calculadora é uma ferramenta de apoio à estimativa. Os resultados são projeções e não constituem garantia de lucro ou resultado financeiro. A ferramenta não substitui orientação contábil, fiscal ou jurídica. O uso dos valores gerados é de sua responsabilidade.</p>
+          <h3 class="mt-4 font-medium text-slate-300">2. Política de Privacidade (texto completo)</h3>
+          <p class="mt-2">Dados coletados: estado da calculadora, log de aceite e trilha de cálculos, armazenados localmente. O site pode carregar recursos de terceiros (fontes, estilos, script de PDF). Não usamos cookies de terceiros para rastreamento. Finalidade: funcionamento da ferramenta e cumprimento legal. Base legal: execução de contrato/consentimento. Retenção: até você limpar o armazenamento (ou limite da trilha). Direitos do titular: ver página de Privacidade. Incidentes de segurança: procedimentos de notificação conforme legislação.</p>
+          <p class="mt-4 text-slate-500" id="termsEnd">Fim. Role até aqui para continuar.</p>
+        </div>
+        <div class="flex justify-end gap-3 border-t border-white/10 px-5 py-4">
+          <button
+            id="btnAcceptTerms"
+            type="button"
+            disabled
+            class="rounded-xl bg-indigo-500 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Aceitar e continuar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div
       class="pointer-events-none fixed inset-0 bg-[radial-gradient(1000px_circle_at_20%_-10%,rgba(99,102,241,.35),transparent_60%),radial-gradient(900px_circle_at_80%_10%,rgba(16,185,129,.25),transparent_55%),radial-gradient(900px_circle_at_60%_120%,rgba(236,72,153,.22),transparent_60%)]"
     ></div>
@@ -95,6 +141,10 @@
               >
                 Resetar
               </button>
+              <label class="inline-flex items-center gap-2 text-xs text-slate-300">
+                <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
+                Incluir nomes no link
+              </label>
               <button
                 id="btnShare"
                 class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300/60"
@@ -293,7 +343,7 @@
                   <button
                     id="btnCopyProject"
                     type="button"
-                    class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10"
+                    class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Copia o valor do projeto"
                   >
                     Copiar valor
@@ -387,14 +437,14 @@
                     <button
                       id="btnCopyProposal"
                       type="button"
-                      class="w-full rounded-xl bg-emerald-500/90 px-3 py-2 text-xs font-medium text-emerald-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200/50"
+                      class="w-full rounded-xl bg-emerald-500/90 px-3 py-2 text-xs font-medium text-emerald-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Copiar texto
                     </button>
                     <button
                       id="btnPdf"
                       type="button"
-                      class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-xs font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50"
+                      class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-xs font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Gerar Proposta em PDF
                     </button>
@@ -409,6 +459,7 @@
         <aside class="lg:col-span-5">
           <div class="sticky top-6 space-y-7">
             <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+              <div id="resultError" class="hidden rounded-xl border border-white/10 bg-ink-800/80 px-4 py-3 text-sm text-slate-300" role="alert"></div>
               <div id="resultCardsInternal">
                 <div class="flex items-start justify-between gap-4">
                   <div>
@@ -418,7 +469,7 @@
                   <button
                     id="btnCopyHourly"
                     type="button"
-                    class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10"
+                    class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Copia a taxa/hora"
                   >
                     Copiar taxa/hora
@@ -475,7 +526,7 @@
                   <p id="stepTax" class="mt-1 font-medium">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
-                  <p class="text-xs text-slate-400">3) Base × (1 + %) = Faturamento alvo</p>
+                  <p class="text-xs text-slate-400">3) Base ÷ (1 − %) = Faturamento alvo</p>
                   <p id="stepProfit" class="mt-1 font-medium">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
@@ -488,6 +539,9 @@
                 Dica: se sua taxa/hora ficou alta, normalmente é porque a taxa de horas faturáveis está baixa,
                 as folgas/ano são altas, ou seus custos/impostos estão subestimados.
               </div>
+              <p class="mt-3 text-xs text-slate-500" id="calcPremises">
+                Premissas: faturamento alvo = base ÷ (1 − total%); taxa/hora = faturamento alvo ÷ horas faturáveis; projeto = horas × taxa × (1 + margem escopo) × (1 − desconto).
+              </p>
             </div>
           </div>
         </aside>
@@ -498,6 +552,12 @@
       <div class="mx-auto max-w-6xl px-4 py-8">
         <p class="text-xs text-slate-400">
           Feito para uso local. Tailwind via CDN (requer internet para carregar estilos).
+        </p>
+        <p class="mt-2 text-xs text-slate-500" id="legalDisclaimer">
+          Esta ferramenta oferece estimativas para apoiar decisões. Resultados podem variar. Para decisões fiscais/contábeis/jurídicas, consulte um profissional.
+        </p>
+        <p class="mt-1 text-xs text-slate-500">
+          <a href="privacidade.html" class="underline hover:text-slate-300">Política de Privacidade</a>
         </p>
       </div>
     </footer>
@@ -510,10 +570,23 @@
     ></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
+    <script type="module">
+      import { compute } from "./calculadora.js";
+      import {
+        hasAcceptedTerms,
+        recordAcceptance,
+        getSessionId,
+        textChecksum,
+        TERMS_VERSION,
+        appendAuditSnapshot,
+        LEGAL_DISCLAIMER,
+      } from "./compliance.js";
       const STORAGE_KEY = "freela_precificacao_v1";
+      const AUDIT_DEBOUNCE_MS = 800;
       let logoDataUrl = null;
       let calcCardStash = null;
+      let lastAuditSnapshotStr = "";
+      let auditDebounceTimer = null;
 
       const $ = (id) => document.getElementById(id);
 
@@ -558,6 +631,7 @@
         btnCopyProposal: $("btnCopyProposal"),
         btnPdf: $("btnPdf"),
         btnShare: $("btnShare"),
+        shareIncludeNames: $("shareIncludeNames"),
         btnExportConfig: $("btnExportConfig"),
         btnReset: $("btnReset"),
 
@@ -571,8 +645,12 @@
         resultProposalPrazo: $("resultProposalPrazo"),
         btnImportConfig: $("btnImportConfig"),
         importConfigInput: $("importConfigInput"),
+        resultError: $("resultError"),
 
         toast: $("toast"),
+        termsModal: $("termsModal"),
+        termsScroll: $("termsScroll"),
+        btnAcceptTerms: $("btnAcceptTerms"),
       };
 
       function downloadJson(filename, data) {
@@ -588,6 +666,10 @@
       }
 
       function exportConfig() {
+        if (!hasAcceptedTerms()) {
+          showToast("Para exportar, aceite os termos no início da página.");
+          return;
+        }
         const s = getStateFromInputs();
         const payload = {
           exportedAt: new Date().toISOString(),
@@ -688,11 +770,12 @@
 
       function fmtMoney(amount, curr) {
         const currency = sanitizeCurrency(curr);
+        const opts = { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2 };
         try {
           const locale = getLocaleForCurrency(currency);
-          return new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
+          return new Intl.NumberFormat(locale, opts).format(amount);
         } catch (_) {
-          return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(amount);
+          return new Intl.NumberFormat("pt-BR", opts).format(amount);
         }
       }
 
@@ -869,39 +952,32 @@
         els.discount.value = s.discount ?? 0;
       }
 
-      function compute(s) {
-        const workingWeeks = Math.max(0, 52 - s.vacationWeeks);
-        const hoursPerWeek = s.hoursPerDay * s.daysPerWeek;
-        const hoursPerMonth = (workingWeeks * hoursPerWeek) / 12;
-        const billableHours = hoursPerMonth * (s.utilization / 100);
-
-        const baseNeed = s.targetIncome + s.monthlyCosts;
-        const totalPercent = s.taxRate + s.profitMargin + s.buffer;
-        const revenueTarget = baseNeed * (1 + totalPercent / 100);
-
-        const hourly = billableHours > 0 ? revenueTarget / billableHours : Infinity;
-        const daily = hourly * s.hoursPerDay;
-
-        const projectMultiplier = 1 + s.scopeRisk / 100;
-        const projectGross = s.projectHours * hourly * projectMultiplier;
-        const projectNet = projectGross * (1 - s.discount / 100);
-
-        return {
-          workingWeeks,
-          hoursPerMonth,
-          billableHours,
-          baseNeed,
-          totalPercent,
-          revenueTarget,
-          hourly,
-          daily,
-          projectNet,
-          projectGross,
-        };
-      }
-
       function safeText(node, text) {
         node.textContent = text;
+      }
+
+      function scheduleAuditSnapshot() {
+        clearTimeout(auditDebounceTimer);
+        auditDebounceTimer = setTimeout(() => {
+          const s = getStateFromInputs();
+          const r = compute(s);
+          if (!r.ok || !hasAcceptedTerms()) return;
+          const snapshot = {
+            inputs: { ...s },
+            outputs: {
+              revenueTarget: r.revenueTarget,
+              hourly: r.hourly,
+              daily: r.daily,
+              projectGross: r.projectGross,
+              projectNet: r.projectNet,
+            },
+          };
+          const str = JSON.stringify(snapshot);
+          if (str !== lastAuditSnapshotStr) {
+            appendAuditSnapshot(snapshot);
+            lastAuditSnapshotStr = str;
+          }
+        }, AUDIT_DEBOUNCE_MS);
       }
 
       function updateUI() {
@@ -921,7 +997,17 @@
 
         const curr = s.currency;
 
-        const hourlyOk = Number.isFinite(r.hourly) && r.hourly >= 0;
+        if (els.resultError) {
+          if (!r.ok && r.error) {
+            els.resultError.textContent = r.error.message;
+            els.resultError.classList.remove("hidden");
+          } else {
+            els.resultError.classList.add("hidden");
+            els.resultError.textContent = "";
+          }
+        }
+
+        const hourlyOk = r.ok && r.hourly != null;
         safeText(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
         safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
         if (els.dailyLabel) {
@@ -929,10 +1015,10 @@
         }
         safeText(
           els.billableHours,
-          Number.isFinite(r.billableHours) ? `${fmtNumber(r.billableHours, 1)} h` : "—"
+          r.billableHours != null ? `${fmtNumber(r.billableHours, 1)} h` : "—"
         );
 
-        safeText(els.revenueTarget, Number.isFinite(r.revenueTarget) ? fmtMoney(r.revenueTarget, curr) : "—");
+        safeText(els.revenueTarget, r.ok && r.revenueTarget != null ? fmtMoney(r.revenueTarget, curr) : "—");
         safeText(
           els.revenueBreakdown,
           `Base: ${fmtMoney(r.baseNeed, curr)} • Total: ${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(
@@ -948,10 +1034,12 @@
           `${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(s.profitMargin, 1)}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`
         );
 
-        if (Number.isFinite(r.revenueTarget)) {
+        if (!r.ok && r.error) {
+          safeText(els.stepProfit, r.error.message);
+        } else if (r.ok && r.revenueTarget != null) {
           safeText(
             els.stepProfit,
-            `${fmtMoney(r.baseNeed, curr)} × (1 + ${fmtNumber(r.totalPercent, 1)}%) = ${fmtMoney(r.revenueTarget, curr)}`
+            `${fmtMoney(r.baseNeed, curr)} ÷ (1 − ${fmtNumber(r.totalPercent, 1)}%) = ${fmtMoney(r.revenueTarget, curr)}`
           );
         } else {
           safeText(els.stepProfit, "—");
@@ -966,7 +1054,7 @@
         );
 
         // Projeto
-        const projectOk = hourlyOk && s.projectHours > 0 && Number.isFinite(r.projectNet);
+        const projectOk = hourlyOk && s.projectHours > 0 && r.ok && r.projectNet != null;
         safeText(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
         if (els.projectHint) {
           if (s.proposalMode) {
@@ -1019,10 +1107,51 @@
           els.resultCardProposal.classList.toggle("hidden", !s.proposalMode);
         }
         if (s.proposalMode && els.resultProposalTotal && els.resultProposalPrazo) {
-          const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
+          const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
           safeText(els.resultProposalTotal, projectOk ? fmtMoney(r.projectNet, s.currency) : "—");
           const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
           safeText(els.resultProposalPrazo, projectOk ? `~${fmtNumber(prazoDias, 0)} dias úteis` : "—");
+        }
+
+        if (r.ok && hasAcceptedTerms()) {
+          scheduleAuditSnapshot();
+        }
+
+        const calcOk = r.ok;
+        const errMsg = r.error ? r.error.message : "";
+        const pdfOk = s.proposalMode
+          ? (r.ok && s.projectHours > 0 && r.projectNet != null)
+          : calcOk;
+        if (els.btnPdf) {
+          els.btnPdf.disabled = !pdfOk;
+          els.btnPdf.title = pdfOk ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
+        }
+        if (els.btnCopyHourly) {
+          els.btnCopyHourly.disabled = !calcOk;
+          els.btnCopyHourly.title = calcOk ? "" : (errMsg || "Calcule a taxa/hora primeiro.");
+        }
+        if (els.btnCopyProject) {
+          const projectOk = calcOk && r.projectNet != null && s.projectHours > 0;
+          els.btnCopyProject.disabled = !projectOk;
+          els.btnCopyProject.title = projectOk ? "" : (errMsg || "Preencha horas do projeto e calcule.");
+        }
+        if (els.btnCopyProposal) {
+          const proposalOk = calcOk && s.projectHours > 0 && r.projectNet != null;
+          els.btnCopyProposal.disabled = !proposalOk;
+          els.btnCopyProposal.title = proposalOk ? "" : "Preencha horas e calcule o investimento.";
+        }
+        const termsOk = hasAcceptedTerms();
+        if (els.btnPdf) els.btnPdf.disabled = els.btnPdf.disabled || !termsOk;
+        if (els.btnCopyHourly) els.btnCopyHourly.disabled = els.btnCopyHourly.disabled || !termsOk;
+        if (els.btnCopyProject) els.btnCopyProject.disabled = els.btnCopyProject.disabled || !termsOk;
+        if (els.btnCopyProposal) els.btnCopyProposal.disabled = els.btnCopyProposal.disabled || !termsOk;
+        if (els.btnShare) {
+          els.btnShare.disabled = !termsOk;
+          els.btnShare.title = termsOk ? "" : "Aceite os termos no início da página para copiar o link.";
+        }
+        if (els.btnExportConfig) {
+          els.btnExportConfig.disabled = !termsOk;
+          els.btnExportConfig.title = termsOk ? "" : "Aceite os termos no início da página para exportar.";
         }
       }
 
@@ -1071,10 +1200,14 @@
         "proposalMode",
       ];
 
-      function buildShareUrl(s) {
+      function buildShareUrl(s, includePii) {
         const url = new URL(window.location.href);
         const params = new URLSearchParams();
-        for (const k of QUERY_PARAM_KEYS) params.set(k, String(s[k] ?? ""));
+        const piiKeys = ["professionalName", "clientName"];
+        for (const k of QUERY_PARAM_KEYS) {
+          if (piiKeys.includes(k) && !includePii) continue;
+          params.set(k, String(s[k] ?? ""));
+        }
         url.search = params.toString();
         return url.toString();
       }
@@ -1131,19 +1264,23 @@
       }
 
       function generatePdf() {
+        if (!hasAcceptedTerms()) {
+          showToast("Para gerar o PDF, aceite os termos no início da página.");
+          return;
+        }
         const s = getStateFromInputs();
         const r = compute(s);
         const curr = s.currency;
         const proposalMode = !!s.proposalMode;
 
         if (proposalMode) {
-          const hasProject = s.projectHours > 0 && Number.isFinite(r.projectNet);
+          const hasProject = s.projectHours > 0 && r.ok && r.projectNet != null;
           if (!hasProject) {
             showToast("Preencha horas e valor do projeto antes de gerar a proposta.");
             return;
           }
-        } else if (!Number.isFinite(r.hourly) || !Number.isFinite(r.revenueTarget)) {
-          showToast("Preencha os dados principais antes de gerar o PDF.");
+        } else if (!r.ok || r.hourly == null || r.revenueTarget == null) {
+          showToast(r.error ? r.error.message : "Preencha os dados principais antes de gerar o PDF.");
           return;
         }
 
@@ -1212,7 +1349,7 @@
             doc.text("Investimento Total", margin, y);
             doc.setFont("helvetica", "normal");
             y += 20;
-            const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
+            const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
             if (projectOk) {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(18);
@@ -1225,11 +1362,16 @@
               doc.text("Preencha as horas estimadas para calcular o investimento.", margin, y);
             }
             doc.setFont("helvetica", "normal");
+            doc.setFontSize(8);
+            const disclaimerLines = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
+            let footerY = pageHeight - margin - disclaimerLines.length * 10 - 14;
+            doc.text(disclaimerLines, margin, footerY);
+            footerY += disclaimerLines.length * 10 + 4;
             doc.setFontSize(9);
             const validadeTexto = (s.validityDate && String(s.validityDate).trim())
               ? `Proposta válida até ${String(s.validityDate).trim()}.`
               : "Proposta válida por 7 dias.";
-            doc.text(`${validadeTexto} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, pageHeight - margin);
+            doc.text(`${validadeTexto} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, footerY);
           } else {
             if (logoDataUrl) {
               const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
@@ -1290,7 +1432,7 @@
             doc.text(`Taxa/hora sugerida: ${fmtMoneyPdf(r.hourly, curr)}`, margin, y);
             y += 16;
             doc.text(`Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h): ${fmtMoneyPdf(r.daily, curr)}`, margin, y);
-            const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
+            const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
             if (projectOk) {
               y += 24;
               doc.setFont("helvetica", "bold");
@@ -1317,17 +1459,21 @@
               doc.text(lines, margin, y);
             }
             doc.setFont("helvetica", "normal");
+            doc.setFontSize(8);
+            const disclaimerLinesRel = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
+            let footerYRel = pageHeight - margin - disclaimerLinesRel.length * 10 - 14;
+            doc.text(disclaimerLinesRel, margin, footerYRel);
+            footerYRel += disclaimerLinesRel.length * 10 + 4;
             doc.setFontSize(9);
             const validadeTextoRelatorio = (s.validityDate && String(s.validityDate).trim())
               ? `Proposta válida até ${String(s.validityDate).trim()}.`
               : "Proposta válida por 7 dias.";
-            doc.text(`${validadeTextoRelatorio} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, pageHeight - margin);
+            doc.text(`${validadeTextoRelatorio} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, footerYRel);
           }
 
           doc.save("proposta-freelancer.pdf");
           showToast("PDF gerado.");
-        } catch (err) {
-          console.error(err);
+        } catch {
           showToast("Não foi possível gerar o PDF.");
         }
       }
@@ -1368,28 +1514,45 @@
         }
 
         els.btnCopyHourly.addEventListener("click", () => {
+          if (!hasAcceptedTerms()) {
+            showToast("Para usar esta função, aceite os termos no início da página.");
+            return;
+          }
           const s = getStateFromInputs();
           const r = compute(s);
-          if (!Number.isFinite(r.hourly)) return showToast("Nada para copiar.");
+          if (!r.ok || r.hourly == null) return showToast("Nada para copiar.");
           copyToClipboard(fmtMoney(r.hourly, s.currency), "Taxa/hora copiada.");
         });
 
         els.btnCopyProject.addEventListener("click", () => {
+          if (!hasAcceptedTerms()) {
+            showToast("Para usar esta função, aceite os termos no início da página.");
+            return;
+          }
           const s = getStateFromInputs();
           const r = compute(s);
-          if (!Number.isFinite(r.projectNet) || s.projectHours <= 0) return showToast("Nada para copiar.");
+          if (!r.ok || r.projectNet == null || s.projectHours <= 0) return showToast("Nada para copiar.");
           copyToClipboard(fmtMoney(r.projectNet, s.currency), "Valor do projeto copiado.");
         });
 
         els.btnCopyProposal.addEventListener("click", () => {
+          if (!hasAcceptedTerms()) {
+            showToast("Para usar esta função, aceite os termos no início da página.");
+            return;
+          }
           const text = els.proposalText.textContent;
           if (!text || text === "—") return showToast("Nada para copiar.");
           copyToClipboard(text, "Texto copiado.");
         });
 
         els.btnShare.addEventListener("click", () => {
+          if (!hasAcceptedTerms()) {
+            showToast("Para usar esta função, aceite os termos no início da página.");
+            return;
+          }
           const s = getStateFromInputs();
-          const url = buildShareUrl(s);
+          const includePii = !!(els.shareIncludeNames && els.shareIncludeNames.checked);
+          const url = buildShareUrl(s, includePii);
           copyToClipboard(url, "Link copiado.");
         });
         if (els.btnExportConfig) {
@@ -1433,6 +1596,81 @@
         }
       }
 
+      function setupTermsModal() {
+        if (!els.termsModal || !els.termsScroll || !els.btnAcceptTerms) return;
+        function checkScrollEnd() {
+          const el = els.termsScroll;
+          const atEnd = el.scrollHeight - el.scrollTop <= el.clientHeight + 2;
+          els.btnAcceptTerms.disabled = !atEnd;
+        }
+        els.termsScroll.addEventListener("scroll", checkScrollEnd);
+        window.addEventListener("resize", checkScrollEnd);
+        try {
+          new ResizeObserver(checkScrollEnd).observe(els.termsScroll);
+        } catch (_) {}
+        checkScrollEnd();
+
+        function isFocusable(el) {
+          if (!el) return false;
+          if (el.disabled === true) return false;
+          if (el.offsetParent === null && el !== document.body) return false;
+          return true;
+        }
+        function getModalFocusables() {
+          return [els.termsScroll, els.btnAcceptTerms].filter(isFocusable);
+        }
+        function trapFocus(e) {
+          if (e.key !== "Tab") return;
+          if (els.termsModal.style.display === "none") return;
+          const focusables = getModalFocusables();
+          if (focusables.length === 0) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (focusables.length === 1) {
+            e.preventDefault();
+            if (document.activeElement !== first) first.focus();
+            return;
+          }
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+        els.termsModal.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            return;
+          }
+          trapFocus(e);
+        });
+
+        els.btnAcceptTerms.addEventListener("click", () => {
+          const text = els.termsScroll.innerText || "";
+          recordAcceptance({
+            termsVersion: TERMS_VERSION,
+            textChecksum: textChecksum(text),
+            sessionId: getSessionId(),
+            scrolled_to_end: true,
+          });
+          els.termsModal.style.display = "none";
+          updateUI();
+        });
+        if (!hasAcceptedTerms()) {
+          els.termsModal.style.display = "flex";
+          checkScrollEnd();
+          requestAnimationFrame(() => {
+            els.termsScroll.focus();
+          });
+        }
+      }
+
       // init
       (function init() {
         const applied = applyQueryParams();
@@ -1441,6 +1679,7 @@
           setInputsFromState(saved ? { ...defaultState(), ...saved } : defaultState());
         }
         wireEvents();
+        setupTermsModal();
         updateUI();
       })();
     </script>
