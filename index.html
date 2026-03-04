@@ -613,6 +613,10 @@
               const raw = typeof reader.result === "string" ? reader.result : "";
               const payload = JSON.parse(raw);
               const data = payload.data != null ? payload.data : payload;
+              const hasTopLogoField = Object.prototype.hasOwnProperty.call(payload, "logoDataUrl");
+              const hasDataLogoField = data && Object.prototype.hasOwnProperty.call(data, "logoDataUrl");
+              const hasLogoField = hasTopLogoField || hasDataLogoField;
+
               const logoFromPayload =
                 typeof payload?.logoDataUrl === "string"
                   ? payload.logoDataUrl
@@ -636,6 +640,9 @@
                 }
               } else if (logoFromPayload != null) {
                 logoIgnored = true;
+                logoDataUrl = null;
+              }
+              if (hasLogoField && !logoFromPayload) {
                 logoDataUrl = null;
               }
 
