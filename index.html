@@ -109,6 +109,14 @@
               >
                 Exportar configurações
               </button>
+              <button
+                id="btnImportConfig"
+                class="rounded-xl border border-white/10 bg-ink-900/60 px-4 py-2 text-sm text-slate-100 hover:bg-ink-800"
+                type="button"
+              >
+                Importar configurações
+              </button>
+              <input id="importConfigInput" type="file" accept=".txt,.json,application/json,text/plain" class="hidden" />
             </div>
             <p class="w-full text-xs text-amber-300/90">
               ⚠️ Link para uso interno. Para o cliente, envie apenas o PDF.
@@ -401,43 +409,56 @@
         <aside class="lg:col-span-5">
           <div class="sticky top-6 space-y-7">
             <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h2 class="text-base font-semibold">Resultado</h2>
-                  <p class="mt-1 text-xs text-slate-400">Atualiza automaticamente conforme você ajusta as entradas.</p>
+              <div id="resultCardsInternal">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 class="text-base font-semibold">Resultado</h2>
+                    <p class="mt-1 text-xs text-slate-400">Atualiza automaticamente conforme você ajusta as entradas.</p>
+                  </div>
+                  <button
+                    id="btnCopyHourly"
+                    type="button"
+                    class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10"
+                    title="Copia a taxa/hora"
+                  >
+                    Copiar taxa/hora
+                  </button>
                 </div>
-                <button
-                  id="btnCopyHourly"
-                  type="button"
-                  class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10"
-                  title="Copia a taxa/hora"
-                >
-                  Copiar taxa/hora
-                </button>
+
+                <div class="mt-5 grid grid-cols-1 gap-3">
+                  <div class="rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+                    <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
+                    <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight">—</p>
+                    <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <p id="dailyLabel" class="text-xs text-slate-400">Taxa/dia</p>
+                      <p id="dailyRate" class="mt-1 text-lg font-semibold">—</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <p class="text-xs text-slate-400">Horas faturáveis/mês</p>
+                      <p id="billableHours" class="mt-1 text-lg font-semibold">—</p>
+                    </div>
+                  </div>
+
+                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
+                    <p id="revenueTarget" class="mt-1 text-lg font-semibold">—</p>
+                    <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
+                  </div>
+                </div>
               </div>
 
-              <div class="mt-5 grid grid-cols-1 gap-3">
-                <div class="rounded-2xl border border-white/10 bg-ink-900/40 p-4">
-                  <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight">—</p>
-                  <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p id="dailyLabel" class="text-xs text-slate-400">Taxa/dia</p>
-                    <p id="dailyRate" class="mt-1 text-lg font-semibold">—</p>
-                  </div>
-                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p class="text-xs text-slate-400">Horas faturáveis/mês</p>
-                    <p id="billableHours" class="mt-1 text-lg font-semibold">—</p>
-                  </div>
-                </div>
-
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
-                  <p id="revenueTarget" class="mt-1 text-lg font-semibold">—</p>
-                  <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
+              <div id="resultCardProposal" class="hidden">
+                <h2 class="text-base font-semibold">Resultado</h2>
+                <p class="mt-1 text-xs text-slate-400">Resumo para proposta comercial.</p>
+                <div class="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6">
+                  <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Investimento Total do Projeto</p>
+                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white">—</p>
+                  <p class="mt-4 text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
+                  <p id="resultProposalPrazo" class="mt-1 text-xl font-semibold text-slate-100">—</p>
                 </div>
               </div>
             </div>
@@ -544,6 +565,12 @@
         configWrapper: $("configWrapper"),
         calcCard: $("calcCard"),
         logoInput: $("logoInput"),
+        resultCardsInternal: $("resultCardsInternal"),
+        resultCardProposal: $("resultCardProposal"),
+        resultProposalTotal: $("resultProposalTotal"),
+        resultProposalPrazo: $("resultProposalPrazo"),
+        btnImportConfig: $("btnImportConfig"),
+        importConfigInput: $("importConfigInput"),
 
         toast: $("toast"),
       };
@@ -571,6 +598,34 @@
         };
         downloadJson("configuracoes_calculadora_backup.txt", payload);
         showToast("Configurações exportadas.");
+      }
+
+      function importConfig() {
+        const input = els.importConfigInput;
+        if (!input) return;
+        input.value = "";
+        input.onchange = () => {
+          const file = input.files && input.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const raw = typeof reader.result === "string" ? reader.result : "";
+              const payload = JSON.parse(raw);
+              const data = payload.data != null ? payload.data : payload;
+              setInputsFromState({ ...defaultState(), ...data });
+              if (typeof payload.logoDataUrl === "string" && payload.logoDataUrl.startsWith("data:image/")) {
+                logoDataUrl = payload.logoDataUrl;
+              }
+              updateUI();
+              showToast("Configurações importadas.");
+            } catch (e) {
+              showToast("Arquivo inválido.");
+            }
+          };
+          reader.readAsText(file);
+        };
+        input.click();
       }
 
       function getProposalTextForPdf() {
@@ -816,6 +871,19 @@
               calcCardStash = null;
             }
           }
+        }
+
+        if (els.resultCardsInternal) {
+          els.resultCardsInternal.classList.toggle("hidden", !!s.proposalMode);
+        }
+        if (els.resultCardProposal) {
+          els.resultCardProposal.classList.toggle("hidden", !s.proposalMode);
+        }
+        if (s.proposalMode && els.resultProposalTotal && els.resultProposalPrazo) {
+          const projectOk = Number.isFinite(r.projectNet) && s.projectHours > 0;
+          safeText(els.resultProposalTotal, projectOk ? fmtMoney(r.projectNet, s.currency) : "—");
+          const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
+          safeText(els.resultProposalPrazo, projectOk ? `~${fmtNumber(prazoDias, 0)} dias úteis` : "—");
         }
       }
 
@@ -1179,6 +1247,9 @@
         });
         if (els.btnExportConfig) {
           els.btnExportConfig.addEventListener("click", exportConfig);
+        }
+        if (els.btnImportConfig) {
+          els.btnImportConfig.addEventListener("click", importConfig);
         }
 
         els.btnReset.addEventListener("click", resetAll);
