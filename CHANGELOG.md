@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.1.1 - 2026-03-05
+- Hardening de produção no fluxo PDF para evitar sobreposição vertical em proposta.
+- Higiene de telemetria para `risk_score_view` com deduplicação por variação relevante e cooldown.
+- Validação segura de endpoints: HTTPS externo obrigatório, HTTP apenas para localhost/127.0.0.1.
+- Ajuste de consistência matemática da composição no modo avançado para evitar dupla contagem.
+- Novos testes de regressão para hardening, mantendo paridade do modo Essencial em `+-0.01`.
+
 ## v2.1.0 - 2026-03-05
 - Adiciona motor de negociação com justificativas prontas (resumo executivo, técnica e prioridade/risco), com linguagem de estimativa robusta em pt-BR.
 - Inclui ancoragem de ROI para impacto crítico, Scope Shielding (score + markup controlado), prêmio dinâmico de conveniência e simulador de runway.
