@@ -2784,6 +2784,7 @@
           els.btnPdfProposal.disabled = els.btnPdf ? els.btnPdf.disabled : true;
           els.btnPdfProposal.title = els.btnPdf ? els.btnPdf.title : (errMsg || "Preencha os dados para gerar o PDF.");
         }
+        const termsOk = hasAcceptedTerms();
         if (els.btnPrimaryPdfHeader) {
           els.btnPrimaryPdfHeader.disabled = !pdfOk || !termsOk;
           els.btnPrimaryPdfHeader.title = (pdfOk && termsOk) ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
@@ -2815,7 +2816,6 @@
           els.btnCopyProposal.disabled = !proposalOk;
           els.btnCopyProposal.title = proposalOk ? "" : "Preencha horas e calcule o investimento.";
         }
-        const termsOk = hasAcceptedTerms();
         if (els.btnPdf) els.btnPdf.disabled = els.btnPdf.disabled || !termsOk;
         if (els.btnPdfProposal) els.btnPdfProposal.disabled = els.btnPdfProposal.disabled || !termsOk;
         if (els.btnCopyHourly) els.btnCopyHourly.disabled = els.btnCopyHourly.disabled || !termsOk;
@@ -3875,4 +3875,6 @@
     </script>
   </body>
 </html>
+
+
 
