@@ -1,0 +1,9 @@
+# Arquivos obrigatórios no deploy (mesmo diretório que index.html)
+index.html
+calculadora.js
+compliance.js
+privacidade.html
+
+# Imports em index.html são relativos: ./calculadora.js e ./compliance.js
+# Servir com MIME type application/javascript para .js
+# Se o app estiver em subpath (ex.: /app/), manter os quatro arquivos juntos em /app/
