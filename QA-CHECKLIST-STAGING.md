@@ -190,16 +190,16 @@
 
 ## 8) Smoke de rotas obrigatórias
 
-### QA-015 — Smoke rotas staging
+### QA-015 — Smoke rotas + smoke view=client
 
 | Campo | Valor |
 |-------|-------|
 | **Pré-condições** | Staging deployado |
 | **Passos** | Executar: `node scripts/smoke-routes.mjs {URL_STAGING}` |
-| **Resultado esperado** | Todas as rotas retornam 200 e Content-Type correto: `/` (text/html), `/calculadora.js` (application/javascript), `/compliance.js` (application/javascript), `/privacidade.html` (text/html), `/privacidade` (text/html). Verdict: GO-LIVE READY. |
+| **Resultado esperado** | (1) Rotas obrigatórias: 200 + Content-Type correto: `/` (text/html), `/calculadora.js` (application/javascript), `/compliance.js` (application/javascript), `/privacidade.html` (text/html), `/privacidade` (text/html). (2) view=client: `/?view=client&currency=BRL&projectNet=5000&projectHours=40&professionalName=QA&validityDate=2026-12-31` retorna 200, text/html, e HTML contém marcadores de client view (ex.: clientViewContainer, clientViewTotal). Verdict: GO-LIVE READY. |
 | **Severidade** | P0 |
 | **Status** | ☑ PASS |
-| **Evidência** | node scripts/smoke-routes.mjs https://calculadora-freelancer-orpin.vercel.app → 5/5 rotas 200, Content-Type OK, verdict GO-LIVE READY. |
+| **Evidência** | node scripts/smoke-routes.mjs {URL} → 6/6 checks 200, Content-Type OK, client view markers presentes, verdict GO-LIVE READY. |
 
 ---
 
