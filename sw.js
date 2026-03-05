@@ -11,6 +11,7 @@ const APP_SHELL = [
   "/risk-audit.js",
   "/telemetry.js",
   "/negotiation-v21.js",
+  "/hardening-v21.js",
   "/privacidade",
   "/privacidade.html",
   "/privacidade/index.html",

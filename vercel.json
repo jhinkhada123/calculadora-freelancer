@@ -37,6 +37,10 @@
       "destination": "/negotiation-v21.js"
     },
     {
+      "source": "/hardening-v21.js",
+      "destination": "/hardening-v21.js"
+    },
+    {
       "source": "/sw.js",
       "destination": "/sw.js"
     },
