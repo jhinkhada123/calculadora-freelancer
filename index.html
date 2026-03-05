@@ -663,6 +663,20 @@
         btnAcceptTerms: $("btnAcceptTerms"),
       };
 
+      function showBootError(err) {
+        const msg = (err && (err.message || String(err))) || "Erro desconhecido";
+        const banner = document.createElement("div");
+        banner.setAttribute("role", "alert");
+        banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:#b91c1c;color:#fff;padding:12px 16px;font-family:sans-serif;font-size:14px;line-height:1.4;box-shadow:0 4px 6px rgba(0,0,0,.2);";
+        banner.textContent = "Erro ao carregar a calculadora: " + msg;
+        try {
+          document.body.appendChild(banner);
+        } catch (_) {
+          document.documentElement.appendChild(banner);
+        }
+        if (typeof console !== "undefined" && console.error) console.error(err);
+      }
+
       function downloadJson(filename, data) {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -913,43 +927,43 @@
 
       function getStateFromInputs() {
         return {
-          currency: sanitizeCurrency(els.currency.value),
-          targetIncome: toNum(els.targetIncome.value),
-          monthlyCosts: toNum(els.monthlyCosts.value),
-          taxRate: clamp(toNum(els.taxRate.value), 0, 70),
-          profitMargin: clamp(toNum(els.profitMargin.value), 0, 200),
-          buffer: clamp(toNum(els.buffer.value), 0, 100),
-          utilization: clamp(toNum(els.utilization.value), 10, 100),
-          hoursPerDay: clamp(toNum(els.hoursPerDay.value), 1, 16),
-          daysPerWeek: clamp(toNum(els.daysPerWeek.value), 1, 7),
-          vacationWeeks: clamp(toNum(els.vacationWeeks.value), 0, 20),
+          currency: sanitizeCurrency(els.currency && els.currency.value),
+          targetIncome: toNum(els.targetIncome && els.targetIncome.value),
+          monthlyCosts: toNum(els.monthlyCosts && els.monthlyCosts.value),
+          taxRate: clamp(toNum(els.taxRate && els.taxRate.value), 0, 70),
+          profitMargin: clamp(toNum(els.profitMargin && els.profitMargin.value), 0, 200),
+          buffer: clamp(toNum(els.buffer && els.buffer.value), 0, 100),
+          utilization: clamp(toNum(els.utilization && els.utilization.value), 10, 100),
+          hoursPerDay: clamp(toNum(els.hoursPerDay && els.hoursPerDay.value), 1, 16),
+          daysPerWeek: clamp(toNum(els.daysPerWeek && els.daysPerWeek.value), 1, 7),
+          vacationWeeks: clamp(toNum(els.vacationWeeks && els.vacationWeeks.value), 0, 20),
 
-          professionalName: (els.professionalName.value || "").trim(),
-          clientName: (els.clientName.value || "").trim(),
-          validityDate: els.validityDate.value || "",
+          professionalName: ((els.professionalName && els.professionalName.value) || "").trim(),
+          clientName: ((els.clientName && els.clientName.value) || "").trim(),
+          validityDate: (els.validityDate && els.validityDate.value) || "",
           proposalMode: !!(els.proposalMode && els.proposalMode.checked),
 
-          projectHours: clamp(toNum(els.projectHours.value), 0, 100000),
-          scopeRisk: clamp(toNum(els.scopeRisk.value), 0, 100),
-          discount: clamp(toNum(els.discount.value), 0, 90),
+          projectHours: clamp(toNum(els.projectHours && els.projectHours.value), 0, 100000),
+          scopeRisk: clamp(toNum(els.scopeRisk && els.scopeRisk.value), 0, 100),
+          discount: clamp(toNum(els.discount && els.discount.value), 0, 90),
         };
       }
 
       function setInputsFromState(s) {
-        els.currency.value = sanitizeCurrency(s.currency ?? "BRL");
-        els.targetIncome.value = s.targetIncome ?? 9000;
-        els.monthlyCosts.value = s.monthlyCosts ?? 1200;
-        els.taxRate.value = s.taxRate ?? 12;
-        els.profitMargin.value = s.profitMargin ?? 15;
-        els.buffer.value = s.buffer ?? 10;
-        els.utilization.value = s.utilization ?? 60;
-        els.hoursPerDay.value = s.hoursPerDay ?? 6;
-        els.daysPerWeek.value = s.daysPerWeek ?? 5;
-        els.vacationWeeks.value = s.vacationWeeks ?? 4;
+        if (els.currency) els.currency.value = sanitizeCurrency(s.currency ?? "BRL");
+        if (els.targetIncome) els.targetIncome.value = s.targetIncome ?? 9000;
+        if (els.monthlyCosts) els.monthlyCosts.value = s.monthlyCosts ?? 1200;
+        if (els.taxRate) els.taxRate.value = s.taxRate ?? 12;
+        if (els.profitMargin) els.profitMargin.value = s.profitMargin ?? 15;
+        if (els.buffer) els.buffer.value = s.buffer ?? 10;
+        if (els.utilization) els.utilization.value = s.utilization ?? 60;
+        if (els.hoursPerDay) els.hoursPerDay.value = s.hoursPerDay ?? 6;
+        if (els.daysPerWeek) els.daysPerWeek.value = s.daysPerWeek ?? 5;
+        if (els.vacationWeeks) els.vacationWeeks.value = s.vacationWeeks ?? 4;
 
-        els.professionalName.value = s.professionalName ?? "";
-        els.clientName.value = s.clientName ?? "";
-        els.validityDate.value = s.validityDate ?? "";
+        if (els.professionalName) els.professionalName.value = s.professionalName ?? "";
+        if (els.clientName) els.clientName.value = s.clientName ?? "";
+        if (els.validityDate) els.validityDate.value = s.validityDate ?? "";
         if (els.proposalMode) {
           els.proposalMode.checked = !!s.proposalMode;
         }
@@ -957,13 +971,13 @@
           logoDataUrl = s.logoDataUrl;
         }
 
-        els.projectHours.value = s.projectHours ?? 30;
-        els.scopeRisk.value = s.scopeRisk ?? 15;
-        els.discount.value = s.discount ?? 0;
+        if (els.projectHours) els.projectHours.value = s.projectHours ?? 30;
+        if (els.scopeRisk) els.scopeRisk.value = s.scopeRisk ?? 15;
+        if (els.discount) els.discount.value = s.discount ?? 0;
       }
 
       function safeText(node, text) {
-        node.textContent = text;
+        if (node) node.textContent = text;
       }
 
       function scheduleAuditSnapshot() {
@@ -994,16 +1008,16 @@
         const s = getStateFromInputs();
         const r = compute(s);
 
-        // normalize inputs (clamp)
-        els.taxRate.value = s.taxRate;
-        els.profitMargin.value = s.profitMargin;
-        els.buffer.value = s.buffer;
-        els.utilization.value = s.utilization;
-        els.hoursPerDay.value = s.hoursPerDay;
-        els.daysPerWeek.value = s.daysPerWeek;
-        els.vacationWeeks.value = s.vacationWeeks;
-        els.scopeRisk.value = s.scopeRisk;
-        els.discount.value = s.discount;
+        // normalize inputs (clamp) — only when elements exist
+        if (els.taxRate) els.taxRate.value = s.taxRate;
+        if (els.profitMargin) els.profitMargin.value = s.profitMargin;
+        if (els.buffer) els.buffer.value = s.buffer;
+        if (els.utilization) els.utilization.value = s.utilization;
+        if (els.hoursPerDay) els.hoursPerDay.value = s.hoursPerDay;
+        if (els.daysPerWeek) els.daysPerWeek.value = s.daysPerWeek;
+        if (els.vacationWeeks) els.vacationWeeks.value = s.vacationWeeks;
+        if (els.scopeRisk) els.scopeRisk.value = s.scopeRisk;
+        if (els.discount) els.discount.value = s.discount;
 
         const curr = s.currency;
 
@@ -1524,11 +1538,13 @@
           els.discount,
         ];
         for (const el of inputs) {
-          el.addEventListener("input", updateUI);
-          el.addEventListener("change", updateUI);
+          if (el) {
+            el.addEventListener("input", updateUI);
+            el.addEventListener("change", updateUI);
+          }
         }
 
-        els.btnCopyHourly.addEventListener("click", () => {
+        if (els.btnCopyHourly) els.btnCopyHourly.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
             showToast("Para usar esta função, aceite os termos no início da página.");
             return;
@@ -1538,8 +1554,7 @@
           if (!r.ok || r.hourly == null) return showToast("Nada para copiar.");
           copyToClipboard(fmtMoney(r.hourly, s.currency), "Taxa/hora copiada.");
         });
-
-        els.btnCopyProject.addEventListener("click", () => {
+        if (els.btnCopyProject) els.btnCopyProject.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
             showToast("Para usar esta função, aceite os termos no início da página.");
             return;
@@ -1549,18 +1564,16 @@
           if (!r.ok || r.projectNet == null || s.projectHours <= 0) return showToast("Nada para copiar.");
           copyToClipboard(fmtMoney(r.projectNet, s.currency), "Valor do projeto copiado.");
         });
-
-        els.btnCopyProposal.addEventListener("click", () => {
+        if (els.btnCopyProposal) els.btnCopyProposal.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
             showToast("Para usar esta função, aceite os termos no início da página.");
             return;
           }
-          const text = els.proposalText.textContent;
+          const text = els.proposalText ? els.proposalText.textContent : "";
           if (!text || text === "—") return showToast("Nada para copiar.");
           copyToClipboard(text, "Texto copiado.");
         });
-
-        els.btnShare.addEventListener("click", () => {
+        if (els.btnShare) els.btnShare.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
             showToast("Para usar esta função, aceite os termos no início da página.");
             return;
@@ -1570,14 +1583,9 @@
           const url = buildShareUrl(s, includePii);
           copyToClipboard(url, "Link copiado.");
         });
-        if (els.btnExportConfig) {
-          els.btnExportConfig.addEventListener("click", exportConfig);
-        }
-        if (els.btnImportConfig) {
-          els.btnImportConfig.addEventListener("click", importConfig);
-        }
-
-        els.btnReset.addEventListener("click", resetAll);
+        if (els.btnExportConfig) els.btnExportConfig.addEventListener("click", exportConfig);
+        if (els.btnImportConfig) els.btnImportConfig.addEventListener("click", importConfig);
+        if (els.btnReset) els.btnReset.addEventListener("click", resetAll);
 
         if (els.btnPdf) {
           els.btnPdf.addEventListener("click", generatePdf);
@@ -1689,17 +1697,21 @@
         }
       }
 
-      // init
-      (function init() {
-        const applied = applyQueryParams();
-        if (!applied) {
-          const saved = loadState();
-          setInputsFromState(saved ? { ...defaultState(), ...saved } : defaultState());
-        }
-        wireEvents();
-        setupTermsModal();
-        updateUI();
-      })();
+      // init (boot hardening: catch any runtime error and show in-page banner)
+      try {
+        (function init() {
+          const applied = applyQueryParams();
+          if (!applied) {
+            const saved = loadState();
+            setInputsFromState(saved ? { ...defaultState(), ...saved } : defaultState());
+          }
+          wireEvents();
+          setupTermsModal();
+          updateUI();
+        })();
+      } catch (bootErr) {
+        showBootError(bootErr);
+      }
     </script>
   </body>
 </html>
