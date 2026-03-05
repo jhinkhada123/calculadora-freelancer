@@ -472,7 +472,10 @@
             <div id="advancedConfigCard" class="mt-6 hidden rounded-2xl border border-indigo-400/30 bg-indigo-500/10 p-4">
               <div class="flex items-center justify-between gap-2">
                 <div>
-                  <h3 class="text-sm font-semibold text-indigo-100">Configuração Premium</h3>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-semibold text-indigo-100">Configuração Premium</h3>
+                    <button type="button" data-help-target="helpAdvancedConfig" class="rounded-full border border-indigo-300/40 bg-indigo-500/20 px-2 py-0.5 text-[11px] font-semibold text-indigo-100 hover:bg-indigo-500/30" aria-label="Ver ajuda da configuração premium">?</button>
+                  </div>
                   <p class="text-xs text-indigo-200/80">Estratégia de preço com patrimônio, escassez, risco e exaustão.</p>
                 </div>
                 <label class="inline-flex items-center gap-2 text-xs text-indigo-100">
@@ -480,6 +483,9 @@
                   Monte Carlo (quando houver histórico)
                 </label>
               </div>
+              <p id="helpAdvancedConfig" class="mt-3 hidden rounded-lg border border-indigo-300/30 bg-indigo-900/30 px-3 py-2 text-xs text-indigo-100">
+                No desktop, passe o mouse sobre os botões para ver dicas. No celular, use este botão "?" para abrir orientações rápidas sobre a seção.
+              </p>
               <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="assetValue">Valor de ativos (CAPEX total)</label>
@@ -516,7 +522,10 @@
             <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 class="text-sm font-semibold">Comparar Cenários</h3>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-semibold">Comparar Cenários</h3>
+                    <button type="button" data-help-target="helpScenarioCompare" class="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-100 hover:bg-white/20" aria-label="Ver ajuda da comparação de cenários">?</button>
+                  </div>
                   <p class="text-xs text-slate-400">Salve duas variações para comparar os resultados lado a lado.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
@@ -525,6 +534,9 @@
                   <button id="btnClearScenarios" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Limpar comparação</button>
                 </div>
               </div>
+              <p id="helpScenarioCompare" class="mt-3 hidden rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300">
+                Salve A e B para capturar dois cenários diferentes. Depois use "Carregar A/B" para reaplicar entradas e comparar o delta automaticamente.
+              </p>
               <div id="scenarioCompareGrid" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-xl border border-white/10 bg-white/5 p-3">
                   <div class="flex items-center justify-between">
@@ -547,11 +559,17 @@
             <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 class="text-sm font-semibold">Integrações e Exportação</h3>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-semibold">Integrações e Exportação</h3>
+                    <button type="button" data-help-target="helpIntegrations" class="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-100 hover:bg-white/20" aria-label="Ver ajuda de integrações e exportação">?</button>
+                  </div>
                   <p class="text-xs text-slate-400">Exporte para planilhas e envie para webhooks sem expor credenciais.</p>
                 </div>
                 <button id="btnOpenIntegrationSettings" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Configurar endpoints</button>
               </div>
+              <p id="helpIntegrations" class="mt-3 hidden rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300">
+                "Baixar CSV" e "Copiar TSV" funcionam localmente. Para "Enviar", primeiro configure endpoints próprios (Apps Script/relay) em "Configurar endpoints".
+              </p>
               <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button id="btnExportCsv" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Baixar CSV</button>
                 <button id="btnCopyTsv" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Copiar linha (TSV)</button>
@@ -1666,6 +1684,53 @@
         });
       }
 
+      function applyButtonHelp() {
+        const helpMap = {
+          btnReset: "Restaura os valores padrão da calculadora.",
+          btnInstallApp: "Instala o app no seu dispositivo quando suportado.",
+          btnShare: "Copia um link com os dados atuais (sem nomes por padrão).",
+          btnExportConfig: "Baixa um arquivo com suas configurações atuais.",
+          btnImportConfig: "Importa configurações salvas anteriormente.",
+          btnCopyProject: "Copia o valor estimado do projeto.",
+          btnCopyProposal: "Copia o texto rápido da proposta.",
+          btnPdf: "Gera a proposta em PDF no modo atual.",
+          btnPdfProposal: "Gera a proposta em PDF no painel de proposta.",
+          btnSaveScenarioA: "Salva as entradas e resultados atuais como Cenário A.",
+          btnSaveScenarioB: "Salva as entradas e resultados atuais como Cenário B.",
+          btnClearScenarios: "Limpa os cenários salvos da comparação.",
+          btnLoadScenarioA: "Carrega o Cenário A nas entradas atuais.",
+          btnLoadScenarioB: "Carrega o Cenário B nas entradas atuais.",
+          btnOpenIntegrationSettings: "Abre configuração de endpoints para integrações.",
+          btnExportCsv: "Baixa os dados atuais em CSV.",
+          btnCopyTsv: "Copia uma linha TSV para colar no Google Sheets.",
+          btnSendSheets: "Envia os dados para o endpoint de Google Sheets configurado.",
+          btnSendNotion: "Envia os dados para o endpoint de Notion configurado.",
+          btnCloseIntegrationSettings: "Fecha a janela de configuração de endpoints.",
+          btnSaveIntegrationSettings: "Salva as URLs dos endpoints de integração.",
+          btnAcceptTerms: "Confirma os termos para liberar o uso das ações principais.",
+          btnCopyHourly: "Copia a taxa/hora calculada.",
+        };
+        Object.entries(helpMap).forEach(([id, text]) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.title = text;
+          el.setAttribute("aria-label", text);
+        });
+      }
+
+      function wireHelpToggles() {
+        const helpButtons = Array.from(document.querySelectorAll("[data-help-target]"));
+        helpButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const targetId = btn.getAttribute("data-help-target");
+            if (!targetId) return;
+            const panel = document.getElementById(targetId);
+            if (!panel) return;
+            panel.classList.toggle("hidden");
+          });
+        });
+      }
+
       function getAdvancedWarningsBundle(s, essential, advanced) {
         const warnings = [];
         if (!advanced || !advanced.ok) return warnings;
@@ -2566,6 +2631,8 @@
             setInputsFromState(saved ? { ...defaultState(), ...saved } : defaultState());
           }
           wireEvents();
+          applyButtonHelp();
+          wireHelpToggles();
           setupInstallPrompt();
           registerServiceWorker();
           setupTermsModal();
