@@ -580,16 +580,45 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module">
-      import { compute } from "./calculadora.js";
-      import {
-        hasAcceptedTerms,
-        recordAcceptance,
-        getSessionId,
-        textChecksum,
-        TERMS_VERSION,
-        appendAuditSnapshot,
-        LEGAL_DISCLAIMER,
-      } from "./compliance.js";
+      let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER;
+
+      function showBootError(err, context) {
+        const ctx = context ? context + ": " : "";
+        const msg = (err && (err.message || String(err))) || "Erro desconhecido";
+        const banner = document.createElement("div");
+        banner.setAttribute("role", "alert");
+        banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:#b91c1c;color:#fff;padding:12px 16px;font-family:sans-serif;font-size:14px;line-height:1.4;box-shadow:0 4px 6px rgba(0,0,0,.2);white-space:pre-wrap;word-break:break-all;";
+        banner.textContent = "Erro ao carregar a calculadora: " + ctx + msg + "\n\nVerifique: calculadora.js e compliance.js (HTTP 200, MIME application/javascript). Rede/Console para detalhes.";
+        try {
+          document.body.appendChild(banner);
+        } catch (_) {
+          document.documentElement.appendChild(banner);
+        }
+        if (typeof console !== "undefined" && console.error) console.error(context || "Boot", err);
+      }
+
+      (async function bootstrap() {
+        try {
+          const calcMod = await import("./calculadora.js");
+          compute = calcMod.compute;
+        } catch (e) {
+          showBootError(e, "Falha ao carregar calculadora.js");
+          return;
+        }
+        try {
+          const compMod = await import("./compliance.js");
+          hasAcceptedTerms = compMod.hasAcceptedTerms;
+          recordAcceptance = compMod.recordAcceptance;
+          getSessionId = compMod.getSessionId;
+          textChecksum = compMod.textChecksum;
+          TERMS_VERSION = compMod.TERMS_VERSION;
+          appendAuditSnapshot = compMod.appendAuditSnapshot;
+          LEGAL_DISCLAIMER = compMod.LEGAL_DISCLAIMER;
+        } catch (e) {
+          showBootError(e, "Falha ao carregar compliance.js");
+          return;
+        }
+
       const STORAGE_KEY = "freela_precificacao_v1";
       const AUDIT_DEBOUNCE_MS = 800;
       let logoDataUrl = null;
@@ -662,20 +691,6 @@
         termsScroll: $("termsScroll"),
         btnAcceptTerms: $("btnAcceptTerms"),
       };
-
-      function showBootError(err) {
-        const msg = (err && (err.message || String(err))) || "Erro desconhecido";
-        const banner = document.createElement("div");
-        banner.setAttribute("role", "alert");
-        banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:#b91c1c;color:#fff;padding:12px 16px;font-family:sans-serif;font-size:14px;line-height:1.4;box-shadow:0 4px 6px rgba(0,0,0,.2);";
-        banner.textContent = "Erro ao carregar a calculadora: " + msg;
-        try {
-          document.body.appendChild(banner);
-        } catch (_) {
-          document.documentElement.appendChild(banner);
-        }
-        if (typeof console !== "undefined" && console.error) console.error(err);
-      }
 
       function downloadJson(filename, data) {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -1697,7 +1712,6 @@
         }
       }
 
-      // init (boot hardening: catch any runtime error and show in-page banner)
       try {
         (function init() {
           const applied = applyQueryParams();
@@ -1710,8 +1724,9 @@
           updateUI();
         })();
       } catch (bootErr) {
-        showBootError(bootErr);
+        showBootError(bootErr, "Erro na inicialização");
       }
+      })().catch((e) => showBootError(e, "Bootstrap"));
     </script>
   </body>
 </html>
