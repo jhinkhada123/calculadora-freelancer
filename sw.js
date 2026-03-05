@@ -8,6 +8,8 @@ const APP_SHELL = [
   "/compliance.js",
   "/benchmarking.js",
   "/advanced-pricing.js",
+  "/risk-audit.js",
+  "/telemetry.js",
   "/privacidade",
   "/privacidade.html",
   "/privacidade/index.html",

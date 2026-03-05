@@ -4,6 +4,8 @@
     { "source": "/compliance.js", "destination": "/compliance.js" },
     { "source": "/benchmarking.js", "destination": "/benchmarking.js" },
     { "source": "/advanced-pricing.js", "destination": "/advanced-pricing.js" },
+    { "source": "/risk-audit.js", "destination": "/risk-audit.js" },
+    { "source": "/telemetry.js", "destination": "/telemetry.js" },
     { "source": "/privacidade.html", "destination": "/privacidade.html" },
     { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
     { "source": "/sw.js", "destination": "/sw.js" },

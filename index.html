@@ -15,6 +15,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -24,6 +28,8 @@
           extend: {
             fontFamily: {
               sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+              serif: ["Playfair Display", "Georgia", "serif"],
+              mono: ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
             },
             boxShadow: {
               soft: "0 12px 40px rgba(0,0,0,.35)",
@@ -34,6 +40,11 @@
                 900: "#0B1020",
                 800: "#111A33",
                 700: "#16224A",
+              },
+              emeraldlux: {
+                900: "#064E3B",
+                700: "#047857",
+                500: "#10B981",
               },
             },
           },
@@ -111,7 +122,7 @@
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
               Precificação profissional em minutos
             </p>
-            <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 class="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
               Calculadora de Precificação para Freelancers
             </h1>
             <p class="max-w-2xl text-sm text-slate-300">
@@ -212,6 +223,14 @@
               </div>
             </div>
 
+            <div class="mt-4 flex flex-wrap gap-2 text-xs">
+              <button type="button" data-accordion-target="essentialArea" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-slate-200 hover:bg-white/10">Essencial</button>
+              <button type="button" data-accordion-target="advancedConfigCard" class="rounded-lg border border-indigo-300/30 bg-indigo-500/15 px-3 py-1 text-indigo-100 hover:bg-indigo-500/25">Avançado</button>
+              <button type="button" data-accordion-target="scenarioCard" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-slate-200 hover:bg-white/10">Comparação</button>
+              <button type="button" data-accordion-target="governanceCard" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-slate-200 hover:bg-white/10">Governança</button>
+            </div>
+
+            <div id="essentialArea">
             <div id="configWrapper" class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="targetIncome">Renda líquida desejada / mês</label>
@@ -468,6 +487,7 @@
                 </div>
               </div>
             </div>
+            </div>
 
             <div id="advancedTeaserCard" class="mt-6 rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.18),rgba(15,23,42,.55))] p-4">
               <div class="flex items-start justify-between gap-3">
@@ -530,7 +550,7 @@
               <p class="mt-3 text-[11px] text-indigo-200/85">Estimativa estratégica; não constitui consultoria fiscal, jurídica ou financeira.</p>
             </div>
 
-            <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+            <div id="scenarioCard" class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
@@ -567,14 +587,14 @@
               <div id="scenarioDelta" class="mt-3 text-xs text-slate-400">Salve os dois cenários para ver as diferenças.</div>
             </div>
 
-            <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+            <div id="governanceCard" class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-semibold">Integrações e Exportação</h3>
+                    <h3 class="text-sm font-semibold">Governança de Dados</h3>
                     <button type="button" data-help-target="helpIntegrations" class="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-100 hover:bg-white/20" aria-label="Ver ajuda de integrações e exportação">?</button>
                   </div>
-                  <p class="text-xs text-slate-400">Exporte para planilhas e envie para webhooks sem expor credenciais.</p>
+                  <p class="text-xs text-slate-400">Exporte, audite e envie por endpoints próprios sem expor credenciais.</p>
                 </div>
                 <button id="btnOpenIntegrationSettings" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Configurar endpoints</button>
               </div>
@@ -692,6 +712,24 @@
               <div id="advancedWarnings" class="mt-4 space-y-2 text-xs"></div>
             </div>
 
+            <div id="auditModeCard" class="hidden rounded-2xl border border-emeraldlux-700/35 bg-emeraldlux-900/20 p-5 shadow-soft backdrop-blur">
+              <h3 class="font-serif text-base font-semibold text-emerald-100">Modo Auditoria</h3>
+              <p class="mt-1 text-xs text-emerald-100/80">Leitura proativa de risco operacional e comercial.</p>
+              <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div class="rounded-xl border border-emerald-300/25 bg-black/20 p-3">
+                  <p class="text-[11px] uppercase tracking-wide text-emerald-200/85">Score de Risco</p>
+                  <p id="riskScoreValue" class="font-mono text-3xl font-semibold text-emerald-100">—</p>
+                  <p id="riskScoreNarrative" class="mt-1 text-xs text-emerald-100/85">Ative o modo avançado para calcular.</p>
+                </div>
+                <div class="rounded-xl border border-emerald-300/25 bg-black/20 p-3">
+                  <p class="text-[11px] uppercase tracking-wide text-emerald-200/85">Badge de Exaustão</p>
+                  <p id="exhaustionBadgeLabel" class="mt-1 text-sm font-semibold text-emerald-100">Sem ajuste</p>
+                  <p id="exhaustionBadgeImpact" class="mt-1 text-xs text-emerald-100/85">—</p>
+                </div>
+              </div>
+              <div id="riskScoreBreakdown" class="mt-3 text-xs text-emerald-50/90"></div>
+            </div>
+
             <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
               <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
@@ -729,7 +767,7 @@
     <footer class="relative border-t border-white/10">
       <div class="mx-auto max-w-6xl px-4 py-8">
         <p class="text-xs text-slate-400">
-          Feito para uso local. Tailwind via CDN (requer internet para carregar estilos).
+          Utilidade de precificação com estimativas robustas para decisões comerciais.
         </p>
         <p class="mt-2 text-xs text-slate-500" id="legalDisclaimer">
           Esta ferramenta fornece estimativas e não garante resultados financeiros. Para decisões fiscais, contábeis ou jurídicas, consulte um profissional qualificado.
@@ -779,6 +817,7 @@
     <script type="module">
       let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
       let computeAdvancedPricing, deriveHistoricalVarianceSamples;
+      let computeRiskScore, riskNarrative, trackEvent;
 
       function showBootError(err, context) {
         const ctx = context ? context + ": " : "";
@@ -831,6 +870,20 @@
           computeAdvancedPricing = null;
           deriveHistoricalVarianceSamples = () => [];
         }
+        try {
+          const riskMod = await import("./risk-audit.js");
+          computeRiskScore = riskMod.computeRiskScore;
+          riskNarrative = riskMod.riskNarrative;
+        } catch (_) {
+          computeRiskScore = () => ({ score: 0, subscores: { riscoEscopo: 0, ocupacaoPressao: 0, exaustaoPressao: 0, margemFragilidade: 0 } });
+          riskNarrative = () => "Sem dados para auditoria de risco.";
+        }
+        try {
+          const telemetryMod = await import("./telemetry.js");
+          trackEvent = telemetryMod.trackEvent;
+        } catch (_) {
+          trackEvent = () => null;
+        }
 
       const STORAGE_KEY = "freela_precificacao_v2";
       const LEGACY_STORAGE_KEY = "freela_precificacao_v1";
@@ -839,6 +892,10 @@
       const INTEGRATIONS_KEY = "freela_integrations_v1";
       const DISMISSED_ALERTS_KEY = "freela_dismissed_alerts_v1";
       const AUDIT_DEBOUNCE_MS = 800;
+      const FEATURE_FLAGS = {
+        risk_score_enabled: true,
+        pdf_v2_enabled: true,
+      };
       let logoDataUrl = null;
       let calcCardStash = null;
       let lastAuditSnapshotStr = "";
@@ -918,6 +975,12 @@
         explainabilityList: $("explainabilityList"),
         advancedWarnings: $("advancedWarnings"),
         advancedModelLabel: $("advancedModelLabel"),
+        auditModeCard: $("auditModeCard"),
+        riskScoreValue: $("riskScoreValue"),
+        riskScoreNarrative: $("riskScoreNarrative"),
+        riskScoreBreakdown: $("riskScoreBreakdown"),
+        exhaustionBadgeLabel: $("exhaustionBadgeLabel"),
+        exhaustionBadgeImpact: $("exhaustionBadgeImpact"),
         premiumModeTag: $("premiumModeTag"),
         btnImportConfig: $("btnImportConfig"),
         importConfigInput: $("importConfigInput"),
@@ -1513,6 +1576,7 @@
         scenarios[slot] = payload;
         saveScenarios(scenarios);
         renderScenariosComparison();
+        trackEvent("scenario_saved", { slot, mode: payload.mode || "essential" });
         showToast(`Cenário ${slot} salvo.`);
       }
 
@@ -1669,6 +1733,8 @@
             showToast(`Falha ao enviar (${resp.status}).`);
             return;
           }
+          const ctx = buildPricingContext(getStateFromInputs());
+          trackEvent("integration_sent", { kind, mode: ctx.mode || "essential" });
           showToast(`Enviado para ${kind === "sheets" ? "Google Sheets" : "Notion"}.`);
         } catch {
           showToast("Falha de rede ao enviar.");
@@ -1737,6 +1803,19 @@
             const panel = document.getElementById(targetId);
             if (!panel) return;
             panel.classList.toggle("hidden");
+          });
+        });
+      }
+
+      function setupAccordionToggles() {
+        const toggles = Array.from(document.querySelectorAll("[data-accordion-target]"));
+        toggles.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const targetId = btn.getAttribute("data-accordion-target");
+            if (!targetId) return;
+            const node = document.getElementById(targetId);
+            if (!node) return;
+            node.classList.toggle("hidden");
           });
         });
       }
@@ -1819,6 +1898,39 @@
         els.advancedWarnings.innerHTML = warns.length
           ? warns.map((w) => `<div class="rounded-lg border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-amber-100">${w}</div>`).join("")
           : '<div class="rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-2 text-emerald-100">Sem alertas criticos no modo avancado.</div>';
+      }
+
+      function renderRiskAudit(s, ctx) {
+        if (!FEATURE_FLAGS.risk_score_enabled) {
+          if (els.auditModeCard) els.auditModeCard.classList.add("hidden");
+          return;
+        }
+        if (!els.auditModeCard || !els.riskScoreValue || !els.riskScoreNarrative || !els.riskScoreBreakdown || !els.exhaustionBadgeLabel || !els.exhaustionBadgeImpact) return;
+        const isAdvanced = s.advancedMode && ctx.mode === "advanced" && ctx.advanced;
+        els.auditModeCard.classList.toggle("hidden", !isAdvanced);
+        if (!isAdvanced) return;
+        const risk = computeRiskScore({
+          scopeFactor: ctx.advanced.data.scopeFactor,
+          occupancyRate: s.occupancyRate,
+          exhaustionFactor: ctx.advanced.data.exhaustionFactor,
+          denominator: ctx.advanced.data.denominator,
+        });
+        els.riskScoreValue.textContent = `${fmtNumber(risk.score, 1)} / 100`;
+        els.riskScoreNarrative.textContent = riskNarrative(risk);
+        els.riskScoreBreakdown.innerHTML =
+          `Escopo ${fmtNumber(risk.subscores.riscoEscopo, 1)} · Ocupação ${fmtNumber(risk.subscores.ocupacaoPressao, 1)} · Exaustão ${fmtNumber(risk.subscores.exaustaoPressao, 1)} · Margem ${fmtNumber(risk.subscores.margemFragilidade, 1)}`;
+
+        const exFactor = ctx.advanced.data.exhaustionFactor || 1;
+        const exImpact = ctx.advanced.data.contributions.exaustao || 0;
+        if (exFactor > 1.0) {
+          els.exhaustionBadgeLabel.textContent = "Taxa de preservação de saúde aplicada";
+          const pct = ((exFactor - 1) * 100);
+          els.exhaustionBadgeImpact.textContent = `${fmtMoney(Math.abs(exImpact), s.currency)} · ${fmtNumber(pct, 1)}%`;
+        } else {
+          els.exhaustionBadgeLabel.textContent = "Sem ajuste de exaustão";
+          els.exhaustionBadgeImpact.textContent = "Impacto: 0";
+        }
+        trackEvent("risk_score_view", { score: risk.score, model: ctx.advanced.mode || "deterministic" });
       }
 
       function scheduleAuditSnapshot() {
@@ -1958,6 +2070,7 @@
         renderAlerts(s, r);
         renderScenariosComparison();
         renderExplainability(s, pricingCtx);
+        renderRiskAudit(s, pricingCtx);
 
         persistState(s);
 
@@ -2230,6 +2343,7 @@
           const pageWidth = doc.internal.pageSize.getWidth();
           const pageHeight = doc.internal.pageSize.getHeight();
           let y = margin;
+          const pdfV2 = !!FEATURE_FLAGS.pdf_v2_enabled;
 
           if (proposalMode) {
             if (logoDataUrl) {
@@ -2255,9 +2369,19 @@
               doc.text(`Data: ${s.validityDate}`, margin, y);
               y += 24;
             }
+            if (pdfV2) {
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(16);
+              doc.text("Resumo Executivo", margin, y);
+              y += 22;
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(11);
+              doc.text("Este documento apresenta estimativas robustas para apoiar decisão comercial.", margin, y);
+              y += 20;
+            }
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
-            doc.text("Escopo da Solução", margin, y);
+            doc.text(pdfV2 ? "Lógica de Precificação" : "Escopo da Solução", margin, y);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
             y += 18;
@@ -2270,7 +2394,7 @@
             if (proposta) {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(12);
-              doc.text("Proposta", margin, y);
+              doc.text(pdfV2 ? "Recomendação Final" : "Proposta", margin, y);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(11);
               y += 18;
@@ -2316,7 +2440,7 @@
             }
             doc.setFont("helvetica", "bold");
             doc.setFontSize(18);
-            doc.text("Proposta de Prestação de Serviços", margin, y);
+            doc.text(pdfV2 ? "Capa - Relatório Consultivo de Precificação" : "Proposta de Prestação de Serviços", margin, y);
             y += 26;
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
@@ -2331,7 +2455,7 @@
             doc.text(`Moeda: ${curr}`, margin, y);
             y += 24;
             doc.setFont("helvetica", "bold");
-            doc.text("Resumo de custos e metas", margin, y);
+            doc.text(pdfV2 ? "Resumo Executivo" : "Resumo de custos e metas", margin, y);
             doc.setFont("helvetica", "normal");
             y += 18;
             doc.text(`Renda líquida desejada/mês: ${fmtMoneyPdf(s.targetIncome, curr)}`, margin, y);
@@ -2345,7 +2469,7 @@
             doc.text(`Buffer (atrasos/imprevistos): ${fmtNumber(s.buffer, 1)}%`, margin, y);
             y += 24;
             doc.setFont("helvetica", "bold");
-            doc.text("Capacidade de trabalho", margin, y);
+            doc.text(pdfV2 ? "Lógica de Precificação" : "Capacidade de trabalho", margin, y);
             doc.setFont("helvetica", "normal");
             y += 18;
             doc.text(`Taxa de horas faturáveis: ${fmtNumber(s.utilization, 1)}%`, margin, y);
@@ -2386,7 +2510,7 @@
             const proposta = getProposalTextForPdf();
             if (proposta) {
               doc.setFont("helvetica", "bold");
-              doc.text("Texto de proposta sugerido", margin, y);
+              doc.text(pdfV2 ? "Recomendação Final" : "Texto de proposta sugerido", margin, y);
               doc.setFont("helvetica", "normal");
               y += 18;
               const maxWidth = 500;
@@ -2407,6 +2531,8 @@
           }
 
           doc.save("proposta-freelancer.pdf");
+          const modeCtx = buildPricingContext(s);
+          trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode, pdfV2 });
           showToast("PDF gerado.");
         } catch {
           showToast("Não foi possível gerar o PDF.");
@@ -2557,7 +2683,10 @@
           els.proposalMode.addEventListener("change", updateUI);
         }
         if (els.advancedMode) {
-          els.advancedMode.addEventListener("change", updateUI);
+          els.advancedMode.addEventListener("change", () => {
+            trackEvent("calc_mode_toggle", { advancedMode: !!els.advancedMode.checked });
+            updateUI();
+          });
         }
         if (els.enableMonteCarlo) {
           els.enableMonteCarlo.addEventListener("change", updateUI);
@@ -2649,6 +2778,7 @@
           wireEvents();
           applyButtonHelp();
           wireHelpToggles();
+          setupAccordionToggles();
           setupInstallPrompt();
           registerServiceWorker();
           setupTermsModal();
