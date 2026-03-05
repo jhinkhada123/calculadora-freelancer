@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070A12" />
-    <title>Calibra | Calculadora de Precificação para Freelancers</title>
+    <title>Calculadora de Precificação para Freelancers</title>
     <meta
       id="metaDescription"
       name="description"
-      content="Calibra: Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados."
+      content="Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados."
     />
     <link rel="manifest" href="/manifest.webmanifest" />
 
@@ -787,7 +787,7 @@
             </div>
 
             <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
-              <h3 class="text-sm font-semibold">Base de Confiança Calibra</h3>
+              <h3 class="text-sm font-semibold">Base de Confiança</h3>
               <p class="mt-1 text-xs text-slate-400">Referências consultivas para decisões profissionais, sem promessas absolutas.</p>
               <ul id="trustMicrocopyList" class="mt-3 list-disc space-y-1 pl-5 text-xs text-slate-200">
                 <li>Estimativas baseadas nos parâmetros reais do seu negócio.</li>
@@ -1095,12 +1095,7 @@
           };
         }
 
-      const BRAND_OPTIONS = {
-        primary: "Valora",
-        fallback: "Calibra",
-      };
-      // Para fallback rápido, altere para BRAND_OPTIONS.fallback.
-      const BRAND_NAME = BRAND_OPTIONS.fallback;
+      const BRAND_NAME = "Calculadora de Precificação para Freelancers";
       const BRAND_SUBTITLE = "Calculadora de Precificação para Freelancers";
       const BRAND_TAGLINE = "Precificação profissional em minutos";
       const BRAND_HERO_HEADLINE = "Precificação estratégica para quem entrega valor, não horas.";
@@ -2070,12 +2065,12 @@
       }
 
       function applyBranding() {
-        document.title = `${BRAND_NAME} | ${BRAND_SUBTITLE}`;
+        document.title = BRAND_SUBTITLE;
         const metaDescription = document.getElementById("metaDescription");
         if (metaDescription) {
           metaDescription.setAttribute(
             "content",
-            `${BRAND_NAME}: ${BRAND_SUBTITLE} com proposta em PDF, auditoria e governança de dados.`
+            `${BRAND_SUBTITLE} com proposta em PDF, auditoria e governança de dados.`
           );
         }
         const subtitleNode = document.getElementById("brandSubtitleText");
@@ -2902,7 +2897,7 @@
             }
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
-            doc.text(`${BRAND_NAME} | ${BRAND_SUBTITLE}`, margin, y);
+            doc.text(BRAND_NAME, margin, y);
             advanceY(16);
             const profLabel = s.professionalName && s.professionalName.trim()
               ? s.professionalName.trim()

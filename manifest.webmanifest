@@ -1,11 +1,11 @@
 {
-  "name": "Calibra | Calculadora de Precificação para Freelancers",
-  "short_name": "Calibra",
+  "name": "Calculadora de Precificação para Freelancers",
+  "short_name": "Calculadora de Precificação para Freelancers",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#070A12",
   "theme_color": "#070A12",
   "lang": "pt-BR",
-  "description": "Calibra: Calculadora de Precificação para Freelancers com modo proposta, auditoria e exportações."
+  "description": "Calculadora de Precificação para Freelancers com modo proposta, auditoria e exportações."
 }
