@@ -1,4 +1,4 @@
-const CACHE_VERSION = "freela-app-v3";
+const CACHE_VERSION = "freela-app-v4";
 const RUNTIME_CACHE = "freela-runtime-v3";
 
 const APP_SHELL = [
@@ -10,6 +10,7 @@ const APP_SHELL = [
   "/advanced-pricing.js",
   "/risk-audit.js",
   "/telemetry.js",
+  "/negotiation-v21.js",
   "/privacidade",
   "/privacidade.html",
   "/privacidade/index.html",

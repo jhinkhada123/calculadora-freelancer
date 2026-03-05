@@ -550,6 +550,90 @@
               <p class="mt-3 text-[11px] text-indigo-200/85">Estimativa estratégica; não constitui consultoria fiscal, jurídica ou financeira.</p>
             </div>
 
+            <div id="negotiationConfigCard" class="mt-6 rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(16,185,129,.10),rgba(15,23,42,.55))] p-4 shadow-soft">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-500/20 px-2 py-1 text-[11px] font-medium text-emerald-100">v2.1</p>
+                  <h3 class="mt-2 text-sm font-semibold text-emerald-100">Inteligência de Negociação</h3>
+                  <p class="mt-1 text-xs text-emerald-100/80">Blocos prontos para proposta, ancoragem de ROI, proteção de escopo, conveniência e simulador de reserva.</p>
+                </div>
+              </div>
+              <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="complexidadeProjeto">Complexidade do projeto</label>
+                  <select id="complexidadeProjeto" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                    <option value="baixa">Baixa</option>
+                    <option value="media" selected>Média</option>
+                    <option value="alta">Alta</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="prazoEntrega">Prazo de entrega</label>
+                  <select id="prazoEntrega" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                    <option value="flexivel">Flexível</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="curto">Curto</option>
+                    <option value="urgente">Urgente</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="criticidadeNegocio">Criticidade para o negócio</label>
+                  <select id="criticidadeNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                    <option value="baixa">Baixa</option>
+                    <option value="media" selected>Média</option>
+                    <option value="alta">Alta</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="envolvimentoCliente">Envolvimento do cliente</label>
+                  <select id="envolvimentoCliente" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                    <option value="baixo">Baixo</option>
+                    <option value="medio" selected>Médio</option>
+                    <option value="alto">Alto</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="impactoNoNegocio">Impacto no negócio</label>
+                  <select id="impactoNoNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                    <option value="baixo">Baixo</option>
+                    <option value="medio" selected>Médio</option>
+                    <option value="alto">Alto</option>
+                    <option value="critico">Crítico</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="areaImpacto">Área impactada (ROI)</label>
+                  <input id="areaImpacto" type="text" placeholder="ex.: Operações, Vendas, Financeiro" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="ocupacaoAgenda">Ocupação da agenda para conveniência (%)</label>
+                  <input id="ocupacaoAgenda" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="reservaMetaMeses">Meta de reserva (meses)</label>
+                  <input id="reservaMetaMeses" type="number" min="1" max="60" step="1" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="reservaAtual">Reserva atual (opcional)</label>
+                  <input id="reservaAtual" type="number" min="0" step="100" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="custoPessoalMensal">Custo pessoal mensal (opcional)</label>
+                  <input id="custoPessoalMensal" type="number" min="0" step="100" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                </div>
+              </div>
+              <div class="mt-4 rounded-xl border border-emerald-300/20 bg-black/20 p-3">
+                <p class="text-xs font-medium text-emerald-100">Checklist de risco do cliente (Proteção de Escopo)</p>
+                <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskHistoricoAlteracoes" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />histórico de muitas alterações</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskComunicacaoFragmentada" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />comunicação fragmentada</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskTomadorIndefinido" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />tomador de decisão indefinido</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskEscopoIncompleto" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />escopo incompleto</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskUrgenciaSemBriefing" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />urgência sem briefing adequado</label>
+                </div>
+              </div>
+            </div>
+
             <div id="scenarioCard" class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
@@ -712,6 +796,37 @@
               <div id="advancedWarnings" class="mt-4 space-y-2 text-xs"></div>
             </div>
 
+            <div id="negotiationOutputCard" class="rounded-2xl border border-emerald-400/25 bg-[linear-gradient(135deg,rgba(16,185,129,.14),rgba(15,23,42,.6))] p-5 shadow-soft backdrop-blur">
+              <div class="flex items-center justify-between gap-3">
+                <h3 class="text-sm font-semibold text-emerald-100">Pacote de Negociação (v2.1)</h3>
+                <div class="flex gap-2">
+                  <button id="btnCopyJustification" type="button" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] text-slate-100 hover:bg-white/10">Copiar justificativa</button>
+                  <button id="btnInsertProposalJustification" type="button" class="rounded-lg border border-emerald-300/30 bg-emerald-500/20 px-3 py-1.5 text-[11px] text-emerald-100 hover:bg-emerald-500/30">Inserir no texto da proposta</button>
+                </div>
+              </div>
+              <p class="mt-2 text-xs text-emerald-100/75">Texto em linguagem robusta de estimativa, sem promessa de resultado garantido.</p>
+              <div id="roiAnchorLine" class="mt-3 hidden rounded-lg border border-emerald-300/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-100"></div>
+              <div class="mt-3 space-y-2 text-xs text-slate-100">
+                <div class="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+                  <p class="text-[11px] uppercase tracking-wide text-slate-300">Resumo executivo</p>
+                  <p id="justificationExecutive" class="mt-1">—</p>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+                  <p class="text-[11px] uppercase tracking-wide text-slate-300">Justificativa técnica</p>
+                  <p id="justificationTechnical" class="mt-1">—</p>
+                </div>
+                <div id="justificationPriorityWrap" class="hidden rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+                  <p class="text-[11px] uppercase tracking-wide text-slate-300">Justificativa de prioridade/risco</p>
+                  <p id="justificationPriority" class="mt-1">—</p>
+                </div>
+              </div>
+              <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div id="scopeShieldSummary" class="rounded-lg border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">—</div>
+                <div id="scarcitySummary" class="rounded-lg border border-indigo-300/30 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">—</div>
+              </div>
+              <div id="runwaySummary" class="mt-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-100">—</div>
+            </div>
+
             <div id="auditModeCard" class="hidden rounded-2xl border border-emeraldlux-700/35 bg-emeraldlux-900/20 p-5 shadow-soft backdrop-blur">
               <h3 class="font-serif text-base font-semibold text-emerald-100">Modo Auditoria</h3>
               <p class="mt-1 text-xs text-emerald-100/80">Leitura proativa de risco operacional e comercial.</p>
@@ -818,6 +933,7 @@
       let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
       let computeAdvancedPricing, deriveHistoricalVarianceSamples;
       let computeRiskScore, riskNarrative, trackEvent;
+      let computeScopeShielding, computeDynamicScarcityMarkup, computeRunwaySummary, computeRoiAnchor, generateJustificationBlocks;
 
       function showBootError(err, context) {
         const ctx = context ? context + ": " : "";
@@ -883,6 +999,36 @@
           trackEvent = telemetryMod.trackEvent;
         } catch (_) {
           trackEvent = () => null;
+        }
+        try {
+          const negotiationMod = await import("./negotiation-v21.js");
+          computeScopeShielding = negotiationMod.computeScopeShielding;
+          computeDynamicScarcityMarkup = negotiationMod.computeDynamicScarcityMarkup;
+          computeRunwaySummary = negotiationMod.computeRunwaySummary;
+          computeRoiAnchor = negotiationMod.computeRoiAnchor;
+          generateJustificationBlocks = negotiationMod.generateJustificationBlocks;
+        } catch (_) {
+          computeScopeShielding = () => ({ score: 0, level: "low", markupPct: 0, capPct: 18 });
+          computeDynamicScarcityMarkup = () => ({ ocupacaoAgenda: 0, markupPct: 0, capPct: 30 });
+          computeRunwaySummary = () => ({
+            reservaMetaMeses: 6,
+            custoPessoalMensal: 0,
+            custoFonte: "derivado",
+            metaReserva: 0,
+            runwayMesesAtual: 0,
+            runwayDiasAtual: 0,
+            runwayMesesPosProjeto: 0,
+            runwayDiasPosProjeto: 0,
+            projetosNecessarios: null,
+            caveat: "Estimativa sujeita à execução e variáveis operacionais.",
+          });
+          computeRoiAnchor = () => ({ enabled: false, text: "", caveat: "Estimativa sujeita à execução e variáveis operacionais." });
+          generateJustificationBlocks = () => ({
+            resumoExecutivo: "",
+            justificativaTecnica: "",
+            justificativaPrioridadeRisco: "",
+            caveat: "Estimativa sujeita à execução e variáveis operacionais.",
+          });
         }
 
       const STORAGE_KEY = "freela_precificacao_v2";
@@ -959,6 +1105,21 @@
         occupancyRate: $("occupancyRate"),
         weeklyHours: $("weeklyHours"),
         scopeVolatility: $("scopeVolatility"),
+        complexidadeProjeto: $("complexidadeProjeto"),
+        prazoEntrega: $("prazoEntrega"),
+        criticidadeNegocio: $("criticidadeNegocio"),
+        envolvimentoCliente: $("envolvimentoCliente"),
+        impactoNoNegocio: $("impactoNoNegocio"),
+        areaImpacto: $("areaImpacto"),
+        ocupacaoAgenda: $("ocupacaoAgenda"),
+        riskHistoricoAlteracoes: $("riskHistoricoAlteracoes"),
+        riskComunicacaoFragmentada: $("riskComunicacaoFragmentada"),
+        riskTomadorIndefinido: $("riskTomadorIndefinido"),
+        riskEscopoIncompleto: $("riskEscopoIncompleto"),
+        riskUrgenciaSemBriefing: $("riskUrgenciaSemBriefing"),
+        reservaMetaMeses: $("reservaMetaMeses"),
+        reservaAtual: $("reservaAtual"),
+        custoPessoalMensal: $("custoPessoalMensal"),
 
         proposalMode: $("proposalMode"),
         configWrapper: $("configWrapper"),
@@ -982,6 +1143,17 @@
         exhaustionBadgeLabel: $("exhaustionBadgeLabel"),
         exhaustionBadgeImpact: $("exhaustionBadgeImpact"),
         premiumModeTag: $("premiumModeTag"),
+        negotiationOutputCard: $("negotiationOutputCard"),
+        roiAnchorLine: $("roiAnchorLine"),
+        justificationExecutive: $("justificationExecutive"),
+        justificationTechnical: $("justificationTechnical"),
+        justificationPriorityWrap: $("justificationPriorityWrap"),
+        justificationPriority: $("justificationPriority"),
+        scopeShieldSummary: $("scopeShieldSummary"),
+        scarcitySummary: $("scarcitySummary"),
+        runwaySummary: $("runwaySummary"),
+        btnCopyJustification: $("btnCopyJustification"),
+        btnInsertProposalJustification: $("btnInsertProposalJustification"),
         btnImportConfig: $("btnImportConfig"),
         importConfigInput: $("importConfigInput"),
         resultError: $("resultError"),
@@ -1288,6 +1460,21 @@
           occupancyRate: clamp(toNum(els.occupancyRate && els.occupancyRate.value), 0, 100),
           weeklyHours: clamp(toNum(els.weeklyHours && els.weeklyHours.value), 1, 120),
           scopeVolatility: (((els.scopeVolatility && els.scopeVolatility.value) || "medium").toLowerCase()),
+          complexidadeProjeto: (((els.complexidadeProjeto && els.complexidadeProjeto.value) || "media").toLowerCase()),
+          prazoEntrega: (((els.prazoEntrega && els.prazoEntrega.value) || "normal").toLowerCase()),
+          criticidadeNegocio: (((els.criticidadeNegocio && els.criticidadeNegocio.value) || "media").toLowerCase()),
+          envolvimentoCliente: (((els.envolvimentoCliente && els.envolvimentoCliente.value) || "medio").toLowerCase()),
+          impactoNoNegocio: (((els.impactoNoNegocio && els.impactoNoNegocio.value) || "medio").toLowerCase()),
+          areaImpacto: ((els.areaImpacto && els.areaImpacto.value) || "").trim(),
+          ocupacaoAgenda: clamp(toNum(els.ocupacaoAgenda && els.ocupacaoAgenda.value), 0, 100),
+          riskHistoricoAlteracoes: !!(els.riskHistoricoAlteracoes && els.riskHistoricoAlteracoes.checked),
+          riskComunicacaoFragmentada: !!(els.riskComunicacaoFragmentada && els.riskComunicacaoFragmentada.checked),
+          riskTomadorIndefinido: !!(els.riskTomadorIndefinido && els.riskTomadorIndefinido.checked),
+          riskEscopoIncompleto: !!(els.riskEscopoIncompleto && els.riskEscopoIncompleto.checked),
+          riskUrgenciaSemBriefing: !!(els.riskUrgenciaSemBriefing && els.riskUrgenciaSemBriefing.checked),
+          reservaMetaMeses: clamp(toNum(els.reservaMetaMeses && els.reservaMetaMeses.value), 1, 60),
+          reservaAtual: Math.max(0, toNum(els.reservaAtual && els.reservaAtual.value)),
+          custoPessoalMensal: Math.max(0, toNum(els.custoPessoalMensal && els.custoPessoalMensal.value)),
         };
       }
 
@@ -1332,6 +1519,41 @@
           const value = allowed.includes(s.scopeVolatility) ? s.scopeVolatility : "medium";
           els.scopeVolatility.value = value;
         }
+        if (els.complexidadeProjeto) {
+          const allowed = ["baixa", "media", "alta"];
+          const value = allowed.includes(s.complexidadeProjeto) ? s.complexidadeProjeto : "media";
+          els.complexidadeProjeto.value = value;
+        }
+        if (els.prazoEntrega) {
+          const allowed = ["flexivel", "normal", "curto", "urgente"];
+          const value = allowed.includes(s.prazoEntrega) ? s.prazoEntrega : "normal";
+          els.prazoEntrega.value = value;
+        }
+        if (els.criticidadeNegocio) {
+          const allowed = ["baixa", "media", "alta"];
+          const value = allowed.includes(s.criticidadeNegocio) ? s.criticidadeNegocio : "media";
+          els.criticidadeNegocio.value = value;
+        }
+        if (els.envolvimentoCliente) {
+          const allowed = ["baixo", "medio", "alto"];
+          const value = allowed.includes(s.envolvimentoCliente) ? s.envolvimentoCliente : "medio";
+          els.envolvimentoCliente.value = value;
+        }
+        if (els.impactoNoNegocio) {
+          const allowed = ["baixo", "medio", "alto", "critico"];
+          const value = allowed.includes(s.impactoNoNegocio) ? s.impactoNoNegocio : "medio";
+          els.impactoNoNegocio.value = value;
+        }
+        if (els.areaImpacto) els.areaImpacto.value = s.areaImpacto ?? "";
+        if (els.ocupacaoAgenda) els.ocupacaoAgenda.value = s.ocupacaoAgenda ?? 70;
+        if (els.riskHistoricoAlteracoes) els.riskHistoricoAlteracoes.checked = !!s.riskHistoricoAlteracoes;
+        if (els.riskComunicacaoFragmentada) els.riskComunicacaoFragmentada.checked = !!s.riskComunicacaoFragmentada;
+        if (els.riskTomadorIndefinido) els.riskTomadorIndefinido.checked = !!s.riskTomadorIndefinido;
+        if (els.riskEscopoIncompleto) els.riskEscopoIncompleto.checked = !!s.riskEscopoIncompleto;
+        if (els.riskUrgenciaSemBriefing) els.riskUrgenciaSemBriefing.checked = !!s.riskUrgenciaSemBriefing;
+        if (els.reservaMetaMeses) els.reservaMetaMeses.value = s.reservaMetaMeses ?? 6;
+        if (els.reservaAtual) els.reservaAtual.value = s.reservaAtual ?? 0;
+        if (els.custoPessoalMensal) els.custoPessoalMensal.value = s.custoPessoalMensal ?? 0;
       }
 
       function safeText(node, text) {
@@ -1607,12 +1829,14 @@
         const inputs = getStateFromInputs();
         const ctx = buildPricingContext(inputs);
         const outputs = ctx.effective;
+        const negotiation = buildNegotiationContext(inputs, outputs);
         return {
           timestamp: new Date().toISOString(),
           app: "calculadora-freelancer",
           mode: ctx.mode,
           inputs,
           outputs,
+          negotiation,
         };
       }
 
@@ -1785,6 +2009,8 @@
           btnInstallApp: "Instala o app no seu dispositivo quando suportado.",
           enableMonteCarlo: "Ativa simulação estocástica quando houver histórico suficiente.",
           advancedMode: "Alterna entre cálculo essencial e precificação avançada.",
+          btnCopyJustification: "Copia os blocos de justificativa para proposta comercial.",
+          btnInsertProposalJustification: "Insere os blocos de justificativa no texto da proposta atual.",
         };
         Object.entries(helpMap).forEach(([id, text]) => {
           const el = document.getElementById(id);
@@ -1861,6 +2087,101 @@
           };
         }
         return { mode: "advanced", effective: advanced.output, essential, advanced, warning: "" };
+      }
+
+      function formatScopeLevel(level) {
+        if (level === "high") return "alto";
+        if (level === "medium") return "médio";
+        return "baixo";
+      }
+
+      function buildNegotiationContext(s, r) {
+        const scopeShield = computeScopeShielding({
+          historicoMuitasAlteracoes: !!s.riskHistoricoAlteracoes,
+          comunicacaoFragmentada: !!s.riskComunicacaoFragmentada,
+          tomadorIndefinido: !!s.riskTomadorIndefinido,
+          escopoIncompleto: !!s.riskEscopoIncompleto,
+          urgenciaSemBriefing: !!s.riskUrgenciaSemBriefing,
+        });
+        const scarcity = computeDynamicScarcityMarkup(s.ocupacaoAgenda);
+        const roi = computeRoiAnchor({
+          impactoNoNegocio: s.impactoNoNegocio,
+          areaImpacto: s.areaImpacto,
+        });
+        const runway = computeRunwaySummary({
+          reservaMetaMeses: s.reservaMetaMeses,
+          reservaAtual: s.reservaAtual,
+          custoPessoalMensal: s.custoPessoalMensal,
+          targetIncome: s.targetIncome,
+          monthlyCosts: s.monthlyCosts,
+          projectNet: r.projectNet,
+        });
+        const justification = generateJustificationBlocks({
+          state: s,
+          scopeShield,
+          scarcity,
+          roi,
+        });
+        const projectNet = Number(r.projectNet || 0);
+        const shieldImpact = projectNet * (scopeShield.markupPct / 100);
+        const scarcityImpact = projectNet * (scarcity.markupPct / 100);
+        return {
+          scopeShield,
+          scarcity,
+          roi,
+          runway,
+          justification,
+          shieldImpact,
+          scarcityImpact,
+        };
+      }
+
+      function renderNegotiationOutputs(s, r, n) {
+        if (!els.justificationExecutive || !els.justificationTechnical || !els.scopeShieldSummary || !els.scarcitySummary || !els.runwaySummary) return;
+        const curr = sanitizeCurrency(s.currency);
+        safeText(els.justificationExecutive, n.justification.resumoExecutivo || "—");
+        safeText(els.justificationTechnical, n.justification.justificativaTecnica || "—");
+        if (els.justificationPriorityWrap && els.justificationPriority) {
+          const hasPriority = !!n.justification.justificativaPrioridadeRisco;
+          els.justificationPriorityWrap.classList.toggle("hidden", !hasPriority);
+          safeText(els.justificationPriority, hasPriority ? n.justification.justificativaPrioridadeRisco : "—");
+        }
+        if (els.roiAnchorLine) {
+          const text = n.roi.enabled ? `${n.roi.text} ${n.roi.caveat}` : "";
+          els.roiAnchorLine.classList.toggle("hidden", !text);
+          safeText(els.roiAnchorLine, text);
+        }
+        safeText(
+          els.scopeShieldSummary,
+          `Taxa de Gestão de Expectativa: ${fmtNumber(n.scopeShield.markupPct, 1)}% (${formatScopeLevel(n.scopeShield.level)}). Impacto estimado: ${fmtMoney(Math.max(0, n.shieldImpact), curr)}.`
+        );
+        safeText(
+          els.scarcitySummary,
+          `Prêmio de conveniência aplicado: ${fmtNumber(n.scarcity.markupPct, 1)}% (ocupação ${fmtNumber(s.ocupacaoAgenda, 0)}%). Impacto estimado: ${fmtMoney(Math.max(0, n.scarcityImpact), curr)}.`
+        );
+        const fonte = n.runway.custoFonte === "explicito"
+          ? `Custo pessoal mensal explícito: ${fmtMoney(n.runway.custoPessoalMensal, curr)}.`
+          : `Custo pessoal mensal derivado (renda + custos): ${fmtMoney(n.runway.custoPessoalMensal, curr)}.`;
+        const projetosTexto = n.runway.projetosNecessarios == null
+          ? "Projetos necessários para meta: informe um projeto com valor líquido positivo."
+          : `Projetos necessários para meta de reserva: ${fmtNumber(n.runway.projetosNecessarios, 0)}.`;
+        safeText(
+          els.runwaySummary,
+          `Fôlego financeiro atual: ${fmtNumber(n.runway.runwayMesesAtual, 1)} meses (${fmtNumber(n.runway.runwayDiasAtual, 0)} dias). ` +
+            `Fôlego financeiro pós-projeto: ${fmtNumber(n.runway.runwayMesesPosProjeto, 1)} meses (${fmtNumber(n.runway.runwayDiasPosProjeto, 0)} dias). ` +
+            `${projetosTexto} ${fonte} ${n.runway.caveat}`
+        );
+      }
+
+      function buildJustificationClipboardText(s, n) {
+        const parts = [
+          n.justification.resumoExecutivo,
+          n.justification.justificativaTecnica,
+        ];
+        if (n.justification.justificativaPrioridadeRisco) parts.push(n.justification.justificativaPrioridadeRisco);
+        if (n.roi.enabled && n.roi.text) parts.push(n.roi.text);
+        parts.push(n.justification.caveat || "Estimativa sujeita à execução e variáveis operacionais.");
+        return parts.filter(Boolean).join("\n\n");
       }
 
       function renderExplainability(s, ctx) {
@@ -1961,6 +2282,7 @@
         const s = getStateFromInputs();
         const pricingCtx = buildPricingContext(s);
         const r = pricingCtx.effective;
+        const negotiationCtx = buildNegotiationContext(s, r);
 
         // normalize inputs (clamp) — only when elements exist
         if (els.taxRate) els.taxRate.value = s.taxRate;
@@ -1977,6 +2299,10 @@
         if (els.opportunityRateAnnual) els.opportunityRateAnnual.value = s.opportunityRateAnnual;
         if (els.occupancyRate) els.occupancyRate.value = s.occupancyRate;
         if (els.weeklyHours) els.weeklyHours.value = s.weeklyHours;
+        if (els.ocupacaoAgenda) els.ocupacaoAgenda.value = s.ocupacaoAgenda;
+        if (els.reservaMetaMeses) els.reservaMetaMeses.value = s.reservaMetaMeses;
+        if (els.reservaAtual) els.reservaAtual.value = s.reservaAtual;
+        if (els.custoPessoalMensal) els.custoPessoalMensal.value = s.custoPessoalMensal;
 
         const curr = s.currency;
 
@@ -2060,7 +2386,8 @@
 
         if (projectOk) {
           const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
-          const texto = `Proposta comercial para execução do projeto conforme escopo acordado. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.`;
+          const roiLine = negotiationCtx.roi.enabled ? ` ${negotiationCtx.roi.text}` : "";
+          const texto = `Proposta comercial para execução do projeto conforme escopo acordado. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.${roiLine} ${negotiationCtx.roi.caveat}`;
           safeText(els.proposalText, texto);
         } else {
           safeText(els.proposalText, "—");
@@ -2071,6 +2398,7 @@
         renderScenariosComparison();
         renderExplainability(s, pricingCtx);
         renderRiskAudit(s, pricingCtx);
+        renderNegotiationOutputs(s, r, negotiationCtx);
 
         persistState(s);
 
@@ -2157,6 +2485,14 @@
           els.btnExportConfig.disabled = !termsOk;
           els.btnExportConfig.title = termsOk ? "" : "Aceite os termos no início da página para exportar.";
         }
+        if (els.btnCopyJustification) {
+          els.btnCopyJustification.disabled = !termsOk;
+          els.btnCopyJustification.title = termsOk ? "" : "Aceite os termos no início da página para copiar.";
+        }
+        if (els.btnInsertProposalJustification) {
+          els.btnInsertProposalJustification.disabled = !termsOk;
+          els.btnInsertProposalJustification.title = termsOk ? "" : "Aceite os termos no início da página para inserir justificativa.";
+        }
       }
 
       function persistState(s) {
@@ -2230,6 +2566,21 @@
         "occupancyRate",
         "weeklyHours",
         "scopeVolatility",
+        "complexidadeProjeto",
+        "prazoEntrega",
+        "criticidadeNegocio",
+        "envolvimentoCliente",
+        "impactoNoNegocio",
+        "areaImpacto",
+        "ocupacaoAgenda",
+        "riskHistoricoAlteracoes",
+        "riskComunicacaoFragmentada",
+        "riskTomadorIndefinido",
+        "riskEscopoIncompleto",
+        "riskUrgenciaSemBriefing",
+        "reservaMetaMeses",
+        "reservaAtual",
+        "custoPessoalMensal",
       ];
 
       function buildShareUrl(s, includePii) {
@@ -2277,6 +2628,21 @@
         if (p.has("occupancyRate")) s.occupancyRate = toNum(p.get("occupancyRate"));
         if (p.has("weeklyHours")) s.weeklyHours = toNum(p.get("weeklyHours"));
         if (p.has("scopeVolatility")) s.scopeVolatility = (p.get("scopeVolatility") || "medium").toLowerCase();
+        if (p.has("complexidadeProjeto")) s.complexidadeProjeto = (p.get("complexidadeProjeto") || "media").toLowerCase();
+        if (p.has("prazoEntrega")) s.prazoEntrega = (p.get("prazoEntrega") || "normal").toLowerCase();
+        if (p.has("criticidadeNegocio")) s.criticidadeNegocio = (p.get("criticidadeNegocio") || "media").toLowerCase();
+        if (p.has("envolvimentoCliente")) s.envolvimentoCliente = (p.get("envolvimentoCliente") || "medio").toLowerCase();
+        if (p.has("impactoNoNegocio")) s.impactoNoNegocio = (p.get("impactoNoNegocio") || "medio").toLowerCase();
+        if (p.has("areaImpacto")) s.areaImpacto = p.get("areaImpacto") || "";
+        if (p.has("ocupacaoAgenda")) s.ocupacaoAgenda = toNum(p.get("ocupacaoAgenda"));
+        if (p.has("riskHistoricoAlteracoes")) s.riskHistoricoAlteracoes = p.get("riskHistoricoAlteracoes") === "true";
+        if (p.has("riskComunicacaoFragmentada")) s.riskComunicacaoFragmentada = p.get("riskComunicacaoFragmentada") === "true";
+        if (p.has("riskTomadorIndefinido")) s.riskTomadorIndefinido = p.get("riskTomadorIndefinido") === "true";
+        if (p.has("riskEscopoIncompleto")) s.riskEscopoIncompleto = p.get("riskEscopoIncompleto") === "true";
+        if (p.has("riskUrgenciaSemBriefing")) s.riskUrgenciaSemBriefing = p.get("riskUrgenciaSemBriefing") === "true";
+        if (p.has("reservaMetaMeses")) s.reservaMetaMeses = toNum(p.get("reservaMetaMeses"));
+        if (p.has("reservaAtual")) s.reservaAtual = toNum(p.get("reservaAtual"));
+        if (p.has("custoPessoalMensal")) s.custoPessoalMensal = toNum(p.get("custoPessoalMensal"));
         setInputsFromState(s);
         return true;
       }
@@ -2308,6 +2674,21 @@
           occupancyRate: 70,
           weeklyHours: 40,
           scopeVolatility: "medium",
+          complexidadeProjeto: "media",
+          prazoEntrega: "normal",
+          criticidadeNegocio: "media",
+          envolvimentoCliente: "medio",
+          impactoNoNegocio: "medio",
+          areaImpacto: "",
+          ocupacaoAgenda: 70,
+          riskHistoricoAlteracoes: false,
+          riskComunicacaoFragmentada: false,
+          riskTomadorIndefinido: false,
+          riskEscopoIncompleto: false,
+          riskUrgenciaSemBriefing: false,
+          reservaMetaMeses: 6,
+          reservaAtual: 0,
+          custoPessoalMensal: 0,
         };
       }
 
@@ -2320,6 +2701,8 @@
         const r = buildPricingContext(s).effective;
         const curr = s.currency;
         const proposalMode = !!s.proposalMode;
+        const negotiationCtx = buildNegotiationContext(s, r);
+        const justificationText = buildJustificationClipboardText(s, negotiationCtx);
 
         if (proposalMode) {
           const hasProject = s.projectHours > 0 && r.ok && r.projectNet != null;
@@ -2344,6 +2727,12 @@
           const pageHeight = doc.internal.pageSize.getHeight();
           let y = margin;
           const pdfV2 = !!FEATURE_FLAGS.pdf_v2_enabled;
+          const ensureSpace = (needed = 84) => {
+            if (y + needed > pageHeight - margin - 72) {
+              doc.addPage();
+              y = margin;
+            }
+          };
 
           if (proposalMode) {
             if (logoDataUrl) {
@@ -2392,6 +2781,7 @@
             y += 28;
             const proposta = getProposalTextForPdf();
             if (proposta) {
+              ensureSpace(140);
               doc.setFont("helvetica", "bold");
               doc.setFontSize(12);
               doc.text(pdfV2 ? "Recomendação Final" : "Proposta", margin, y);
@@ -2403,6 +2793,42 @@
               doc.text(lines, margin, y);
               y += lines.length * 14 + 24;
             }
+            ensureSpace(140);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("Justificativas de negociação", margin, y);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            y += 16;
+            const jLines = doc.splitTextToSize(justificationText, pageWidth - 2 * margin);
+            doc.text(jLines, margin, y);
+            y += jLines.length * 12 + 16;
+            if (negotiationCtx.roi.enabled && negotiationCtx.roi.text) {
+              ensureSpace(60);
+              const roiLines = doc.splitTextToSize(`${negotiationCtx.roi.text} ${negotiationCtx.roi.caveat}`, pageWidth - 2 * margin);
+              doc.text(roiLines, margin, y);
+              y += roiLines.length * 12 + 12;
+            }
+            ensureSpace(72);
+            doc.setFontSize(10);
+            doc.text(
+              `Proteção de Escopo: ${fmtNumber(negotiationCtx.scopeShield.markupPct, 1)}% (${formatScopeLevel(negotiationCtx.scopeShield.level)}). ` +
+                `Prêmio de conveniência: ${fmtNumber(negotiationCtx.scarcity.markupPct, 1)}%.`,
+              margin,
+              y
+            );
+            y += 14;
+            doc.text(
+              `Fôlego financeiro atual: ${fmtNumber(negotiationCtx.runway.runwayMesesAtual, 1)} meses | pós-projeto: ${fmtNumber(negotiationCtx.runway.runwayMesesPosProjeto, 1)} meses.`,
+              margin,
+              y
+            );
+            y += 14;
+            doc.text(
+              `Projetos para meta de reserva: ${negotiationCtx.runway.projetosNecessarios == null ? "n/d" : fmtNumber(negotiationCtx.runway.projetosNecessarios, 0)}.`,
+              margin,
+              y
+            );
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
             doc.text("Investimento Total", margin, y);
@@ -2509,6 +2935,7 @@
             y += 36;
             const proposta = getProposalTextForPdf();
             if (proposta) {
+              ensureSpace(140);
               doc.setFont("helvetica", "bold");
               doc.text(pdfV2 ? "Recomendação Final" : "Texto de proposta sugerido", margin, y);
               doc.setFont("helvetica", "normal");
@@ -2516,7 +2943,38 @@
               const maxWidth = 500;
               const lines = doc.splitTextToSize(proposta, maxWidth);
               doc.text(lines, margin, y);
+              y += lines.length * 12 + 16;
             }
+            ensureSpace(140);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("Justificativas de negociação", margin, y);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            y += 16;
+            const jLinesRel = doc.splitTextToSize(justificationText, pageWidth - 2 * margin);
+            doc.text(jLinesRel, margin, y);
+            y += jLinesRel.length * 12 + 12;
+            if (negotiationCtx.roi.enabled && negotiationCtx.roi.text) {
+              ensureSpace(60);
+              const roiLinesRel = doc.splitTextToSize(`${negotiationCtx.roi.text} ${negotiationCtx.roi.caveat}`, pageWidth - 2 * margin);
+              doc.text(roiLinesRel, margin, y);
+              y += roiLinesRel.length * 12 + 12;
+            }
+            ensureSpace(72);
+            doc.setFontSize(10);
+            doc.text(
+              `Proteção de Escopo: ${fmtNumber(negotiationCtx.scopeShield.markupPct, 1)}% (${formatScopeLevel(negotiationCtx.scopeShield.level)}). ` +
+                `Prêmio de conveniência: ${fmtNumber(negotiationCtx.scarcity.markupPct, 1)}%.`,
+              margin,
+              y
+            );
+            y += 14;
+            doc.text(
+              `Fôlego financeiro atual: ${fmtNumber(negotiationCtx.runway.runwayMesesAtual, 1)} meses | pós-projeto: ${fmtNumber(negotiationCtx.runway.runwayMesesPosProjeto, 1)} meses.`,
+              margin,
+              y
+            );
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
             const disclaimerLinesRel = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
@@ -2575,12 +3033,32 @@
           els.occupancyRate,
           els.weeklyHours,
           els.scopeVolatility,
+          els.complexidadeProjeto,
+          els.prazoEntrega,
+          els.criticidadeNegocio,
+          els.envolvimentoCliente,
+          els.impactoNoNegocio,
+          els.areaImpacto,
+          els.ocupacaoAgenda,
+          els.reservaMetaMeses,
+          els.reservaAtual,
+          els.custoPessoalMensal,
         ];
         for (const el of inputs) {
           if (el) {
             el.addEventListener("input", updateUI);
             el.addEventListener("change", updateUI);
           }
+        }
+        const scopeRiskChecks = [
+          els.riskHistoricoAlteracoes,
+          els.riskComunicacaoFragmentada,
+          els.riskTomadorIndefinido,
+          els.riskEscopoIncompleto,
+          els.riskUrgenciaSemBriefing,
+        ];
+        for (const el of scopeRiskChecks) {
+          if (el) el.addEventListener("change", updateUI);
         }
 
         if (els.btnCopyHourly) els.btnCopyHourly.addEventListener("click", () => {
@@ -2611,6 +3089,34 @@
           const text = els.proposalText ? els.proposalText.textContent : "";
           if (!text || text === "—") return showToast("Nada para copiar.");
           copyToClipboard(text, "Texto copiado.");
+        });
+        if (els.btnCopyJustification) els.btnCopyJustification.addEventListener("click", () => {
+          if (!hasAcceptedTerms()) {
+            showToast("Para usar esta função, aceite os termos no início da página.");
+            return;
+          }
+          const s = getStateFromInputs();
+          const r = buildPricingContext(s).effective;
+          const n = buildNegotiationContext(s, r);
+          const text = buildJustificationClipboardText(s, n);
+          if (!text) return showToast("Nada para copiar.");
+          copyToClipboard(text, "Justificativa copiada.");
+        });
+        if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
+          if (!hasAcceptedTerms()) {
+            showToast("Para usar esta função, aceite os termos no início da página.");
+            return;
+          }
+          const s = getStateFromInputs();
+          const r = buildPricingContext(s).effective;
+          const n = buildNegotiationContext(s, r);
+          const baseText = (els.proposalText && els.proposalText.textContent && els.proposalText.textContent !== "—")
+            ? String(els.proposalText.textContent).trim()
+            : "";
+          const payload = buildJustificationClipboardText(s, n);
+          const merged = [baseText, payload].filter(Boolean).join("\n\n");
+          if (els.proposalText) els.proposalText.textContent = merged || "—";
+          showToast("Justificativa inserida no texto da proposta.");
         });
         if (els.btnShare) els.btnShare.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
