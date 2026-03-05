@@ -1,3 +1,0 @@
-Teste de deploy automatizado pelo agente.
-Timestamp local: 2026-03-02
-Objetivo: validar fluxo de publicacao via git push.
