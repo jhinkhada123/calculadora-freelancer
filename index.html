@@ -1686,29 +1686,16 @@
 
       function applyButtonHelp() {
         const helpMap = {
-          btnReset: "Restaura os valores padrão da calculadora.",
-          btnInstallApp: "Instala o app no seu dispositivo quando suportado.",
-          btnShare: "Copia um link com os dados atuais (sem nomes por padrão).",
-          btnExportConfig: "Baixa um arquivo com suas configurações atuais.",
-          btnImportConfig: "Importa configurações salvas anteriormente.",
-          btnCopyProject: "Copia o valor estimado do projeto.",
-          btnCopyProposal: "Copia o texto rápido da proposta.",
-          btnPdf: "Gera a proposta em PDF no modo atual.",
-          btnPdfProposal: "Gera a proposta em PDF no painel de proposta.",
           btnSaveScenarioA: "Salva as entradas e resultados atuais como Cenário A.",
           btnSaveScenarioB: "Salva as entradas e resultados atuais como Cenário B.",
-          btnClearScenarios: "Limpa os cenários salvos da comparação.",
           btnLoadScenarioA: "Carrega o Cenário A nas entradas atuais.",
           btnLoadScenarioB: "Carrega o Cenário B nas entradas atuais.",
           btnOpenIntegrationSettings: "Abre configuração de endpoints para integrações.",
-          btnExportCsv: "Baixa os dados atuais em CSV.",
-          btnCopyTsv: "Copia uma linha TSV para colar no Google Sheets.",
           btnSendSheets: "Envia os dados para o endpoint de Google Sheets configurado.",
           btnSendNotion: "Envia os dados para o endpoint de Notion configurado.",
-          btnCloseIntegrationSettings: "Fecha a janela de configuração de endpoints.",
-          btnSaveIntegrationSettings: "Salva as URLs dos endpoints de integração.",
-          btnAcceptTerms: "Confirma os termos para liberar o uso das ações principais.",
-          btnCopyHourly: "Copia a taxa/hora calculada.",
+          btnInstallApp: "Instala o app no seu dispositivo quando suportado.",
+          enableMonteCarlo: "Ativa simulação estocástica quando houver histórico suficiente.",
+          advancedMode: "Alterna entre cálculo essencial e precificação avançada.",
         };
         Object.entries(helpMap).forEach(([id, text]) => {
           const el = document.getElementById(id);
