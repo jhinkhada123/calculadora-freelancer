@@ -127,12 +127,14 @@
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
               <span id="brandTaglineText">Precificação profissional em minutos</span>
             </p>
-            <h1 id="brandSubtitleText" class="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
-              Calculadora de Precificação para Freelancers
+            <h1 id="brandHeroHeadlineText" class="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
+              Precificação estratégica para quem entrega valor, não horas.
             </h1>
-            <p class="max-w-2xl text-sm text-slate-300">
-              Calcule uma taxa/hora sustentável com base em renda desejada, custos, impostos e sua
-              capacidade real de trabalho faturável. Inclui estimativa rápida para projetos.
+            <p id="brandSubtitleText" class="text-sm font-semibold text-slate-100">
+              Calculadora de Precificação para Freelancers
+            </p>
+            <p id="brandSubheadlineText" class="max-w-2xl text-sm text-slate-300">
+              Calcule taxas sustentáveis, justifique propostas com respaldo técnico e negocie com clareza em uma única ferramenta.
             </p>
           </div>
 
@@ -479,14 +481,14 @@
                       type="button"
                       class="w-full rounded-xl bg-emerald-500/90 px-3 py-2 text-xs font-medium text-emerald-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Copiar texto
+                      Copiar proposta
                     </button>
                     <button
                       id="btnPdf"
                       type="button"
                       class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-xs font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Gerar Proposta em PDF
+                      Gerar proposta agora
                     </button>
                   </div>
                 </div>
@@ -763,7 +765,7 @@
                     type="button"
                     class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Gerar Proposta em PDF
+                    Gerar proposta agora
                   </button>
                 </div>
               </div>
@@ -782,6 +784,25 @@
               <h3 class="text-sm font-semibold">Alertas Inteligentes</h3>
               <p class="mt-1 text-xs text-slate-400">Sinais práticos para reduzir risco de sobrecarga e precificação frágil.</p>
               <div id="alertsList" class="mt-4 space-y-2 text-sm text-slate-200"></div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+              <h3 class="text-sm font-semibold">Base de Confiança Calibra</h3>
+              <p class="mt-1 text-xs text-slate-400">Referências consultivas para decisões profissionais, sem promessas absolutas.</p>
+              <ul id="trustMicrocopyList" class="mt-3 list-disc space-y-1 pl-5 text-xs text-slate-200">
+                <li>Estimativas baseadas nos parâmetros reais do seu negócio.</li>
+                <li>Seus dados ficam no navegador, sem cadastro obrigatório.</li>
+                <li>Cada fator de preço é explicado, sem caixa-preta.</li>
+                <li>Ferramenta orientada para decisão comercial informada.</li>
+                <li>Metodologia alinhada à capacidade faturável e contexto operacional.</li>
+                <li>Ajustes de risco e escassez são aplicados de forma transparente.</li>
+                <li>Proposta em linguagem consultiva com premissas explícitas.</li>
+                <li>Atualização em tempo real conforme suas entradas.</li>
+                <li>Exportação disponível em CSV, link e PDF consultivo.</li>
+                <li>Simulação de fôlego financeiro com premissas declaradas.</li>
+                <li>Sem promessa de resultado: estimativas robustas e rastreáveis.</li>
+                <li>Precificação tratada como decisão estratégica, não improviso.</li>
+              </ul>
             </div>
 
             <div id="explainabilityCard" class="hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.20),rgba(15,23,42,.60))] p-5 shadow-soft backdrop-blur">
@@ -830,6 +851,10 @@
                 <div id="scarcitySummary" class="rounded-lg border border-indigo-300/30 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">—</div>
               </div>
               <div id="runwaySummary" class="mt-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-100">—</div>
+              <div class="mt-3 rounded-lg border border-emerald-300/20 bg-emerald-500/10 px-3 py-2">
+                <p class="text-[11px] uppercase tracking-wide text-emerald-100/90">Frases anti-desconto</p>
+                <ul id="antiDiscountList" class="mt-2 list-disc space-y-1 pl-5 text-xs text-emerald-50"></ul>
+              </div>
             </div>
 
             <div id="auditModeCard" class="hidden rounded-2xl border border-emeraldlux-700/35 bg-emeraldlux-900/20 p-5 shadow-soft backdrop-blur">
@@ -1078,6 +1103,18 @@
       const BRAND_NAME = BRAND_OPTIONS.fallback;
       const BRAND_SUBTITLE = "Calculadora de Precificação para Freelancers";
       const BRAND_TAGLINE = "Precificação profissional em minutos";
+      const BRAND_HERO_HEADLINE = "Precificação estratégica para quem entrega valor, não horas.";
+      const BRAND_SUBHEADLINE = "Calcule taxas sustentáveis, justifique propostas com respaldo técnico e negocie com clareza em uma única ferramenta.";
+      const NEGOTIATION_PHRASES = [
+        "Este investimento considera escopo, prazo e nível de responsabilidade acordados.",
+        "A proposta já contempla margem técnica para gestão de expectativa e execução consistente.",
+        "A reserva de agenda foi considerada para viabilizar o prazo combinado.",
+        "O valor está alinhado às premissas operacionais apresentadas neste documento.",
+        "Redução de preço implica revisão proporcional de escopo, prazo ou formato de entrega.",
+        "A composição apresentada prioriza previsibilidade de entrega e qualidade técnica.",
+        "As condições propostas preservam a sustentabilidade da operação durante o projeto.",
+        "A decisão de investimento deve considerar impacto esperado, risco e premissas explícitas.",
+      ];
 
       const STORAGE_KEY = "freela_precificacao_v2";
       const LEGACY_STORAGE_KEY = "freela_precificacao_v1";
@@ -1134,6 +1171,7 @@
         projectHint: $("projectHint"),
         proposalText: $("proposalText"),
         dailyLabel: $("dailyLabel"),
+        antiDiscountList: $("antiDiscountList"),
 
         btnCopyHourly: $("btnCopyHourly"),
         btnCopyProject: $("btnCopyProject"),
@@ -1203,6 +1241,7 @@
         runwaySummary: $("runwaySummary"),
         btnCopyJustification: $("btnCopyJustification"),
         btnInsertProposalJustification: $("btnInsertProposalJustification"),
+        trustMicrocopyList: $("trustMicrocopyList"),
         btnImportConfig: $("btnImportConfig"),
         importConfigInput: $("importConfigInput"),
         resultError: $("resultError"),
@@ -2043,6 +2082,23 @@
         if (subtitleNode) subtitleNode.textContent = BRAND_SUBTITLE;
         const taglineNode = document.getElementById("brandTaglineText");
         if (taglineNode) taglineNode.textContent = BRAND_TAGLINE;
+        const heroHeadlineNode = document.getElementById("brandHeroHeadlineText");
+        if (heroHeadlineNode) heroHeadlineNode.textContent = BRAND_HERO_HEADLINE;
+        const subheadlineNode = document.getElementById("brandSubheadlineText");
+        if (subheadlineNode) subheadlineNode.textContent = BRAND_SUBHEADLINE;
+
+        const ctaMap = {
+          btnShare: "Comparar cenários",
+          btnExportConfig: "Exportar configuração",
+          btnImportConfig: "Importar configuração",
+          btnCopyProposal: "Copiar proposta",
+          btnCopyJustification: "Copiar justificativa técnica",
+          btnInsertProposalJustification: "Inserir justificativa na proposta",
+        };
+        Object.entries(ctaMap).forEach(([id, label]) => {
+          const node = document.getElementById(id);
+          if (node) node.textContent = label;
+        });
       }
 
       function applyButtonHelp() {
@@ -2219,6 +2275,10 @@
             `Fôlego financeiro pós-projeto: ${fmtNumber(n.runway.runwayMesesPosProjeto, 1)} meses (${fmtNumber(n.runway.runwayDiasPosProjeto, 0)} dias). ` +
             `${projetosTexto} ${fonte} ${n.runway.caveat}`
         );
+        if (els.antiDiscountList) {
+          const anti = getAntiDiscountPhrases(s, n);
+          els.antiDiscountList.innerHTML = anti.map((p) => `<li>${p}</li>`).join("");
+        }
       }
 
       function buildJustificationClipboardText(s, n) {
@@ -2230,6 +2290,14 @@
         if (n.roi.enabled && n.roi.text) parts.push(n.roi.text);
         parts.push(n.justification.caveat || "Estimativa sujeita à execução e variáveis operacionais.");
         return parts.filter(Boolean).join("\n\n");
+      }
+
+      function getAntiDiscountPhrases(s, n) {
+        const phrases = [...NEGOTIATION_PHRASES];
+        if (n && n.roi && n.roi.enabled && n.roi.text) {
+          phrases.unshift(`${n.roi.text} ${n.roi.caveat}`);
+        }
+        return phrases.slice(0, 8);
       }
 
       function renderExplainability(s, ctx) {
@@ -2454,7 +2522,8 @@
         if (projectOk) {
           const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
           const roiLine = negotiationCtx.roi.enabled ? ` ${negotiationCtx.roi.text}` : "";
-          const texto = `Proposta comercial para execução do projeto conforme escopo acordado. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.${roiLine} ${negotiationCtx.roi.caveat}`;
+          const anti = getAntiDiscountPhrases(s, negotiationCtx)[0] || "";
+          const texto = `Proposta comercial para execução do projeto conforme escopo e premissas acordadas. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.${roiLine} ${anti} ${negotiationCtx.roi.caveat}`;
           safeText(els.proposalText, texto);
         } else {
           safeText(els.proposalText, "—");
@@ -2770,6 +2839,7 @@
         const proposalMode = !!s.proposalMode;
         const negotiationCtx = buildNegotiationContext(s, r);
         const justificationText = buildJustificationClipboardText(s, negotiationCtx);
+        const antiDiscountPhrases = getAntiDiscountPhrases(s, negotiationCtx);
 
         if (proposalMode) {
           const hasProject = s.projectHours > 0 && r.ok && r.projectNet != null;
@@ -2913,6 +2983,17 @@
               `Projetos para meta de reserva: ${negotiationCtx.runway.projetosNecessarios == null ? "n/d" : fmtNumber(negotiationCtx.runway.projetosNecessarios, 0)}.`,
               { lineHeight: 12, spacingAfter: 12, minRoom: 48 }
             );
+            ensureSpace(120);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.text("Frases de negociação sugeridas", margin, y);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            advanceY(14);
+            antiDiscountPhrases.forEach((phrase) => {
+              writeWrappedSummary(`- ${phrase}`, { lineHeight: 12, spacingAfter: 2, minRoom: 44 });
+            });
+            advanceY(8);
             ensureSpace(110);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
@@ -3066,6 +3147,20 @@
               margin,
               y
             );
+            y += 18;
+            ensureSpace(140);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.text("Frases de negociação sugeridas", margin, y);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            y += 14;
+            antiDiscountPhrases.forEach((phrase) => {
+              const lineItems = doc.splitTextToSize(`- ${phrase}`, pageWidth - 2 * margin);
+              ensureSpace(Math.max(48, lineItems.length * 12 + 8));
+              doc.text(lineItems, margin, y);
+              y += lineItems.length * 12 + 2;
+            });
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
             const disclaimerLinesRel = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
