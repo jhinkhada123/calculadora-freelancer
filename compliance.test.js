@@ -17,6 +17,31 @@ import {
 const ACCEPTANCE_KEY = "freela_terms_acceptance_v1";
 const AUDIT_KEY = "freela_audit_trail_v1";
 
+function createMemoryStorage() {
+  const store = {};
+  return {
+    getItem(key) {
+      return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
+    },
+    setItem(key, value) {
+      store[key] = String(value);
+    },
+    removeItem(key) {
+      delete store[key];
+    },
+    clear() {
+      for (const k of Object.keys(store)) delete store[k];
+    },
+  };
+}
+
+if (typeof global.localStorage === "undefined") {
+  global.localStorage = createMemoryStorage();
+}
+if (typeof global.sessionStorage === "undefined") {
+  global.sessionStorage = createMemoryStorage();
+}
+
 function clearComplianceStorage() {
   try {
     localStorage.removeItem(ACCEPTANCE_KEY);
