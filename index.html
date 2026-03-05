@@ -202,12 +202,16 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3">
               <label
-                class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-indigo-400/30 bg-indigo-500/15 px-3 py-2 text-xs text-indigo-100 hover:bg-indigo-500/25"
+                id="advancedModeWrap"
+                class="inline-flex cursor-pointer flex-col gap-0.5 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800 transition-colors"
               >
-                <input id="advancedMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
-                <span>Modo Essencial | Modo Avançado (Premium)</span>
+                <span class="inline-flex items-center gap-2">
+                  <input id="advancedMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
+                  <span id="advancedModeLabel">Essencial</span>
+                </span>
+                <span id="advancedModeSubtext" class="text-[10px] text-slate-400">patrimônio, risco, escassez, exaustão + explicação</span>
               </label>
               <label
                 class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800"
@@ -215,59 +219,68 @@
                 <input id="proposalMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
                 <span>Modo Proposta</span>
               </label>
-              <label
-                class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800"
-              >
-                <span>Logo</span>
-                <input id="logoInput" type="file" accept="image/*" class="hidden" />
-              </label>
             </div>
-            <div class="flex items-center gap-3">
-              <button
-                id="btnReset"
-                class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 hover:bg-white/10"
-                type="button"
-              >
-                Resetar
-              </button>
-              <button
-                id="btnInstallApp"
-                class="hidden rounded-xl border border-white/10 bg-ink-900/60 px-4 py-2 text-sm text-slate-100 hover:bg-ink-800"
-                type="button"
-                title="Instalar aplicativo"
-              >
-                Instalar app
-              </button>
-              <label class="inline-flex items-center gap-2 text-xs text-slate-300">
-                <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
-                Incluir nomes no link
-              </label>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="flex flex-col gap-0.5">
+                <button
+                  id="btnPrimaryPdfHeader"
+                  type="button"
+                  class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Gerar proposta em PDF
+                </button>
+                <p class="text-[10px] text-slate-400">Para cliente: use PDF.</p>
+              </div>
               <button
                 id="btnShare"
-                class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300/60"
                 type="button"
+                class="rounded-xl border border-white/20 bg-ink-900/60 px-4 py-2 text-sm text-slate-200 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Copiar link interno (uso interno; para cliente envie o PDF)"
+                aria-label="Copiar link interno"
               >
-                Copiar link com dados
+                Copiar link interno
               </button>
-              <button
-                id="btnExportConfig"
-                class="rounded-xl border border-white/10 bg-ink-900/60 px-4 py-2 text-sm text-slate-100 hover:bg-ink-800"
-                type="button"
-              >
-                Exportar configurações
-              </button>
-              <button
-                id="btnImportConfig"
-                class="rounded-xl border border-white/10 bg-ink-900/60 px-4 py-2 text-sm text-slate-100 hover:bg-ink-800"
-                type="button"
-              >
-                Importar configurações
-              </button>
-              <input id="importConfigInput" type="file" accept=".txt,.json,application/json,text/plain" class="hidden" />
+              <div class="relative">
+                <button
+                  id="btnToolsToggle"
+                  type="button"
+                  class="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-200 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  aria-controls="toolsDropdown"
+                >
+                  Ferramentas
+                </button>
+                <div
+                  id="toolsDropdown"
+                  class="absolute right-0 top-full z-50 mt-1 hidden min-w-[220px] rounded-xl border border-white/15 bg-ink-900 shadow-soft py-2"
+                  role="menu"
+                >
+                  <button id="toolsReset" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Resetar</button>
+                  <button id="toolsExport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Exportar configurações</button>
+                  <button id="toolsImport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Importar configurações</button>
+                  <input id="importConfigInput" type="file" accept=".txt,.json,application/json,text/plain" class="hidden" />
+                  <button id="toolsInstall" type="button" class="hidden w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Instalar app</button>
+                  <div class="my-2 border-t border-white/10"></div>
+                  <div class="px-4 py-2">
+                    <label class="inline-flex cursor-pointer items-center gap-2 text-xs text-slate-300">
+                      <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
+                      Incluir nomes no link
+                    </label>
+                  </div>
+                  <div class="border-t border-white/10 px-4 py-2">
+                    <p class="text-[10px] text-slate-400 mb-2">Logo</p>
+                    <div class="flex items-center gap-2">
+                      <label class="cursor-pointer rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10">
+                        <span id="logoStateText">Adicionar logo</span>
+                        <input id="logoInput" type="file" accept="image/*" class="hidden" />
+                      </label>
+                      <button id="btnRemoveLogo" type="button" class="hidden rounded-lg border border-amber-400/30 px-2 py-1 text-[11px] text-amber-200 hover:bg-amber-500/20">Remover logo</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="w-full text-xs text-amber-300/90">
-              ⚠️ Link para uso interno. Para o cliente, envie apenas o PDF.
-            </p>
           </div>
         </div>
       </div>
@@ -530,6 +543,7 @@
                 </div>
               </div>
 
+              <p class="mt-3 text-[11px] text-slate-400">Quando fechar, gere o PDF do cliente.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
@@ -1299,10 +1313,21 @@
         btnCopyProposal: $("btnCopyProposal"),
         btnPdf: $("btnPdf"),
         btnPdfProposal: $("btnPdfProposal"),
+        btnPrimaryPdfHeader: $("btnPrimaryPdfHeader"),
         btnShare: $("btnShare"),
         shareIncludeNames: $("shareIncludeNames"),
         btnExportConfig: $("btnExportConfig"),
         btnReset: $("btnReset"),
+        btnToolsToggle: $("btnToolsToggle"),
+        toolsDropdown: $("toolsDropdown"),
+        toolsReset: $("toolsReset"),
+        toolsExport: $("toolsExport"),
+        toolsImport: $("toolsImport"),
+        toolsInstall: $("toolsInstall"),
+        btnRemoveLogo: $("btnRemoveLogo"),
+        logoStateText: $("logoStateText"),
+        advancedModeWrap: $("advancedModeWrap"),
+        advancedModeLabel: $("advancedModeLabel"),
         advancedMode: $("advancedMode"),
         advancedConfigCard: $("advancedConfigCard"),
         advancedTeaserCard: $("advancedTeaserCard"),
@@ -2180,6 +2205,7 @@
           e.preventDefault();
           deferredInstallPrompt = e;
           if (els.btnInstallApp) els.btnInstallApp.classList.remove("hidden");
+          if (els.toolsInstall) els.toolsInstall.classList.remove("hidden");
         });
       }
 
@@ -2196,6 +2222,7 @@
         }
         deferredInstallPrompt = null;
         if (els.btnInstallApp) els.btnInstallApp.classList.add("hidden");
+        if (els.toolsInstall) els.toolsInstall.classList.add("hidden");
       }
 
       function registerServiceWorker() {
@@ -2757,6 +2784,23 @@
           els.btnPdfProposal.disabled = els.btnPdf ? els.btnPdf.disabled : true;
           els.btnPdfProposal.title = els.btnPdf ? els.btnPdf.title : (errMsg || "Preencha os dados para gerar o PDF.");
         }
+        if (els.btnPrimaryPdfHeader) {
+          els.btnPrimaryPdfHeader.disabled = !pdfOk || !termsOk;
+          els.btnPrimaryPdfHeader.title = (pdfOk && termsOk) ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
+          els.btnPrimaryPdfHeader.textContent = s.proposalMode ? "Gerar proposta agora" : "Gerar proposta em PDF";
+        }
+        if (els.advancedModeWrap && els.advancedModeLabel) {
+          const isPremium = !!s.advancedMode;
+          els.advancedModeLabel.textContent = isPremium ? "Premium" : "Essencial";
+          els.advancedModeWrap.classList.toggle("border-indigo-400/30", isPremium);
+          els.advancedModeWrap.classList.toggle("bg-indigo-500/15", isPremium);
+          els.advancedModeWrap.classList.toggle("text-indigo-100", isPremium);
+          els.advancedModeWrap.classList.toggle("border-white/10", !isPremium);
+          els.advancedModeWrap.classList.toggle("bg-ink-900/70", !isPremium);
+          els.advancedModeWrap.classList.toggle("text-slate-100", !isPremium);
+        }
+        if (els.logoStateText) els.logoStateText.textContent = logoDataUrl ? "Logo carregada" : "Adicionar logo";
+        if (els.btnRemoveLogo) els.btnRemoveLogo.classList.toggle("hidden", !logoDataUrl);
         if (els.btnCopyHourly) {
           els.btnCopyHourly.disabled = !calcOk;
           els.btnCopyHourly.title = calcOk ? "" : (errMsg || "Calcule a taxa/hora primeiro.");
@@ -2779,11 +2823,19 @@
         if (els.btnCopyProposal) els.btnCopyProposal.disabled = els.btnCopyProposal.disabled || !termsOk;
         if (els.btnShare) {
           els.btnShare.disabled = !termsOk;
-          els.btnShare.title = termsOk ? "" : "Aceite os termos no início da página para copiar o link.";
+          els.btnShare.title = termsOk ? "Copiar link interno (uso interno; para cliente envie o PDF)" : "Aceite os termos no início da página para copiar o link.";
         }
         if (els.btnExportConfig) {
           els.btnExportConfig.disabled = !termsOk;
           els.btnExportConfig.title = termsOk ? "" : "Aceite os termos no início da página para exportar.";
+        }
+        if (els.toolsExport) {
+          els.toolsExport.disabled = !termsOk;
+          els.toolsExport.title = termsOk ? "" : "Aceite os termos no início da página para exportar.";
+        }
+        if (els.toolsImport) {
+          els.toolsImport.disabled = !termsOk;
+          els.toolsImport.title = termsOk ? "" : "Aceite os termos no início da página para importar.";
         }
         if (els.btnCopyJustification) {
           els.btnCopyJustification.disabled = !termsOk;
@@ -3581,6 +3633,38 @@
         if (els.btnExportConfig) els.btnExportConfig.addEventListener("click", exportConfig);
         if (els.btnImportConfig) els.btnImportConfig.addEventListener("click", importConfig);
         if (els.btnReset) els.btnReset.addEventListener("click", resetAll);
+        function closeToolsDropdown() {
+          if (els.toolsDropdown) els.toolsDropdown.classList.add("hidden");
+          if (els.btnToolsToggle) els.btnToolsToggle.setAttribute("aria-expanded", "false");
+        }
+        if (els.toolsExport) els.toolsExport.addEventListener("click", () => { closeToolsDropdown(); exportConfig(); });
+        if (els.toolsImport) els.toolsImport.addEventListener("click", () => { closeToolsDropdown(); importConfig(); });
+        if (els.toolsReset) els.toolsReset.addEventListener("click", () => { closeToolsDropdown(); resetAll(); });
+        if (els.toolsInstall) els.toolsInstall.addEventListener("click", () => { closeToolsDropdown(); triggerAppInstall(); });
+        if (els.btnPrimaryPdfHeader) els.btnPrimaryPdfHeader.addEventListener("click", generatePdf);
+        if (els.btnRemoveLogo) els.btnRemoveLogo.addEventListener("click", () => {
+          logoDataUrl = null;
+          updateUI();
+          showToast("Logo removida.");
+        });
+        if (els.btnToolsToggle && els.toolsDropdown) {
+          els.btnToolsToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isHidden = els.toolsDropdown.classList.toggle("hidden");
+            els.btnToolsToggle.setAttribute("aria-expanded", String(!isHidden));
+          });
+          document.addEventListener("click", (e) => {
+            if (els.toolsDropdown.contains(e.target) || els.btnToolsToggle.contains(e.target)) return;
+            els.toolsDropdown.classList.add("hidden");
+            els.btnToolsToggle.setAttribute("aria-expanded", "false");
+          });
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+              els.toolsDropdown.classList.add("hidden");
+              els.btnToolsToggle.setAttribute("aria-expanded", "false");
+            }
+          });
+        }
 
         if (els.btnPdf) {
           els.btnPdf.addEventListener("click", generatePdf);
@@ -3609,6 +3693,7 @@
             } catch (_) {
               showToast("Falha ao carregar a logo.");
             }
+            updateUI();
           });
         }
 
