@@ -296,6 +296,7 @@
             <div class="mt-4 flex flex-wrap gap-2 text-xs">
               <button type="button" data-accordion-target="essentialArea" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-slate-200 hover:bg-white/10">Essencial</button>
               <button type="button" data-accordion-target="advancedConfigCard" class="rounded-lg border border-indigo-300/30 bg-indigo-500/15 px-3 py-1 text-indigo-100 hover:bg-indigo-500/25">Avançado</button>
+              <button type="button" data-accordion-target="strategistCard" class="strategist-accordion-btn hidden rounded-lg border border-amber-300/30 bg-amber-500/15 px-3 py-1 text-amber-100 hover:bg-amber-500/25">Estrategista</button>
               <button type="button" data-accordion-target="scenarioCard" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-slate-200 hover:bg-white/10">Comparação</button>
               <button type="button" data-accordion-target="governanceCard" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-slate-200 hover:bg-white/10">Governança</button>
             </div>
@@ -618,6 +619,33 @@
                 </div>
               </div>
               <p class="mt-3 text-[11px] text-indigo-200/85">Estimativa estratégica; não constitui consultoria fiscal, jurídica ou financeira.</p>
+            </div>
+
+            <div id="strategistCard" class="mt-6 hidden rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.12),rgba(15,23,42,.55))] p-4 shadow-soft">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <p class="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-500/20 px-2 py-1 text-[11px] font-medium text-amber-100">Precificação por valor</p>
+                  <h3 class="mt-2 text-sm font-semibold text-amber-100">Modo Estrategista</h3>
+                  <p class="mt-1 text-xs text-amber-200/85">VCE, ROIx e CDO para justificar preço com base no valor entregue.</p>
+                </div>
+                <label class="inline-flex items-center gap-2 text-xs text-amber-100">
+                  <input id="modoEstrategista" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
+                  Ativar
+                </label>
+              </div>
+              <div id="strategistInputsWrap" class="mt-4 hidden grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="valorGanhoEstimado12m">Valor ganho estimado (12 meses)</label>
+                  <input id="valorGanhoEstimado12m" type="number" min="0" step="1000" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-300/60" placeholder="Ex: 120000" />
+                  <p class="text-xs text-slate-400">Ganho econômico esperado pelo cliente no período.</p>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="custoOportunidadeMensal">Custo de oportunidade mensal</label>
+                  <input id="custoOportunidadeMensal" type="number" min="0" step="100" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-300/60" placeholder="Ex: 0" />
+                  <p class="text-xs text-slate-400">Custo diário de atraso (CDO = valor/30).</p>
+                </div>
+              </div>
+              <p class="mt-3 text-[11px] text-amber-200/85">Estimativa baseada nas premissas informadas; sem garantias.</p>
             </div>
 
             <div id="negotiationConfigCard" class="mt-6 rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(16,185,129,.10),rgba(15,23,42,.55))] p-4 shadow-soft">
@@ -967,6 +995,28 @@
                 Premissas: faturamento alvo = base ÷ (1 − total%); taxa/hora = faturamento alvo ÷ horas faturáveis; projeto = horas × taxa × (1 + margem escopo) × (1 − desconto).
               </p>
             </div>
+
+            <div id="strategistResultsCard" class="strategist-results-card hidden rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.08),rgba(15,23,42,.55))] p-5 shadow-soft backdrop-blur">
+              <h3 class="text-sm font-semibold text-amber-100">Impacto Econômico Estimado</h3>
+              <p class="mt-1 text-xs text-slate-400">VCE, ROIx e CDO para precificação por valor.</p>
+              <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div class="rounded-xl border border-amber-300/20 bg-ink-900/40 p-3">
+                  <p class="text-xs text-slate-400" title="Valor Capturado Estimado: percentual do ganho do cliente que o preço representa.">VCE</p>
+                  <p id="strategistVce" class="mt-1 text-lg font-semibold text-amber-100">—</p>
+                  <p id="strategistVceLabel" class="mt-1 text-[11px] text-amber-200/80">—</p>
+                </div>
+                <div class="rounded-xl border border-amber-300/20 bg-ink-900/40 p-3">
+                  <p class="text-xs text-slate-400" title="Retorno sobre investimento: ganho do cliente dividido pelo preço.">ROIx</p>
+                  <p id="strategistRoix" class="mt-1 text-lg font-semibold text-amber-100">—</p>
+                </div>
+                <div class="rounded-xl border border-amber-400/30 bg-amber-500/10 p-3">
+                  <p class="text-xs text-slate-400" title="Custo Diário de Oportunidade: custo de atraso por dia (custo mensal ÷ 30).">CDO</p>
+                  <p id="strategistCdo" class="mt-1 text-lg font-semibold text-amber-100">—</p>
+                </div>
+              </div>
+              <p id="strategistViabilidadeAlerta" class="mt-3 hidden rounded-lg border border-amber-400/40 bg-amber-500/15 px-3 py-2 text-xs text-amber-100">Viabilidade questionável: ganho estimado menor que o preço.</p>
+              <p class="mt-3 text-[11px] text-slate-500">Estimativa baseada nas premissas informadas; sem garantias.</p>
+            </div>
           </div>
         </aside>
       </div>
@@ -1026,6 +1076,7 @@
       let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
       let computeAdvancedPricing, deriveHistoricalVarianceSamples;
       let computeRiskScore, riskNarrative, trackEvent;
+      let computeStrategistMetrics, formatStrategistValue, STRATEGIST_CAVEAT;
       let computeScopeShielding, computeDynamicScarcityMarkup, computeRunwaySummary, computeRoiAnchor, generateJustificationBlocks;
       let validateEndpointUrl, shouldTrackRiskScoreView, buildCompositionPartsModel, ensurePdfYSpaceModel, advancePdfYModel, advancePdfYByLinesModel;
 
@@ -1125,6 +1176,16 @@
           });
         }
         try {
+          const strategistMod = await import("./strategist-mode.js");
+          computeStrategistMetrics = strategistMod.computeStrategistMetrics;
+          formatStrategistValue = strategistMod.formatStrategistValue;
+          STRATEGIST_CAVEAT = strategistMod.STRATEGIST_CAVEAT;
+        } catch (_) {
+          computeStrategistMetrics = () => ({ ok: false, vce: null, roix: null, cdo: null, vceLabel: null, viabilidadeAlerta: false });
+          formatStrategistValue = () => "—";
+          STRATEGIST_CAVEAT = "Estimativa baseada nas premissas informadas; sem garantias.";
+        }
+        try {
           const hardeningMod = await import("./hardening-v21.js");
           validateEndpointUrl = hardeningMod.validateEndpointUrl;
           shouldTrackRiskScoreView = hardeningMod.shouldTrackRiskScoreView;
@@ -1184,6 +1245,8 @@
       const FEATURE_FLAGS = {
         risk_score_enabled: true,
         pdf_v2_enabled: true,
+        strategist_mode_enabled: false,
+        pdf_impact_block_enabled: false,
       };
       let logoDataUrl = null;
       let calcCardStash = null;
@@ -1262,6 +1325,17 @@
         riskTomadorIndefinido: $("riskTomadorIndefinido"),
         riskEscopoIncompleto: $("riskEscopoIncompleto"),
         riskUrgenciaSemBriefing: $("riskUrgenciaSemBriefing"),
+        modoEstrategista: $("modoEstrategista"),
+        valorGanhoEstimado12m: $("valorGanhoEstimado12m"),
+        custoOportunidadeMensal: $("custoOportunidadeMensal"),
+        strategistCard: $("strategistCard"),
+        strategistInputsWrap: $("strategistInputsWrap"),
+        strategistVce: $("strategistVce"),
+        strategistVceLabel: $("strategistVceLabel"),
+        strategistRoix: $("strategistRoix"),
+        strategistCdo: $("strategistCdo"),
+        strategistViabilidadeAlerta: $("strategistViabilidadeAlerta"),
+        strategistResultsCard: $("strategistResultsCard"),
         reservaMetaMeses: $("reservaMetaMeses"),
         reservaAtual: $("reservaAtual"),
         custoPessoalMensal: $("custoPessoalMensal"),
@@ -1621,6 +1695,9 @@
           reservaMetaMeses: clamp(toNum(els.reservaMetaMeses && els.reservaMetaMeses.value), 1, 60),
           reservaAtual: Math.max(0, toNum(els.reservaAtual && els.reservaAtual.value)),
           custoPessoalMensal: Math.max(0, toNum(els.custoPessoalMensal && els.custoPessoalMensal.value)),
+          modoEstrategista: !!(els.modoEstrategista && els.modoEstrategista.checked),
+          valorGanhoEstimado12m: Math.max(0, toNum(els.valorGanhoEstimado12m && els.valorGanhoEstimado12m.value)),
+          custoOportunidadeMensal: Math.max(0, toNum(els.custoOportunidadeMensal && els.custoOportunidadeMensal.value)),
         };
       }
 
@@ -1692,6 +1769,9 @@
         }
         if (els.areaImpacto) els.areaImpacto.value = s.areaImpacto ?? "";
         if (els.ocupacaoAgenda) els.ocupacaoAgenda.value = s.ocupacaoAgenda ?? 70;
+        if (els.modoEstrategista) els.modoEstrategista.checked = !!s.modoEstrategista;
+        if (els.valorGanhoEstimado12m) els.valorGanhoEstimado12m.value = s.valorGanhoEstimado12m ?? 0;
+        if (els.custoOportunidadeMensal) els.custoOportunidadeMensal.value = s.custoOportunidadeMensal ?? 0;
         if (els.riskHistoricoAlteracoes) els.riskHistoricoAlteracoes.checked = !!s.riskHistoricoAlteracoes;
         if (els.riskComunicacaoFragmentada) els.riskComunicacaoFragmentada.checked = !!s.riskComunicacaoFragmentada;
         if (els.riskTomadorIndefinido) els.riskTomadorIndefinido.checked = !!s.riskTomadorIndefinido;
@@ -2593,6 +2673,33 @@
         renderRiskAudit(s, pricingCtx);
         renderNegotiationOutputs(s, r, negotiationCtx);
 
+        const strategistEnabled = !!FEATURE_FLAGS.strategist_mode_enabled;
+        const strategistActive = strategistEnabled && !!s.modoEstrategista;
+        const accordionStrategist = document.querySelector(".strategist-accordion-btn");
+        if (accordionStrategist) accordionStrategist.classList.toggle("hidden", !strategistEnabled);
+        if (els.strategistCard) {
+          if (!strategistEnabled) els.strategistCard.classList.add("hidden");
+        }
+        if (els.strategistInputsWrap) els.strategistInputsWrap.classList.toggle("hidden", !strategistActive);
+        if (els.strategistInputsWrap) els.strategistInputsWrap.classList.toggle("grid", strategistActive);
+        if (els.strategistResultsCard) els.strategistResultsCard.classList.toggle("hidden", !strategistActive);
+        if (strategistActive && computeStrategistMetrics && formatStrategistValue) {
+          const precoBase = s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null;
+          const strat = computeStrategistMetrics({
+            precoBase,
+            valorGanhoEstimado12m: s.valorGanhoEstimado12m,
+            custoOportunidadeMensal: s.custoOportunidadeMensal,
+          });
+          const noPreco = precoBase == null || precoBase <= 0;
+          safeText(els.strategistVce, noPreco ? "—" : formatStrategistValue(strat.vce, "percent"));
+          safeText(els.strategistVceLabel, noPreco ? "Preencha horas do projeto." : (strat.vceLabel || "—"));
+          safeText(els.strategistRoix, noPreco ? "—" : (strat.roix != null ? `${fmtNumber(strat.roix, 1)}x` : "—"));
+          safeText(els.strategistCdo, noPreco ? "—" : (strat.cdo != null ? fmtMoney(strat.cdo, curr) : "—"));
+          if (els.strategistViabilidadeAlerta) {
+            els.strategistViabilidadeAlerta.classList.toggle("hidden", !strat.viabilidadeAlerta);
+          }
+        }
+
         persistState(s);
 
         if (els.configWrapper) {
@@ -2887,6 +2994,9 @@
           reservaMetaMeses: 6,
           reservaAtual: 0,
           custoPessoalMensal: 0,
+          modoEstrategista: false,
+          valorGanhoEstimado12m: 0,
+          custoOportunidadeMensal: 0,
         };
       }
 
@@ -3011,7 +3121,18 @@
             advanceY(16);
             const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
             doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
-            advanceY(28);
+            advanceY(12);
+            const stratPdf = !!FEATURE_FLAGS.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
+              precoBase: s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null,
+              valorGanhoEstimado12m: s.valorGanhoEstimado12m,
+              custoOportunidadeMensal: s.custoOportunidadeMensal,
+            }) : null;
+            const showImpactCliente = !!FEATURE_FLAGS.pdf_impact_block_enabled && stratPdf && stratPdf.ok;
+            if (showImpactCliente) {
+              const cdoVal = stratPdf.cdo != null ? fmtMoneyPdf(stratPdf.cdo, curr) : "—";
+              writeWrappedSummary(`Cronograma: estimativa consultiva; não constitui promessa de prazo. CDO (custo diário de oportunidade): ${cdoVal}.`, { lineHeight: 11, spacingAfter: 8, minRoom: 44 });
+            }
+            advanceY(16);
             const proposta = getProposalTextForPdf();
             if (proposta) {
               ensureSpace(140);
@@ -3025,6 +3146,25 @@
               const lines = doc.splitTextToSize(proposta, maxWidth);
               doc.text(lines, margin, y);
               advanceY(lines.length * 14 + 24);
+            }
+            if (showImpactCliente) {
+              ensureSpace(80);
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(11);
+              doc.text("Impacto Econômico Estimado", margin, y);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
+              advanceY(14);
+              const vceStr = stratPdf.vce != null ? formatStrategistValue(stratPdf.vce, "percent") : "—";
+              const roixStr = stratPdf.roix != null ? `${fmtNumber(stratPdf.roix, 1)}x` : "—";
+              const cdoStr = stratPdf.cdo != null ? fmtMoneyPdf(stratPdf.cdo, curr) : "—";
+              doc.text(`VCE: ${vceStr} | ROIx: ${roixStr} | CDO: ${cdoStr}`, margin, y);
+              advanceY(12);
+              if (STRATEGIST_CAVEAT) {
+                const caveatLines = doc.splitTextToSize(STRATEGIST_CAVEAT, pageWidth - 2 * margin);
+                doc.text(caveatLines, margin, y);
+                advanceY(caveatLines.length * 10 + 12);
+              }
             }
             ensureSpace(140);
             doc.setFont("helvetica", "bold");
@@ -3178,6 +3318,46 @@
               y += 16;
               doc.text(`Preço sugerido do projeto: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
             }
+            const stratInterno = !!FEATURE_FLAGS.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
+              precoBase: s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null,
+              valorGanhoEstimado12m: s.valorGanhoEstimado12m,
+              custoOportunidadeMensal: s.custoOportunidadeMensal,
+            }) : null;
+            if (stratInterno && stratInterno.ok) {
+              y += 24;
+              ensureSpace(100);
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(12);
+              doc.text("Impacto Econômico Estimado", margin, y);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
+              advanceY(16);
+              const premLines = doc.splitTextToSize("Premissas: preço base = valor do projeto; VCE = (preço ÷ ganho 12m) × 100; ROIx = ganho ÷ preço; CDO = custo oportunidade mensal ÷ 30.", pageWidth - 2 * margin);
+              doc.text(premLines, margin, y);
+              advanceY(premLines.length * 10 + 8);
+              const vceStr = stratInterno.vce != null ? formatStrategistValue(stratInterno.vce, "percent") : "—";
+              const roixStr = stratInterno.roix != null ? `${fmtNumber(stratInterno.roix, 1)}x` : "—";
+              const cdoStr = stratInterno.cdo != null ? fmtMoneyPdf(stratInterno.cdo, curr) : "—";
+              doc.text(`VCE: ${vceStr} | ROIx: ${roixStr} | CDO: ${cdoStr}`, margin, y);
+              advanceY(12);
+              if (stratInterno.vceLabel) doc.text(`Interpretação VCE: ${stratInterno.vceLabel}`, margin, y);
+              advanceY(stratInterno.vceLabel ? 12 : 0);
+              if (stratInterno.viabilidadeAlerta) {
+                advanceY(4);
+                doc.text("Alerta: viabilidade questionável (ganho estimado menor que o preço).", margin, y);
+                advanceY(12);
+              }
+              if (STRATEGIST_CAVEAT) {
+                advanceY(4);
+                const caveatLines = doc.splitTextToSize(STRATEGIST_CAVEAT, pageWidth - 2 * margin);
+                doc.text(caveatLines, margin, y);
+                advanceY(caveatLines.length * 10 + 8);
+              }
+              const cdoVal = stratInterno.cdo != null ? fmtMoneyPdf(stratInterno.cdo, curr) : "—";
+              advanceY(4);
+              doc.text(`Cronograma: estimativa consultiva; não constitui promessa de prazo. CDO: ${cdoVal}.`, margin, y);
+              advanceY(16);
+            }
             y += 36;
             const proposta = getProposalTextForPdf();
             if (proposta) {
@@ -3306,12 +3486,17 @@
           els.reservaMetaMeses,
           els.reservaAtual,
           els.custoPessoalMensal,
+          els.valorGanhoEstimado12m,
+          els.custoOportunidadeMensal,
         ];
         for (const el of inputs) {
           if (el) {
             el.addEventListener("input", updateUI);
             el.addEventListener("change", updateUI);
           }
+        }
+        if (els.modoEstrategista) {
+          els.modoEstrategista.addEventListener("change", updateUI);
         }
         const scopeRiskChecks = [
           els.riskHistoricoAlteracoes,
