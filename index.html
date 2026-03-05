@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070A12" />
-    <title>Calculadora de Precificação Freelancer</title>
+    <title>Valora | Calculadora de Precificação para Freelancers</title>
+    <meta
+      id="metaDescription"
+      name="description"
+      content="Valora: Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados."
+    />
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- TODO: self-host fonts/CSS/JS para evitar dependência de CDNs (Google Fonts, Tailwind, cdnjs). -->
@@ -120,9 +125,9 @@
               class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200"
             >
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-              Precificação profissional em minutos
+              <span id="brandTaglineText">Precificação profissional em minutos</span>
             </p>
-            <h1 class="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 id="brandSubtitleText" class="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
               Calculadora de Precificação para Freelancers
             </h1>
             <p class="max-w-2xl text-sm text-slate-300">
@@ -1064,6 +1069,15 @@
             return (Number(y) || 0) + (l * h) + s;
           };
         }
+
+      const BRAND_OPTIONS = {
+        primary: "Valora",
+        fallback: "Calibra",
+      };
+      // Para fallback rápido, altere para BRAND_OPTIONS.fallback.
+      const BRAND_NAME = BRAND_OPTIONS.primary;
+      const BRAND_SUBTITLE = "Calculadora de Precificação para Freelancers";
+      const BRAND_TAGLINE = "Precificação profissional em minutos";
 
       const STORAGE_KEY = "freela_precificacao_v2";
       const LEGACY_STORAGE_KEY = "freela_precificacao_v1";
@@ -2016,6 +2030,21 @@
         });
       }
 
+      function applyBranding() {
+        document.title = `${BRAND_NAME} | ${BRAND_SUBTITLE}`;
+        const metaDescription = document.getElementById("metaDescription");
+        if (metaDescription) {
+          metaDescription.setAttribute(
+            "content",
+            `${BRAND_NAME}: ${BRAND_SUBTITLE} com proposta em PDF, auditoria e governança de dados.`
+          );
+        }
+        const subtitleNode = document.getElementById("brandSubtitleText");
+        if (subtitleNode) subtitleNode.textContent = BRAND_SUBTITLE;
+        const taglineNode = document.getElementById("brandTaglineText");
+        if (taglineNode) taglineNode.textContent = BRAND_TAGLINE;
+      }
+
       function applyButtonHelp() {
         const helpMap = {
           btnSaveScenarioA: "Salva as entradas e resultados atuais como Cenário A.",
@@ -2803,6 +2832,8 @@
             }
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
+            doc.text(`${BRAND_NAME} | ${BRAND_SUBTITLE}`, margin, y);
+            advanceY(16);
             const profLabel = s.professionalName && s.professionalName.trim()
               ? s.professionalName.trim()
               : "Profissional Responsável";
@@ -2920,7 +2951,13 @@
             }
             doc.setFont("helvetica", "bold");
             doc.setFontSize(18);
-            doc.text(pdfV2 ? "Capa - Relatório Consultivo de Precificação" : "Proposta de Prestação de Serviços", margin, y);
+            doc.text(
+              pdfV2
+                ? `${BRAND_NAME} - Relatório Consultivo de Precificação`
+                : `${BRAND_NAME} - Proposta de Prestação de Serviços`,
+              margin,
+              y
+            );
             y += 26;
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
@@ -3341,6 +3378,7 @@
           setupAccordionToggles();
           setupInstallPrompt();
           registerServiceWorker();
+          applyBranding();
           setupTermsModal();
           updateUI();
         })();
