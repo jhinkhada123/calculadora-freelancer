@@ -511,6 +511,15 @@
                   <p class="mt-4 text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
                   <p id="resultProposalPrazo" class="mt-1 text-xl font-semibold text-slate-100">—</p>
                 </div>
+                <div class="mt-4">
+                  <button
+                    id="btnPdfProposal"
+                    type="button"
+                    class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Gerar Proposta em PDF
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -630,6 +639,7 @@
         btnCopyProject: $("btnCopyProject"),
         btnCopyProposal: $("btnCopyProposal"),
         btnPdf: $("btnPdf"),
+        btnPdfProposal: $("btnPdfProposal"),
         btnShare: $("btnShare"),
         shareIncludeNames: $("shareIncludeNames"),
         btnExportConfig: $("btnExportConfig"),
@@ -1126,6 +1136,10 @@
           els.btnPdf.disabled = !pdfOk;
           els.btnPdf.title = pdfOk ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
         }
+        if (els.btnPdfProposal) {
+          els.btnPdfProposal.disabled = els.btnPdf ? els.btnPdf.disabled : true;
+          els.btnPdfProposal.title = els.btnPdf ? els.btnPdf.title : (errMsg || "Preencha os dados para gerar o PDF.");
+        }
         if (els.btnCopyHourly) {
           els.btnCopyHourly.disabled = !calcOk;
           els.btnCopyHourly.title = calcOk ? "" : (errMsg || "Calcule a taxa/hora primeiro.");
@@ -1142,6 +1156,7 @@
         }
         const termsOk = hasAcceptedTerms();
         if (els.btnPdf) els.btnPdf.disabled = els.btnPdf.disabled || !termsOk;
+        if (els.btnPdfProposal) els.btnPdfProposal.disabled = els.btnPdfProposal.disabled || !termsOk;
         if (els.btnCopyHourly) els.btnCopyHourly.disabled = els.btnCopyHourly.disabled || !termsOk;
         if (els.btnCopyProject) els.btnCopyProject.disabled = els.btnCopyProject.disabled || !termsOk;
         if (els.btnCopyProposal) els.btnCopyProposal.disabled = els.btnCopyProposal.disabled || !termsOk;
@@ -1566,6 +1581,9 @@
 
         if (els.btnPdf) {
           els.btnPdf.addEventListener("click", generatePdf);
+        }
+        if (els.btnPdfProposal) {
+          els.btnPdfProposal.addEventListener("click", generatePdf);
         }
 
         if (els.logoInput) {
