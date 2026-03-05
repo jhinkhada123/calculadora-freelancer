@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#070A12" />
     <title>Calculadora de Precificação Freelancer</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- TODO: self-host fonts/CSS/JS para evitar dependência de CDNs (Google Fonts, Tailwind, cdnjs). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -140,6 +142,14 @@
                 type="button"
               >
                 Resetar
+              </button>
+              <button
+                id="btnInstallApp"
+                class="hidden rounded-xl border border-white/10 bg-ink-900/60 px-4 py-2 text-sm text-slate-100 hover:bg-ink-800"
+                type="button"
+                title="Instalar aplicativo"
+              >
+                Instalar app
               </button>
               <label class="inline-flex items-center gap-2 text-xs text-slate-300">
                 <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
@@ -452,6 +462,54 @@
                 </div>
               </div>
             </div>
+
+            <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="text-sm font-semibold">Comparar Cenários</h3>
+                  <p class="text-xs text-slate-400">Salve duas variações para comparar os resultados lado a lado.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button id="btnSaveScenarioA" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Salvar como Cenário A</button>
+                  <button id="btnSaveScenarioB" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Salvar como Cenário B</button>
+                  <button id="btnClearScenarios" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Limpar comparação</button>
+                </div>
+              </div>
+              <div id="scenarioCompareGrid" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div class="rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div class="flex items-center justify-between">
+                    <p class="text-xs font-medium text-slate-300">Cenário A</p>
+                    <button id="btnLoadScenarioA" type="button" class="rounded-lg border border-white/10 bg-ink-900/60 px-2 py-1 text-[11px] text-slate-200 hover:bg-ink-800">Carregar A</button>
+                  </div>
+                  <div id="scenarioAContent" class="mt-2 text-xs text-slate-400">Ainda não salvo.</div>
+                </div>
+                <div class="rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div class="flex items-center justify-between">
+                    <p class="text-xs font-medium text-slate-300">Cenário B</p>
+                    <button id="btnLoadScenarioB" type="button" class="rounded-lg border border-white/10 bg-ink-900/60 px-2 py-1 text-[11px] text-slate-200 hover:bg-ink-800">Carregar B</button>
+                  </div>
+                  <div id="scenarioBContent" class="mt-2 text-xs text-slate-400">Ainda não salvo.</div>
+                </div>
+              </div>
+              <div id="scenarioDelta" class="mt-3 text-xs text-slate-400">Salve os dois cenários para ver as diferenças.</div>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="text-sm font-semibold">Integrações e Exportação</h3>
+                  <p class="text-xs text-slate-400">Exporte para planilhas e envie para webhooks sem expor credenciais.</p>
+                </div>
+                <button id="btnOpenIntegrationSettings" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Configurar endpoints</button>
+              </div>
+              <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button id="btnExportCsv" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Baixar CSV</button>
+                <button id="btnCopyTsv" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Copiar linha (TSV)</button>
+                <button id="btnSendSheets" type="button" class="rounded-xl border border-indigo-400/30 bg-indigo-500/20 px-3 py-2 text-xs text-indigo-100 hover:bg-indigo-500/30">Enviar para Google Sheets</button>
+                <button id="btnSendNotion" type="button" class="rounded-xl border border-violet-400/30 bg-violet-500/20 px-3 py-2 text-xs text-violet-100 hover:bg-violet-500/30">Enviar para Notion</button>
+              </div>
+              <p class="mt-3 text-[11px] text-slate-500">Use URL de endpoint próprio (Apps Script Web App ou relay seguro). Nunca coloque tokens direto no frontend.</p>
+            </div>
           </div>
         </section>
 
@@ -523,6 +581,21 @@
               </div>
             </div>
 
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+              <h3 class="text-sm font-semibold">Composição do Faturamento</h3>
+              <p class="mt-1 text-xs text-slate-400">Distribuição estimada do faturamento alvo mensal.</p>
+              <div class="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+                <div id="compositionChart" class="h-40 w-40 rounded-full border border-white/10 bg-ink-800" role="img" aria-label="Gráfico de composição do faturamento"></div>
+                <div id="compositionLegend" class="w-full space-y-2 text-xs text-slate-300"></div>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+              <h3 class="text-sm font-semibold">Alertas Inteligentes</h3>
+              <p class="mt-1 text-xs text-slate-400">Sinais práticos para reduzir risco de sobrecarga e precificação frágil.</p>
+              <div id="alertsList" class="mt-4 space-y-2 text-sm text-slate-200"></div>
+            </div>
+
             <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
               <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
@@ -563,10 +636,10 @@
           Feito para uso local. Tailwind via CDN (requer internet para carregar estilos).
         </p>
         <p class="mt-2 text-xs text-slate-500" id="legalDisclaimer">
-          This tool provides estimates and does not guarantee financial results. For tax/accounting/legal decisions, consult a qualified professional.
+          Esta ferramenta fornece estimativas e não garante resultados financeiros. Para decisões fiscais, contábeis ou jurídicas, consulte um profissional qualificado.
         </p>
         <p class="mt-1 text-xs text-slate-500">
-          <a href="privacidade.html" class="underline hover:text-slate-300">Política de Privacidade</a>
+          <a href="/privacidade" class="underline hover:text-slate-300">Política de Privacidade</a>
         </p>
       </div>
     </footer>
@@ -578,9 +651,37 @@
       aria-live="polite"
     ></div>
 
+    <div
+      id="integrationSettingsModal"
+      class="fixed inset-0 z-[110] hidden items-center justify-center bg-ink-950/90 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="integrationSettingsTitle"
+    >
+      <div class="w-full max-w-xl rounded-2xl border border-white/10 bg-ink-900 p-5 shadow-soft">
+        <div class="flex items-center justify-between">
+          <h3 id="integrationSettingsTitle" class="text-base font-semibold">Configurar endpoints</h3>
+          <button id="btnCloseIntegrationSettings" type="button" class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-200 hover:bg-white/10">Fechar</button>
+        </div>
+        <div class="mt-4 space-y-3">
+          <div>
+            <label for="sheetsEndpointInput" class="text-xs text-slate-300">URL Apps Script (Google Sheets)</label>
+            <input id="sheetsEndpointInput" type="url" placeholder="https://script.google.com/macros/s/SEU-ID/exec" class="mt-1 w-full rounded-xl border border-white/10 bg-ink-800 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300/50" />
+          </div>
+          <div>
+            <label for="notionEndpointInput" class="text-xs text-slate-300">URL relay/webhook (Notion)</label>
+            <input id="notionEndpointInput" type="url" placeholder="https://seu-relay.exemplo.com/notion" class="mt-1 w-full rounded-xl border border-white/10 bg-ink-800 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300/50" />
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end gap-2">
+          <button id="btnSaveIntegrationSettings" type="button" class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400">Salvar endpoints</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module">
-      let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER;
+      let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts;
 
       function showBootError(err, context) {
         const ctx = context ? context + ": " : "";
@@ -618,13 +719,23 @@
           showBootError(e, "Falha ao carregar compliance.js");
           return;
         }
+        try {
+          const benchmarkMod = await import("./benchmarking.js");
+          evaluateBenchmarkAlerts = benchmarkMod.evaluateBenchmarkAlerts;
+        } catch (_) {
+          evaluateBenchmarkAlerts = () => [];
+        }
 
       const STORAGE_KEY = "freela_precificacao_v1";
+      const SCENARIOS_KEY = "freela_scenarios_v1";
+      const INTEGRATIONS_KEY = "freela_integrations_v1";
+      const DISMISSED_ALERTS_KEY = "freela_dismissed_alerts_v1";
       const AUDIT_DEBOUNCE_MS = 800;
       let logoDataUrl = null;
       let calcCardStash = null;
       let lastAuditSnapshotStr = "";
       let auditDebounceTimer = null;
+      let deferredInstallPrompt = null;
 
       const $ = (id) => document.getElementById(id);
 
@@ -682,9 +793,31 @@
         resultCardProposal: $("resultCardProposal"),
         resultProposalTotal: $("resultProposalTotal"),
         resultProposalPrazo: $("resultProposalPrazo"),
+        compositionChart: $("compositionChart"),
+        compositionLegend: $("compositionLegend"),
+        alertsList: $("alertsList"),
         btnImportConfig: $("btnImportConfig"),
         importConfigInput: $("importConfigInput"),
         resultError: $("resultError"),
+        btnInstallApp: $("btnInstallApp"),
+        btnSaveScenarioA: $("btnSaveScenarioA"),
+        btnSaveScenarioB: $("btnSaveScenarioB"),
+        btnClearScenarios: $("btnClearScenarios"),
+        btnLoadScenarioA: $("btnLoadScenarioA"),
+        btnLoadScenarioB: $("btnLoadScenarioB"),
+        scenarioAContent: $("scenarioAContent"),
+        scenarioBContent: $("scenarioBContent"),
+        scenarioDelta: $("scenarioDelta"),
+        btnExportCsv: $("btnExportCsv"),
+        btnCopyTsv: $("btnCopyTsv"),
+        btnSendSheets: $("btnSendSheets"),
+        btnSendNotion: $("btnSendNotion"),
+        btnOpenIntegrationSettings: $("btnOpenIntegrationSettings"),
+        integrationSettingsModal: $("integrationSettingsModal"),
+        btnCloseIntegrationSettings: $("btnCloseIntegrationSettings"),
+        btnSaveIntegrationSettings: $("btnSaveIntegrationSettings"),
+        sheetsEndpointInput: $("sheetsEndpointInput"),
+        notionEndpointInput: $("notionEndpointInput"),
 
         toast: $("toast"),
         termsModal: $("termsModal"),
@@ -995,6 +1128,424 @@
         if (node) node.textContent = text;
       }
 
+      function loadJsonStorage(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return fallback;
+          const parsed = JSON.parse(raw);
+          return parsed && typeof parsed === "object" ? parsed : fallback;
+        } catch {
+          return fallback;
+        }
+      }
+
+      function saveJsonStorage(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function loadScenarios() {
+        return loadJsonStorage(SCENARIOS_KEY, { A: null, B: null });
+      }
+
+      function saveScenarios(data) {
+        return saveJsonStorage(SCENARIOS_KEY, data);
+      }
+
+      function loadIntegrationSettings() {
+        return loadJsonStorage(INTEGRATIONS_KEY, { sheetsUrl: "", notionUrl: "" });
+      }
+
+      function saveIntegrationSettings(next) {
+        return saveJsonStorage(INTEGRATIONS_KEY, next);
+      }
+
+      function getDismissedAlerts() {
+        try {
+          const raw = sessionStorage.getItem(DISMISSED_ALERTS_KEY);
+          if (!raw) return {};
+          const parsed = JSON.parse(raw);
+          return parsed && typeof parsed === "object" ? parsed : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function dismissAlertForSession(id) {
+        const current = getDismissedAlerts();
+        current[id] = true;
+        try {
+          sessionStorage.setItem(DISMISSED_ALERTS_KEY, JSON.stringify(current));
+        } catch {
+          // ignore
+        }
+      }
+
+      function computeCompositionParts(s, r) {
+        if (!r.ok || !Number.isFinite(r.revenueTarget) || r.revenueTarget <= 0) return [];
+        const revenueTarget = r.revenueTarget;
+        const income = Math.max(0, Number(s.targetIncome) || 0);
+        const costs = Math.max(0, Number(s.monthlyCosts) || 0);
+        const taxes = Math.max(0, revenueTarget * ((Number(s.taxRate) || 0) / 100));
+        const reserve = Math.max(0, revenueTarget * (((Number(s.profitMargin) || 0) + (Number(s.buffer) || 0)) / 100));
+        const rawParts = [
+          { key: "income", label: "Renda líquida desejada", value: income, color: "#34d399" },
+          { key: "costs", label: "Custos fixos", value: costs, color: "#60a5fa" },
+          { key: "taxes", label: "Impostos (estimado)", value: taxes, color: "#f59e0b" },
+          { key: "reserve", label: "Reserva (lucro + buffer)", value: reserve, color: "#a78bfa" },
+        ];
+        const total = rawParts.reduce((acc, p) => acc + p.value, 0) || 1;
+        return rawParts.map((p) => ({
+          ...p,
+          percent: (p.value / total) * 100,
+        }));
+      }
+
+      function renderComposition(s, r) {
+        if (!els.compositionChart || !els.compositionLegend) return;
+        const parts = computeCompositionParts(s, r);
+        if (!parts.length) {
+          els.compositionChart.style.background = "linear-gradient(135deg, #1f2937, #0f172a)";
+          els.compositionLegend.innerHTML = '<p class="text-xs text-slate-400">Preencha os dados válidos para visualizar.</p>';
+          return;
+        }
+        let start = 0;
+        const gradients = parts.map((p) => {
+          const end = start + p.percent;
+          const segment = `${p.color} ${start.toFixed(2)}% ${end.toFixed(2)}%`;
+          start = end;
+          return segment;
+        });
+        els.compositionChart.style.background = `conic-gradient(${gradients.join(", ")})`;
+        const curr = sanitizeCurrency(s.currency);
+        els.compositionLegend.innerHTML = parts
+          .map(
+            (p) =>
+              `<div class="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-2 py-1">
+                 <span class="inline-flex items-center gap-2">
+                   <span class="h-2.5 w-2.5 rounded-full" style="background:${p.color}"></span>
+                   <span>${p.label}</span>
+                 </span>
+                 <span class="text-slate-200">${fmtMoney(p.value, curr)} · ${fmtNumber(p.percent, 1)}%</span>
+               </div>`
+          )
+          .join("");
+      }
+
+      function severityClasses(sev) {
+        if (sev === "critical") return "border-red-400/40 bg-red-500/10 text-red-100";
+        if (sev === "warning") return "border-amber-400/40 bg-amber-500/10 text-amber-100";
+        return "border-sky-400/40 bg-sky-500/10 text-sky-100";
+      }
+
+      function renderAlerts(s, r) {
+        if (!els.alertsList) return;
+        const allAlerts = evaluateBenchmarkAlerts ? evaluateBenchmarkAlerts(s, r) : [];
+        const dismissed = getDismissedAlerts();
+        const visibleAlerts = allAlerts.filter((a) => !dismissed[a.id]);
+        if (!visibleAlerts.length) {
+          els.alertsList.innerHTML = '<p class="text-xs text-slate-400">Sem alertas no momento. Boa configuração.</p>';
+          return;
+        }
+        els.alertsList.innerHTML = visibleAlerts
+          .map(
+            (a) => `<div class="rounded-xl border px-3 py-2 ${severityClasses(a.severity)}">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide">${a.severity}</p>
+                    <p class="text-sm font-medium">${a.title}</p>
+                    <p class="mt-1 text-xs opacity-90">${a.message}</p>
+                    <p class="mt-1 text-xs opacity-90">Sugestão: ${a.recommendation}</p>
+                  </div>
+                  <button type="button" data-dismiss-alert="${a.id}" class="rounded-lg border border-white/20 bg-black/20 px-2 py-1 text-[11px] hover:bg-black/30">
+                    Dispensar
+                  </button>
+                </div>
+              </div>`
+          )
+          .join("");
+        Array.from(els.alertsList.querySelectorAll("[data-dismiss-alert]")).forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-dismiss-alert");
+            if (!id) return;
+            dismissAlertForSession(id);
+            renderAlerts(s, r);
+          });
+        });
+      }
+
+      function metricListHtml(payload) {
+        if (!payload || !payload.outputs) return '<p class="text-xs text-slate-400">Ainda não salvo.</p>';
+        const out = payload.outputs;
+        const curr = sanitizeCurrency(payload.inputs?.currency || "BRL");
+        const rows = [
+          ["Taxa/hora", out.hourly, true],
+          ["Taxa/dia", out.daily, true],
+          ["Faturamento alvo", out.revenueTarget, true],
+          ["Horas faturáveis", out.billableHours, false],
+          ["Preço projeto", out.projectNet, true],
+        ];
+        return rows
+          .map(([label, value, money]) => {
+            const text = value == null ? "—" : (money ? fmtMoney(value, curr) : `${fmtNumber(value, 1)} h`);
+            return `<div class="flex items-center justify-between"><span class="text-slate-400">${label}</span><span class="text-slate-100">${text}</span></div>`;
+          })
+          .join("");
+      }
+
+      function getDeltaText(a, b, key, money, curr) {
+        const av = a?.outputs?.[key];
+        const bv = b?.outputs?.[key];
+        if (av == null || bv == null) return `${key}: —`;
+        const delta = bv - av;
+        const sign = delta > 0 ? "+" : "";
+        const base = money ? fmtMoney(Math.abs(delta), curr) : `${fmtNumber(Math.abs(delta), 1)} h`;
+        const cls = delta > 0 ? "text-emerald-300" : delta < 0 ? "text-rose-300" : "text-slate-300";
+        return `<span class="${cls}">${key}: ${sign}${delta < 0 ? "-" : ""}${base}</span>`;
+      }
+
+      function renderScenariosComparison() {
+        const scenarios = loadScenarios();
+        if (els.scenarioAContent) els.scenarioAContent.innerHTML = metricListHtml(scenarios.A);
+        if (els.scenarioBContent) els.scenarioBContent.innerHTML = metricListHtml(scenarios.B);
+        if (!els.scenarioDelta) return;
+        if (!scenarios.A || !scenarios.B) {
+          els.scenarioDelta.textContent = "Salve os dois cenários para ver as diferenças.";
+          return;
+        }
+        const curr = sanitizeCurrency((scenarios.B.inputs && scenarios.B.inputs.currency) || "BRL");
+        els.scenarioDelta.innerHTML = [
+          getDeltaText(scenarios.A, scenarios.B, "hourly", true, curr),
+          getDeltaText(scenarios.A, scenarios.B, "daily", true, curr),
+          getDeltaText(scenarios.A, scenarios.B, "revenueTarget", true, curr),
+          getDeltaText(scenarios.A, scenarios.B, "billableHours", false, curr),
+          getDeltaText(scenarios.A, scenarios.B, "projectNet", true, curr),
+        ].join(' <span class="text-slate-600">|</span> ');
+      }
+
+      function captureScenarioPayload() {
+        const s = getStateFromInputs();
+        const r = compute(s);
+        if (!r.ok) return null;
+        return {
+          savedAt: new Date().toISOString(),
+          inputs: { ...s },
+          outputs: {
+            hourly: r.hourly,
+            daily: r.daily,
+            revenueTarget: r.revenueTarget,
+            billableHours: r.billableHours,
+            projectNet: r.projectNet,
+          },
+        };
+      }
+
+      function saveScenario(slot) {
+        const payload = captureScenarioPayload();
+        if (!payload) {
+          showToast("Não foi possível salvar: ajuste os dados para um cálculo válido.");
+          return;
+        }
+        const scenarios = loadScenarios();
+        scenarios[slot] = payload;
+        saveScenarios(scenarios);
+        renderScenariosComparison();
+        showToast(`Cenário ${slot} salvo.`);
+      }
+
+      function loadScenario(slot) {
+        const scenarios = loadScenarios();
+        if (!scenarios[slot] || !scenarios[slot].inputs) {
+          showToast(`Cenário ${slot} ainda não foi salvo.`);
+          return;
+        }
+        setInputsFromState({ ...defaultState(), ...scenarios[slot].inputs });
+        updateUI();
+        showToast(`Cenário ${slot} carregado.`);
+      }
+
+      function clearScenarios() {
+        saveScenarios({ A: null, B: null });
+        renderScenariosComparison();
+        showToast("Comparação limpa.");
+      }
+
+      function csvEscape(v) {
+        const str = String(v ?? "");
+        if (/[,"\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
+        return str;
+      }
+
+      function buildExportPayload() {
+        const inputs = getStateFromInputs();
+        const outputs = compute(inputs);
+        return {
+          timestamp: new Date().toISOString(),
+          app: "calculadora-freelancer",
+          inputs,
+          outputs,
+        };
+      }
+
+      function exportCsv() {
+        if (!hasAcceptedTerms()) {
+          showToast("Aceite os termos para exportar.");
+          return;
+        }
+        const payload = buildExportPayload();
+        const flat = {
+          timestamp: payload.timestamp,
+          ...payload.inputs,
+          revenueTarget: payload.outputs.revenueTarget,
+          hourly: payload.outputs.hourly,
+          daily: payload.outputs.daily,
+          billableHours: payload.outputs.billableHours,
+          projectNet: payload.outputs.projectNet,
+        };
+        const headers = Object.keys(flat);
+        const values = headers.map((h) => csvEscape(flat[h]));
+        const csv = `${headers.join(",")}\n${values.join(",")}\n`;
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `calculadora-export-${Date.now()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast("CSV exportado.");
+      }
+
+      function copyTsvRow() {
+        if (!hasAcceptedTerms()) {
+          showToast("Aceite os termos para copiar dados.");
+          return;
+        }
+        const payload = buildExportPayload();
+        const flat = {
+          timestamp: payload.timestamp,
+          ...payload.inputs,
+          revenueTarget: payload.outputs.revenueTarget,
+          hourly: payload.outputs.hourly,
+          daily: payload.outputs.daily,
+          billableHours: payload.outputs.billableHours,
+          projectNet: payload.outputs.projectNet,
+        };
+        const headers = Object.keys(flat).join("\t");
+        const values = Object.values(flat).map((v) => String(v ?? "")).join("\t");
+        copyToClipboard(`${headers}\n${values}`, "Linha TSV copiada.");
+      }
+
+      function isValidHttpUrl(value) {
+        try {
+          const url = new URL(value);
+          return url.protocol === "https:" || url.protocol === "http:";
+        } catch {
+          return false;
+        }
+      }
+
+      function openIntegrationSettingsModal() {
+        if (!els.integrationSettingsModal) return;
+        const settings = loadIntegrationSettings();
+        if (els.sheetsEndpointInput) els.sheetsEndpointInput.value = settings.sheetsUrl || "";
+        if (els.notionEndpointInput) els.notionEndpointInput.value = settings.notionUrl || "";
+        els.integrationSettingsModal.classList.remove("hidden");
+        els.integrationSettingsModal.classList.add("flex");
+      }
+
+      function closeIntegrationSettingsModal() {
+        if (!els.integrationSettingsModal) return;
+        els.integrationSettingsModal.classList.remove("flex");
+        els.integrationSettingsModal.classList.add("hidden");
+      }
+
+      function saveIntegrationSettingsFromModal() {
+        const sheetsUrl = (els.sheetsEndpointInput && els.sheetsEndpointInput.value || "").trim();
+        const notionUrl = (els.notionEndpointInput && els.notionEndpointInput.value || "").trim();
+        if (sheetsUrl && !isValidHttpUrl(sheetsUrl)) {
+          showToast("URL do Google Sheets inválida.");
+          return;
+        }
+        if (notionUrl && !isValidHttpUrl(notionUrl)) {
+          showToast("URL do Notion inválida.");
+          return;
+        }
+        saveIntegrationSettings({ sheetsUrl, notionUrl });
+        closeIntegrationSettingsModal();
+        showToast("Endpoints salvos.");
+      }
+
+      async function sendToEndpoint(kind) {
+        if (!hasAcceptedTerms()) {
+          showToast("Aceite os termos para enviar dados.");
+          return;
+        }
+        const settings = loadIntegrationSettings();
+        const endpoint = kind === "sheets" ? settings.sheetsUrl : settings.notionUrl;
+        if (!endpoint) {
+          showToast(`Configure o endpoint de ${kind === "sheets" ? "Google Sheets" : "Notion"} primeiro.`);
+          openIntegrationSettingsModal();
+          return;
+        }
+        if (!isValidHttpUrl(endpoint)) {
+          showToast("Endpoint inválido. Revise a configuração.");
+          return;
+        }
+        const payload = buildExportPayload();
+        try {
+          const resp = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!resp.ok) {
+            showToast(`Falha ao enviar (${resp.status}).`);
+            return;
+          }
+          showToast(`Enviado para ${kind === "sheets" ? "Google Sheets" : "Notion"}.`);
+        } catch {
+          showToast("Falha de rede ao enviar.");
+        }
+      }
+
+      function setupInstallPrompt() {
+        window.addEventListener("beforeinstallprompt", (e) => {
+          e.preventDefault();
+          deferredInstallPrompt = e;
+          if (els.btnInstallApp) els.btnInstallApp.classList.remove("hidden");
+        });
+      }
+
+      async function triggerAppInstall() {
+        if (!deferredInstallPrompt) {
+          showToast("Instalação não disponível neste navegador.");
+          return;
+        }
+        deferredInstallPrompt.prompt();
+        try {
+          await deferredInstallPrompt.userChoice;
+        } catch {
+          // ignore
+        }
+        deferredInstallPrompt = null;
+        if (els.btnInstallApp) els.btnInstallApp.classList.add("hidden");
+      }
+
+      function registerServiceWorker() {
+        if (!("serviceWorker" in navigator)) return;
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {
+            // keep app usable even if SW fails
+          });
+        });
+      }
+
       function scheduleAuditSnapshot() {
         clearTimeout(auditDebounceTimer);
         auditDebounceTimer = setTimeout(() => {
@@ -1117,6 +1668,10 @@
         } else {
           safeText(els.proposalText, "—");
         }
+
+        renderComposition(s, r);
+        renderAlerts(s, r);
+        renderScenariosComparison();
 
         persistState(s);
 
@@ -1632,6 +2187,29 @@
           });
         }
 
+        if (els.btnSaveScenarioA) els.btnSaveScenarioA.addEventListener("click", () => saveScenario("A"));
+        if (els.btnSaveScenarioB) els.btnSaveScenarioB.addEventListener("click", () => saveScenario("B"));
+        if (els.btnClearScenarios) els.btnClearScenarios.addEventListener("click", clearScenarios);
+        if (els.btnLoadScenarioA) els.btnLoadScenarioA.addEventListener("click", () => loadScenario("A"));
+        if (els.btnLoadScenarioB) els.btnLoadScenarioB.addEventListener("click", () => loadScenario("B"));
+
+        if (els.btnExportCsv) els.btnExportCsv.addEventListener("click", exportCsv);
+        if (els.btnCopyTsv) els.btnCopyTsv.addEventListener("click", copyTsvRow);
+        if (els.btnSendSheets) els.btnSendSheets.addEventListener("click", () => sendToEndpoint("sheets"));
+        if (els.btnSendNotion) els.btnSendNotion.addEventListener("click", () => sendToEndpoint("notion"));
+        if (els.btnOpenIntegrationSettings) els.btnOpenIntegrationSettings.addEventListener("click", openIntegrationSettingsModal);
+        if (els.btnCloseIntegrationSettings) els.btnCloseIntegrationSettings.addEventListener("click", closeIntegrationSettingsModal);
+        if (els.btnSaveIntegrationSettings) els.btnSaveIntegrationSettings.addEventListener("click", saveIntegrationSettingsFromModal);
+        if (els.integrationSettingsModal) {
+          els.integrationSettingsModal.addEventListener("click", (e) => {
+            if (e.target === els.integrationSettingsModal) closeIntegrationSettingsModal();
+          });
+        }
+
+        if (els.btnInstallApp) {
+          els.btnInstallApp.addEventListener("click", triggerAppInstall);
+        }
+
         if (els.proposalMode) {
           els.proposalMode.addEventListener("change", updateUI);
         }
@@ -1720,6 +2298,8 @@
             setInputsFromState(saved ? { ...defaultState(), ...saved } : defaultState());
           }
           wireEvents();
+          setupInstallPrompt();
+          registerServiceWorker();
           setupTermsModal();
           updateUI();
         })();

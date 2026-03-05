@@ -2,7 +2,11 @@
   "rewrites": [
     { "source": "/calculadora.js", "destination": "/calculadora.js" },
     { "source": "/compliance.js", "destination": "/compliance.js" },
+    { "source": "/benchmarking.js", "destination": "/benchmarking.js" },
     { "source": "/privacidade.html", "destination": "/privacidade.html" },
+    { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
+    { "source": "/sw.js", "destination": "/sw.js" },
+    { "source": "/offline.html", "destination": "/offline.html" },
     { "source": "/privacidade", "destination": "/privacidade/index.html" },
     { "source": "/privacidade/", "destination": "/privacidade/index.html" }
   ]

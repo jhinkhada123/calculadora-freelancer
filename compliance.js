@@ -102,7 +102,7 @@ export function appendAuditSnapshot(snapshot) {
 }
 
 export const LEGAL_DISCLAIMER =
-  "This tool provides estimates and does not guarantee financial results. For tax/accounting/legal decisions, consult a qualified professional.";
+  "Esta ferramenta fornece estimativas e não garante resultados financeiros. Para decisões fiscais, contábeis ou jurídicas, consulte um profissional qualificado.";
 
 export const CALC_PREMISES =
   "Premissas: faturamento alvo = base ÷ (1 − total%), com base = renda desejada + custos; taxa/hora = faturamento alvo ÷ horas faturáveis; projeto = horas × taxa × (1 + margem escopo) × (1 − desconto).";

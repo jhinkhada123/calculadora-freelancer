@@ -1,0 +1,11 @@
+{
+  "name": "Calculadora de Precificação Freelancer",
+  "short_name": "Precificação",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070A12",
+  "theme_color": "#070A12",
+  "lang": "pt-BR",
+  "description": "Calculadora de precificação para freelancers com modo proposta, auditoria e exportações."
+}
