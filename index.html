@@ -934,6 +934,7 @@
       let computeAdvancedPricing, deriveHistoricalVarianceSamples;
       let computeRiskScore, riskNarrative, trackEvent;
       let computeScopeShielding, computeDynamicScarcityMarkup, computeRunwaySummary, computeRoiAnchor, generateJustificationBlocks;
+      let validateEndpointUrl, shouldTrackRiskScoreView, buildCompositionPartsModel, ensurePdfYSpaceModel, advancePdfYModel, advancePdfYByLinesModel;
 
       function showBootError(err, context) {
         const ctx = context ? context + ": " : "";
@@ -1030,6 +1031,39 @@
             caveat: "Estimativa sujeita à execução e variáveis operacionais.",
           });
         }
+        try {
+          const hardeningMod = await import("./hardening-v21.js");
+          validateEndpointUrl = hardeningMod.validateEndpointUrl;
+          shouldTrackRiskScoreView = hardeningMod.shouldTrackRiskScoreView;
+          buildCompositionPartsModel = hardeningMod.buildCompositionParts;
+          ensurePdfYSpaceModel = hardeningMod.ensurePdfYSpace;
+          advancePdfYModel = hardeningMod.advancePdfY;
+          advancePdfYByLinesModel = hardeningMod.advancePdfYByLines;
+        } catch (_) {
+          validateEndpointUrl = () => ({ ok: false, reason: "INVALID_URL" });
+          shouldTrackRiskScoreView = () => ({ shouldTrack: true, next: null });
+          buildCompositionPartsModel = (s, r) => {
+            if (!(r && r.ok) || !Number.isFinite(r.revenueTarget) || r.revenueTarget <= 0) return [];
+            const income = Math.max(0, Number(s?.targetIncome) || 0);
+            const costs = Math.max(0, Number(s?.monthlyCosts) || 0);
+            const core = Math.max(0, Number(r.revenueTarget) - income - costs);
+            const base = [
+              { key: "income", label: "Renda líquida desejada", value: income, color: "#34d399" },
+              { key: "costs", label: "Custos fixos", value: costs, color: "#60a5fa" },
+              { key: "core", label: "Encargos e margem essenciais", value: core, color: "#a78bfa" },
+            ];
+            const total = base.reduce((acc, p) => acc + p.value, 0) || 1;
+            return base.map((p) => ({ ...p, percent: (p.value / total) * 100 }));
+          };
+          ensurePdfYSpaceModel = (y) => ({ y: Number.isFinite(y) ? y : 56, addPage: false });
+          advancePdfYModel = (y, step) => (Number(y) || 0) + (Number(step) || 0);
+          advancePdfYByLinesModel = (y, lines, lineHeight, spacing) => {
+            const l = Math.max(0, Number(lines) || 0);
+            const h = Math.max(0, Number(lineHeight) || 0);
+            const s = Math.max(0, Number(spacing) || 0);
+            return (Number(y) || 0) + (l * h) + s;
+          };
+        }
 
       const STORAGE_KEY = "freela_precificacao_v2";
       const LEGACY_STORAGE_KEY = "freela_precificacao_v1";
@@ -1047,6 +1081,7 @@
       let lastAuditSnapshotStr = "";
       let auditDebounceTimer = null;
       let deferredInstallPrompt = null;
+      let riskTelemetryState = null;
 
       const $ = (id) => document.getElementById(id);
 
@@ -1618,33 +1653,8 @@
       }
 
       function computeCompositionParts(s, r, ctx) {
-        if (!r.ok || !Number.isFinite(r.revenueTarget) || r.revenueTarget <= 0) return [];
-        const revenueTarget = r.revenueTarget;
-        const income = Math.max(0, Number(s.targetIncome) || 0);
-        const costs = Math.max(0, Number(s.monthlyCosts) || 0);
-        const taxes = Math.max(0, revenueTarget * ((Number(s.taxRate) || 0) / 100));
-        const reserve = Math.max(0, revenueTarget * (((Number(s.profitMargin) || 0) + (Number(s.buffer) || 0)) / 100));
-        const rawParts = [
-          { key: "income", label: "Renda líquida desejada", value: income, color: "#34d399" },
-          { key: "costs", label: "Custos fixos", value: costs, color: "#60a5fa" },
-          { key: "taxes", label: "Impostos (estimado)", value: taxes, color: "#f59e0b" },
-          { key: "reserve", label: "Reserva (lucro + buffer)", value: reserve, color: "#a78bfa" },
-        ];
-        if (ctx && ctx.mode === "advanced" && ctx.advanced && ctx.advanced.ok) {
-          const dep = Math.max(0, ctx.advanced.data.depreciationMonthly || 0);
-          const opp = Math.max(0, ctx.advanced.data.opportunityCostMonthly || 0);
-          const adjustments = Math.max(0, (ctx.advanced.output.hourly - ctx.advanced.data.grossUp) * Math.max(r.billableHours || 0, 0));
-          rawParts.push(
-            { key: "dep", label: "Depreciação", value: dep, color: "#22d3ee" },
-            { key: "opp", label: "Custo de oportunidade", value: opp, color: "#f97316" },
-            { key: "adj", label: "Ajuste risco/escassez/exaustão", value: adjustments, color: "#f43f5e" }
-          );
-        }
-        const total = rawParts.reduce((acc, p) => acc + p.value, 0) || 1;
-        return rawParts.map((p) => ({
-          ...p,
-          percent: (p.value / total) * 100,
-        }));
+        const parts = buildCompositionPartsModel ? buildCompositionPartsModel(s, r, ctx) : [];
+        return Array.isArray(parts) ? parts : [];
       }
 
       function renderComposition(s, r, ctx) {
@@ -1891,12 +1901,14 @@
       }
 
       function isValidHttpUrl(value) {
-        try {
-          const url = new URL(value);
-          return url.protocol === "https:" || url.protocol === "http:";
-        } catch {
-          return false;
+        return validateEndpointUrl ? validateEndpointUrl(value) : { ok: false, reason: "INVALID_URL" };
+      }
+
+      function endpointValidationMessage(res, label) {
+        if (res && res.reason === "HTTP_EXTERNAL_BLOCKED") {
+          return `URL de ${label} inválida: use HTTPS para hosts externos. HTTP é permitido apenas em localhost/127.0.0.1.`;
         }
+        return `URL de ${label} inválida.`;
       }
 
       function openIntegrationSettingsModal() {
@@ -1917,12 +1929,14 @@
       function saveIntegrationSettingsFromModal() {
         const sheetsUrl = (els.sheetsEndpointInput && els.sheetsEndpointInput.value || "").trim();
         const notionUrl = (els.notionEndpointInput && els.notionEndpointInput.value || "").trim();
-        if (sheetsUrl && !isValidHttpUrl(sheetsUrl)) {
-          showToast("URL do Google Sheets inválida.");
+        const sheetsValidation = sheetsUrl ? isValidHttpUrl(sheetsUrl) : { ok: true };
+        const notionValidation = notionUrl ? isValidHttpUrl(notionUrl) : { ok: true };
+        if (!sheetsValidation.ok) {
+          showToast(endpointValidationMessage(sheetsValidation, "Google Sheets"));
           return;
         }
-        if (notionUrl && !isValidHttpUrl(notionUrl)) {
-          showToast("URL do Notion inválida.");
+        if (!notionValidation.ok) {
+          showToast(endpointValidationMessage(notionValidation, "Notion"));
           return;
         }
         saveIntegrationSettings({ sheetsUrl, notionUrl });
@@ -1942,8 +1956,13 @@
           openIntegrationSettingsModal();
           return;
         }
-        if (!isValidHttpUrl(endpoint)) {
-          showToast("Endpoint inválido. Revise a configuração.");
+        const validation = isValidHttpUrl(endpoint);
+        if (!validation.ok) {
+          if (validation.reason === "HTTP_EXTERNAL_BLOCKED") {
+            showToast("Endpoint bloqueado: para host externo use HTTPS. HTTP só é permitido em localhost/127.0.0.1.");
+          } else {
+            showToast("Endpoint inválido. Revise a configuração.");
+          }
           return;
         }
         const payload = buildExportPayload();
@@ -2229,7 +2248,10 @@
         if (!els.auditModeCard || !els.riskScoreValue || !els.riskScoreNarrative || !els.riskScoreBreakdown || !els.exhaustionBadgeLabel || !els.exhaustionBadgeImpact) return;
         const isAdvanced = s.advancedMode && ctx.mode === "advanced" && ctx.advanced;
         els.auditModeCard.classList.toggle("hidden", !isAdvanced);
-        if (!isAdvanced) return;
+        if (!isAdvanced) {
+          riskTelemetryState = null;
+          return;
+        }
         const risk = computeRiskScore({
           scopeFactor: ctx.advanced.data.scopeFactor,
           occupancyRate: s.occupancyRate,
@@ -2251,7 +2273,23 @@
           els.exhaustionBadgeLabel.textContent = "Sem ajuste de exaustão";
           els.exhaustionBadgeImpact.textContent = "Impacto: 0";
         }
-        trackEvent("risk_score_view", { score: risk.score, model: ctx.advanced.mode || "deterministic" });
+        const telemetryDecision = shouldTrackRiskScoreView
+          ? shouldTrackRiskScoreView({
+              prev: riskTelemetryState,
+              score: risk.score,
+              mode: ctx.mode || "advanced",
+              model: ctx.advanced.mode || "deterministic",
+              nowMs: Date.now(),
+              threshold: 1.0,
+              cooldownMs: 10_000,
+            })
+          : { shouldTrack: true, next: null };
+        if (telemetryDecision && telemetryDecision.next) {
+          riskTelemetryState = telemetryDecision.next;
+        }
+        if (telemetryDecision && telemetryDecision.shouldTrack) {
+          trackEvent("risk_score_view", { score: risk.score, model: ctx.advanced.mode || "deterministic" });
+        }
       }
 
       function scheduleAuditSnapshot() {
@@ -2728,10 +2766,30 @@
           let y = margin;
           const pdfV2 = !!FEATURE_FLAGS.pdf_v2_enabled;
           const ensureSpace = (needed = 84) => {
-            if (y + needed > pageHeight - margin - 72) {
+            const guard = ensurePdfYSpaceModel
+              ? ensurePdfYSpaceModel(y, needed, pageHeight, margin, 72)
+              : { y, addPage: false };
+            if (guard.addPage) {
               doc.addPage();
-              y = margin;
+              y = guard.y;
             }
+          };
+          const advanceY = (step = 0) => {
+            y = advancePdfYModel ? advancePdfYModel(y, step) : (y + step);
+          };
+          const advanceYByLines = (lineCount, lineHeight = 12, spacingAfter = 0) => {
+            y = advancePdfYByLinesModel ? advancePdfYByLinesModel(y, lineCount, lineHeight, spacingAfter) : (y + (lineCount * lineHeight) + spacingAfter);
+          };
+          const writeWrappedSummary = (text, opts = {}) => {
+            const maxWidth = opts.maxWidth || (pageWidth - 2 * margin);
+            const lineHeight = opts.lineHeight || 12;
+            const spacingAfter = opts.spacingAfter || 0;
+            const minRoom = opts.minRoom || 56;
+            const lines = doc.splitTextToSize(String(text || ""), maxWidth);
+            const needed = Math.max(minRoom, (lines.length * lineHeight) + spacingAfter + 8);
+            ensureSpace(needed);
+            doc.text(lines, margin, y);
+            advanceYByLines(lines.length, lineHeight, spacingAfter);
           };
 
           if (proposalMode) {
@@ -2766,19 +2824,19 @@
               doc.setFont("helvetica", "normal");
               doc.setFontSize(11);
               doc.text("Este documento apresenta estimativas robustas para apoiar decisão comercial.", margin, y);
-              y += 20;
+              advanceY(20);
             }
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
             doc.text(pdfV2 ? "Lógica de Precificação" : "Escopo da Solução", margin, y);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
-            y += 18;
+            advanceY(18);
             doc.text("Escopo definido conforme objetivos e entregáveis acordados.", margin, y);
-            y += 16;
+            advanceY(16);
             const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
             doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
-            y += 28;
+            advanceY(28);
             const proposta = getProposalTextForPdf();
             if (proposta) {
               ensureSpace(140);
@@ -2787,11 +2845,11 @@
               doc.text(pdfV2 ? "Recomendação Final" : "Proposta", margin, y);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(11);
-              y += 18;
+              advanceY(18);
               const maxWidth = pageWidth - 2 * margin;
               const lines = doc.splitTextToSize(proposta, maxWidth);
               doc.text(lines, margin, y);
-              y += lines.length * 14 + 24;
+              advanceY(lines.length * 14 + 24);
             }
             ensureSpace(140);
             doc.setFont("helvetica", "bold");
@@ -2799,41 +2857,37 @@
             doc.text("Justificativas de negociação", margin, y);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(10);
-            y += 16;
+            advanceY(16);
             const jLines = doc.splitTextToSize(justificationText, pageWidth - 2 * margin);
             doc.text(jLines, margin, y);
-            y += jLines.length * 12 + 16;
+            advanceY(jLines.length * 12 + 16);
             if (negotiationCtx.roi.enabled && negotiationCtx.roi.text) {
               ensureSpace(60);
               const roiLines = doc.splitTextToSize(`${negotiationCtx.roi.text} ${negotiationCtx.roi.caveat}`, pageWidth - 2 * margin);
               doc.text(roiLines, margin, y);
-              y += roiLines.length * 12 + 12;
+              advanceY(roiLines.length * 12 + 12);
             }
             ensureSpace(72);
             doc.setFontSize(10);
-            doc.text(
+            writeWrappedSummary(
               `Proteção de Escopo: ${fmtNumber(negotiationCtx.scopeShield.markupPct, 1)}% (${formatScopeLevel(negotiationCtx.scopeShield.level)}). ` +
                 `Prêmio de conveniência: ${fmtNumber(negotiationCtx.scarcity.markupPct, 1)}%.`,
-              margin,
-              y
+              { lineHeight: 12, spacingAfter: 4, minRoom: 60 }
             );
-            y += 14;
-            doc.text(
+            writeWrappedSummary(
               `Fôlego financeiro atual: ${fmtNumber(negotiationCtx.runway.runwayMesesAtual, 1)} meses | pós-projeto: ${fmtNumber(negotiationCtx.runway.runwayMesesPosProjeto, 1)} meses.`,
-              margin,
-              y
+              { lineHeight: 12, spacingAfter: 4, minRoom: 56 }
             );
-            y += 14;
-            doc.text(
+            writeWrappedSummary(
               `Projetos para meta de reserva: ${negotiationCtx.runway.projetosNecessarios == null ? "n/d" : fmtNumber(negotiationCtx.runway.projetosNecessarios, 0)}.`,
-              margin,
-              y
+              { lineHeight: 12, spacingAfter: 12, minRoom: 48 }
             );
+            ensureSpace(110);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
             doc.text("Investimento Total", margin, y);
             doc.setFont("helvetica", "normal");
-            y += 20;
+            advanceY(20);
             const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
             if (projectOk) {
               doc.setFont("helvetica", "bold");
