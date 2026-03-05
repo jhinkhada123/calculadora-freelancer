@@ -105,8 +105,8 @@
 | **Passos** | 1. Abrir DevTools > Network<br>2. Carregar staging<br>3. Verificar quando `jspdf.umd.min.js` é requisitado |
 | **Resultado esperado** | jsPDF carregado sob demanda (ao clicar Gerar PDF ou quando necessário). Não bloqueia LCP. Script em `<script src="...jspdf...">` pode ser defer/async ou carregado dinamicamente. |
 | **Severidade** | P1 |
-| **Status** | ☑ FAIL |
-| **Evidência** | L961: `<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>` — carregamento síncrono no parse do HTML. Não lazy. Requisitado no load inicial. |
+| **Status** | ☑ PASS |
+| **Evidência** | Script global removido. loadJsPdf() carrega via createElement+appendChild ao clicar Gerar PDF. Fallback: showToast com mensagem clara se falhar. |
 
 ---
 
@@ -120,8 +120,8 @@
 | **Passos** | 1. Inspecionar `<head>`<br>2. Verificar tag `<link rel="canonical" href="...">` |
 | **Resultado esperado** | Canonical aponta para URL base sem query params (ex: `{staging}/`). Evita conteúdo duplicado. |
 | **Severidade** | P1 |
-| **Status** | ☑ FAIL |
-| **Evidência** | Grep canonical: 0 matches. <head> (L1-69) sem link rel=canonical. |
+| **Status** | ☑ PASS |
+| **Evidência** | link rel=canonical + script que define href = origin + pathname (base sem params). |
 
 ### QA-010 — noindex em params e view=client
 
@@ -131,8 +131,8 @@
 | **Passos** | 1. Inspecionar `<head>`<br>2. Verificar `<meta name="robots" content="noindex, nofollow">` (ou equivalente) |
 | **Resultado esperado** | Páginas com query params ou view=client possuem noindex para evitar indexação de URLs parametrizadas. URL base `/` indexável. |
 | **Severidade** | P1 |
-| **Status** | ☑ FAIL |
-| **Evidência** | Grep noindex/robots: 0 matches. Sem meta robots condicional para params. |
+| **Status** | ☑ PASS |
+| **Evidência** | Script adiciona meta robots noindex quando view=client ou params de estado (currency, targetIncome, etc.) presentes. Base sem params indexável. |
 
 ### QA-011 — OG tags para compartilhamento
 
@@ -142,8 +142,8 @@
 | **Passos** | 1. Inspecionar `<head>`<br>2. Verificar `og:title`, `og:description`, `og:image`, `og:url` |
 | **Resultado esperado** | Meta tags Open Graph presentes. og:title e og:description alinhados ao branding neutro. og:image válida (URL absoluta). |
 | **Severidade** | P2 |
-| **Status** | ☑ FAIL |
-| **Evidência** | Grep og:|meta property: 0 matches. Sem meta og:title, og:description, og:image, og:url. |
+| **Status** | ☑ PASS |
+| **Evidência** | og:title, og:description, og:type, og:image, og:url + twitter:card, twitter:title, twitter:description, twitter:image. Script define og:url e og:image com base absoluta. |
 
 ---
 
@@ -183,8 +183,8 @@
 | **Passos** | 1. Abrir staging<br>2. Verificar visibilidade de scenarioCard e governanceCard antes de clicar nos botões Essencial/Comparação/Governança |
 | **Resultado esperado** | scenarioCard e governanceCard com `hidden` ou colapsados por padrão. Apenas Essencial (ou área principal) expandida. Usuário expande via botões "Comparação" e "Governança". |
 | **Severidade** | P1 |
-| **Status** | ☑ FAIL |
-| **Evidência** | L644: scenarioCard class="mt-6 rounded-2xl..."; L681: governanceCard class="mt-6 rounded-2xl...". Nenhum tem "hidden". Visíveis por padrão. advancedConfigCard tem hidden (L510); scenario/governance não. |
+| **Status** | ☑ PASS |
+| **Evidência** | scenarioCard e governanceCard com class "hidden" no HTML inicial. Accordion expande ao clicar nos botões. |
 
 ---
 
@@ -242,12 +242,12 @@
 | Severidade | PASS | FAIL | NA |
 |------------|------|------|-----|
 | **P0** | 6 | 0 | 0 |
-| **P1** | 3 | 3 | 0 |
-| **P2** | 1 | 1 | 0 |
+| **P1** | 6 | 0 | 0 |
+| **P2** | 2 | 0 | 0 |
 
 **P0:** QA-001 PASS, QA-002 PASS, QA-003 PASS, QA-004 PASS, QA-006 PASS, QA-015 PASS  
-**P1:** QA-005 PASS, QA-007 PASS, QA-008 FAIL, QA-009 FAIL, QA-010 FAIL, QA-012 PASS, QA-014 FAIL  
-**P2:** QA-011 FAIL, QA-013 PASS  
+**P1:** QA-005 PASS, QA-007 PASS, QA-008 PASS, QA-009 PASS, QA-010 PASS, QA-012 PASS, QA-014 PASS  
+**P2:** QA-011 PASS, QA-013 PASS  
 
 ---
 
@@ -255,11 +255,7 @@
 
 | ID | Severidade | Descrição |
 |----|------------|-----------|
-| QA-008 | P1 | jsPDF carregado no load (não lazy) |
-| QA-009 | P1 | Sem tag canonical |
-| QA-010 | P1 | Sem noindex para params |
-| QA-011 | P2 | Sem OG tags |
-| QA-014 | P1 | Comparação e Governança visíveis por padrão (não colapsados) |
+| — | — | Nenhum. Todos os itens P0/P1/P2 resolvidos. |
 
 ---
 
@@ -276,8 +272,4 @@
 
 | Prioridade | Ação | Teste |
 |------------|------|-------|
-| P1 | Adicionar `class="hidden"` em scenarioCard e governanceCard no HTML inicial; expandir via accordion | QA-014 |
-| P1 | Carregar jsPDF dinamicamente (import() ou createElement script) ao clicar Gerar PDF | QA-008 |
-| P1 | Adicionar `<link rel="canonical" href="{base}">` no head | QA-009 |
-| P1 | Adicionar meta robots noindex quando URL tem query params (script condicional) | QA-010 |
-| P2 | Adicionar og:title, og:description, og:image, og:url | QA-011 |
+| — | — | Nenhuma pendência. Release marketing-ready fechado. |

@@ -11,6 +11,39 @@
       name="description"
       content="Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados."
     />
+    <link rel="canonical" href="" />
+    <meta property="og:title" content="Calculadora de Precificação para Freelancers" />
+    <meta property="og:description" content="Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="" />
+    <meta property="og:url" content="" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Calculadora de Precificação para Freelancers" />
+    <meta name="twitter:description" content="Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados." />
+    <meta name="twitter:image" content="" />
+    <script>
+      (function() {
+        var o = window.location.origin;
+        var p = (window.location.pathname || "/").replace(/\/$/, "") || "";
+        var base = o + (p || "/");
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical) canonical.href = base;
+        var params = new URLSearchParams(window.location.search || "");
+        var needsNoindex = params.get("view") === "client" || ["currency","targetIncome","monthlyCosts","projectHours","projectNet","professionalName","clientName","validityDate"].some(function(k) { return params.has(k); });
+        if (needsNoindex) {
+          var m = document.createElement("meta");
+          m.name = "robots";
+          m.content = "noindex, nofollow";
+          document.head.appendChild(m);
+        }
+        var ogUrl = document.querySelector('meta[property="og:url"]');
+        if (ogUrl) ogUrl.content = base;
+        var ogImg = document.querySelector('meta[property="og:image"]');
+        if (ogImg) ogImg.content = base + "og-image.png";
+        var twImg = document.querySelector('meta[name="twitter:image"]');
+        if (twImg) twImg.content = base + "og-image.png";
+      })();
+    </script>
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- TODO: self-host fonts/CSS/JS para evitar dependência de CDNs (Google Fonts, Tailwind, cdnjs). -->
@@ -671,7 +704,7 @@
               </div>
             </div>
 
-            <div id="scenarioCard" class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+            <div id="scenarioCard" class="mt-6 hidden rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
@@ -708,7 +741,7 @@
               <div id="scenarioDelta" class="mt-3 text-xs text-slate-400">Salve os dois cenários para ver as diferenças.</div>
             </div>
 
-            <div id="governanceCard" class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+            <div id="governanceCard" class="mt-6 hidden rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
@@ -989,7 +1022,6 @@
       </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module">
       let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
       let computeAdvancedPricing, deriveHistoricalVarianceSamples;
@@ -2858,6 +2890,21 @@
         };
       }
 
+      function loadJsPdf() {
+        if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf);
+        return new Promise(function(resolve, reject) {
+          var s = document.createElement("script");
+          s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+          s.async = true;
+          s.onload = function() {
+            if (window.jspdf && window.jspdf.jsPDF) resolve(window.jspdf);
+            else reject(new Error("jsPDF não disponível"));
+          };
+          s.onerror = function() { reject(new Error("Falha ao carregar jsPDF")); };
+          document.head.appendChild(s);
+        });
+      }
+
       function generatePdf() {
         if (!hasAcceptedTerms()) {
           showToast("Para gerar o PDF, aceite os termos no início da página.");
@@ -2882,12 +2929,9 @@
           return;
         }
 
+        loadJsPdf().then(function(jspdfMod) {
         try {
-          if (!window.jspdf || !window.jspdf.jsPDF) {
-            showToast("Biblioteca jsPDF não foi carregada.");
-            return;
-          }
-          const { jsPDF } = window.jspdf;
+          const { jsPDF } = jspdfMod;
           const doc = new jsPDF({ unit: "pt", format: "a4" });
           const margin = 56;
           const pageWidth = doc.internal.pageSize.getWidth();
@@ -3211,6 +3255,9 @@
         } catch {
           showToast("Não foi possível gerar o PDF.");
         }
+        }).catch(function(err) {
+          showToast(err && err.message ? err.message : "Biblioteca jsPDF não foi carregada. Verifique sua conexão.");
+        });
       }
 
       function resetAll() {
