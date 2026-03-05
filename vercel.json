@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/calculadora.js", "destination": "/calculadora.js" },
+    { "source": "/compliance.js", "destination": "/compliance.js" },
+    { "source": "/privacidade.html", "destination": "/privacidade.html" },
+    { "source": "/privacidade", "destination": "/privacidade/index.html" },
+    { "source": "/privacidade/", "destination": "/privacidade/index.html" }
+  ]
+}
