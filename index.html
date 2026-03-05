@@ -123,6 +123,12 @@
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-3">
               <label
+                class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-indigo-400/30 bg-indigo-500/15 px-3 py-2 text-xs text-indigo-100 hover:bg-indigo-500/25"
+              >
+                <input id="advancedMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
+                <span>Modo Essencial | Modo Avançado (Premium)</span>
+              </label>
+              <label
                 class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800"
               >
                 <input id="proposalMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
@@ -463,6 +469,50 @@
               </div>
             </div>
 
+            <div id="advancedConfigCard" class="mt-6 hidden rounded-2xl border border-indigo-400/30 bg-indigo-500/10 p-4">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <h3 class="text-sm font-semibold text-indigo-100">Configuração Premium</h3>
+                  <p class="text-xs text-indigo-200/80">Estratégia de preço com patrimônio, escassez, risco e exaustão.</p>
+                </div>
+                <label class="inline-flex items-center gap-2 text-xs text-indigo-100">
+                  <input id="enableMonteCarlo" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
+                  Monte Carlo (quando houver histórico)
+                </label>
+              </div>
+              <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="assetValue">Valor de ativos (CAPEX total)</label>
+                  <input id="assetValue" type="number" min="0" step="100" class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="assetUsefulLifeMonths">Vida útil dos ativos (meses)</label>
+                  <input id="assetUsefulLifeMonths" type="number" min="1" max="1200" step="1" class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="opportunityRateAnnual">Taxa anual de oportunidade (%)</label>
+                  <input id="opportunityRateAnnual" type="number" min="0" max="300" step="0.1" class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="occupancyRate">Ocupação da agenda (%)</label>
+                  <input id="occupancyRate" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="weeklyHours">Horas semanais planejadas</label>
+                  <input id="weeklyHours" type="number" min="1" max="120" step="1" class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-slate-200" for="scopeVolatility">Volatilidade de escopo</label>
+                  <select id="scopeVolatility" class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50">
+                    <option value="low">Baixa</option>
+                    <option value="medium" selected>Média</option>
+                    <option value="high">Alta</option>
+                  </select>
+                </div>
+              </div>
+              <p class="mt-3 text-[11px] text-indigo-200/80">Estimativa estratégica; não constitui consultoria fiscal, jurídica ou financeira.</p>
+            </div>
+
             <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
@@ -596,6 +646,13 @@
               <div id="alertsList" class="mt-4 space-y-2 text-sm text-slate-200"></div>
             </div>
 
+            <div id="explainabilityCard" class="hidden rounded-2xl border border-indigo-400/30 bg-indigo-500/10 p-5 shadow-soft backdrop-blur">
+              <h3 class="text-sm font-semibold text-indigo-100">Como chegamos nesse preço</h3>
+              <p id="advancedModelLabel" class="mt-1 text-xs text-indigo-200/80">Modelo: estimativa por faixa</p>
+              <div id="explainabilityList" class="mt-4 space-y-2 text-xs text-slate-100"></div>
+              <div id="advancedWarnings" class="mt-4 space-y-2 text-xs"></div>
+            </div>
+
             <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
               <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
@@ -681,7 +738,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module">
-      let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts;
+      let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
+      let computeAdvancedPricing, deriveHistoricalVarianceSamples;
 
       function showBootError(err, context) {
         const ctx = context ? context + ": " : "";
@@ -715,6 +773,7 @@
           TERMS_VERSION = compMod.TERMS_VERSION;
           appendAuditSnapshot = compMod.appendAuditSnapshot;
           LEGAL_DISCLAIMER = compMod.LEGAL_DISCLAIMER;
+          getAuditTrail = compMod.getAuditTrail;
         } catch (e) {
           showBootError(e, "Falha ao carregar compliance.js");
           return;
@@ -725,8 +784,18 @@
         } catch (_) {
           evaluateBenchmarkAlerts = () => [];
         }
+        try {
+          const advancedMod = await import("./advanced-pricing.js");
+          computeAdvancedPricing = advancedMod.computeAdvancedPricing;
+          deriveHistoricalVarianceSamples = advancedMod.deriveHistoricalVarianceSamples;
+        } catch (_) {
+          computeAdvancedPricing = null;
+          deriveHistoricalVarianceSamples = () => [];
+        }
 
-      const STORAGE_KEY = "freela_precificacao_v1";
+      const STORAGE_KEY = "freela_precificacao_v2";
+      const LEGACY_STORAGE_KEY = "freela_precificacao_v1";
+      const STORAGE_SCHEMA_VERSION = 2;
       const SCENARIOS_KEY = "freela_scenarios_v1";
       const INTEGRATIONS_KEY = "freela_integrations_v1";
       const DISMISSED_ALERTS_KEY = "freela_dismissed_alerts_v1";
@@ -784,6 +853,15 @@
         shareIncludeNames: $("shareIncludeNames"),
         btnExportConfig: $("btnExportConfig"),
         btnReset: $("btnReset"),
+        advancedMode: $("advancedMode"),
+        advancedConfigCard: $("advancedConfigCard"),
+        enableMonteCarlo: $("enableMonteCarlo"),
+        assetValue: $("assetValue"),
+        assetUsefulLifeMonths: $("assetUsefulLifeMonths"),
+        opportunityRateAnnual: $("opportunityRateAnnual"),
+        occupancyRate: $("occupancyRate"),
+        weeklyHours: $("weeklyHours"),
+        scopeVolatility: $("scopeVolatility"),
 
         proposalMode: $("proposalMode"),
         configWrapper: $("configWrapper"),
@@ -796,6 +874,10 @@
         compositionChart: $("compositionChart"),
         compositionLegend: $("compositionLegend"),
         alertsList: $("alertsList"),
+        explainabilityCard: $("explainabilityCard"),
+        explainabilityList: $("explainabilityList"),
+        advancedWarnings: $("advancedWarnings"),
+        advancedModelLabel: $("advancedModelLabel"),
         btnImportConfig: $("btnImportConfig"),
         importConfigInput: $("importConfigInput"),
         resultError: $("resultError"),
@@ -1090,10 +1172,18 @@
           clientName: ((els.clientName && els.clientName.value) || "").trim(),
           validityDate: (els.validityDate && els.validityDate.value) || "",
           proposalMode: !!(els.proposalMode && els.proposalMode.checked),
+          advancedMode: !!(els.advancedMode && els.advancedMode.checked),
+          enableMonteCarlo: !!(els.enableMonteCarlo && els.enableMonteCarlo.checked),
 
           projectHours: clamp(toNum(els.projectHours && els.projectHours.value), 0, 100000),
           scopeRisk: clamp(toNum(els.scopeRisk && els.scopeRisk.value), 0, 100),
           discount: clamp(toNum(els.discount && els.discount.value), 0, 90),
+          assetValue: clamp(toNum(els.assetValue && els.assetValue.value), 0, 1e12),
+          assetUsefulLifeMonths: clamp(toNum(els.assetUsefulLifeMonths && els.assetUsefulLifeMonths.value), 1, 1200),
+          opportunityRateAnnual: clamp(toNum(els.opportunityRateAnnual && els.opportunityRateAnnual.value), 0, 300),
+          occupancyRate: clamp(toNum(els.occupancyRate && els.occupancyRate.value), 0, 100),
+          weeklyHours: clamp(toNum(els.weeklyHours && els.weeklyHours.value), 1, 120),
+          scopeVolatility: (((els.scopeVolatility && els.scopeVolatility.value) || "medium").toLowerCase()),
         };
       }
 
@@ -1115,6 +1205,12 @@
         if (els.proposalMode) {
           els.proposalMode.checked = !!s.proposalMode;
         }
+        if (els.advancedMode) {
+          els.advancedMode.checked = !!s.advancedMode;
+        }
+        if (els.enableMonteCarlo) {
+          els.enableMonteCarlo.checked = !!s.enableMonteCarlo;
+        }
         if (typeof s.logoDataUrl === "string" && s.logoDataUrl.startsWith("data:image/")) {
           logoDataUrl = s.logoDataUrl;
         }
@@ -1122,6 +1218,16 @@
         if (els.projectHours) els.projectHours.value = s.projectHours ?? 30;
         if (els.scopeRisk) els.scopeRisk.value = s.scopeRisk ?? 15;
         if (els.discount) els.discount.value = s.discount ?? 0;
+        if (els.assetValue) els.assetValue.value = s.assetValue ?? 0;
+        if (els.assetUsefulLifeMonths) els.assetUsefulLifeMonths.value = s.assetUsefulLifeMonths ?? 48;
+        if (els.opportunityRateAnnual) els.opportunityRateAnnual.value = s.opportunityRateAnnual ?? 12;
+        if (els.occupancyRate) els.occupancyRate.value = s.occupancyRate ?? 70;
+        if (els.weeklyHours) els.weeklyHours.value = s.weeklyHours ?? 40;
+        if (els.scopeVolatility) {
+          const allowed = ["low", "medium", "high"];
+          const value = allowed.includes(s.scopeVolatility) ? s.scopeVolatility : "medium";
+          els.scopeVolatility.value = value;
+        }
       }
 
       function safeText(node, text) {
@@ -1185,7 +1291,7 @@
         }
       }
 
-      function computeCompositionParts(s, r) {
+      function computeCompositionParts(s, r, ctx) {
         if (!r.ok || !Number.isFinite(r.revenueTarget) || r.revenueTarget <= 0) return [];
         const revenueTarget = r.revenueTarget;
         const income = Math.max(0, Number(s.targetIncome) || 0);
@@ -1198,6 +1304,16 @@
           { key: "taxes", label: "Impostos (estimado)", value: taxes, color: "#f59e0b" },
           { key: "reserve", label: "Reserva (lucro + buffer)", value: reserve, color: "#a78bfa" },
         ];
+        if (ctx && ctx.mode === "advanced" && ctx.advanced && ctx.advanced.ok) {
+          const dep = Math.max(0, ctx.advanced.data.depreciationMonthly || 0);
+          const opp = Math.max(0, ctx.advanced.data.opportunityCostMonthly || 0);
+          const adjustments = Math.max(0, (ctx.advanced.output.hourly - ctx.advanced.data.grossUp) * Math.max(r.billableHours || 0, 0));
+          rawParts.push(
+            { key: "dep", label: "Depreciação", value: dep, color: "#22d3ee" },
+            { key: "opp", label: "Custo de oportunidade", value: opp, color: "#f97316" },
+            { key: "adj", label: "Ajuste risco/escassez/exaustão", value: adjustments, color: "#f43f5e" }
+          );
+        }
         const total = rawParts.reduce((acc, p) => acc + p.value, 0) || 1;
         return rawParts.map((p) => ({
           ...p,
@@ -1205,9 +1321,9 @@
         }));
       }
 
-      function renderComposition(s, r) {
+      function renderComposition(s, r, ctx) {
         if (!els.compositionChart || !els.compositionLegend) return;
-        const parts = computeCompositionParts(s, r);
+        const parts = computeCompositionParts(s, r, ctx);
         if (!parts.length) {
           els.compositionChart.style.background = "linear-gradient(135deg, #1f2937, #0f172a)";
           els.compositionLegend.innerHTML = '<p class="text-xs text-slate-400">Preencha os dados válidos para visualizar.</p>';
@@ -1329,10 +1445,12 @@
 
       function captureScenarioPayload() {
         const s = getStateFromInputs();
-        const r = compute(s);
+        const ctx = buildPricingContext(s);
+        const r = ctx.effective;
         if (!r.ok) return null;
         return {
           savedAt: new Date().toISOString(),
+          mode: ctx.mode,
           inputs: { ...s },
           outputs: {
             hourly: r.hourly,
@@ -1382,10 +1500,12 @@
 
       function buildExportPayload() {
         const inputs = getStateFromInputs();
-        const outputs = compute(inputs);
+        const ctx = buildPricingContext(inputs);
+        const outputs = ctx.effective;
         return {
           timestamp: new Date().toISOString(),
           app: "calculadora-freelancer",
+          mode: ctx.mode,
           inputs,
           outputs,
         };
@@ -1546,11 +1666,89 @@
         });
       }
 
+      function getAdvancedWarningsBundle(s, essential, advanced) {
+        const warnings = [];
+        if (!advanced || !advanced.ok) return warnings;
+        const patrimonialHourly = (advanced.data.depreciationMonthly + advanced.data.opportunityCostMonthly) / Math.max(essential.billableHours || 1, 1);
+        if ((advanced.output.hourly || 0) <= patrimonialHourly) {
+          warnings.push("Erosao patrimonial: o preco/hora nao cobre o peso de depreciacao e oportunidade.");
+        }
+        if ((advanced.data.exhaustionFactor || 1) > 1.1) {
+          warnings.push("Risco de burnout: fator de exaustao acima do nivel recomendado.");
+        }
+        if ((advanced.data.scarcityFactor || 1) > 1.08) {
+          warnings.push("Escassez favoravel: ocupacao atual justifica markup premium.");
+        }
+        return warnings;
+      }
+
+      function buildPricingContext(s) {
+        const essential = compute(s);
+        if (!s.advancedMode || !computeAdvancedPricing) {
+          return { mode: "essential", effective: essential, essential, advanced: null, warning: "" };
+        }
+        if (!essential.ok) {
+          return { mode: "advanced_fallback", effective: essential, essential, advanced: null, warning: "Modo Avancado indisponivel ate corrigir os dados essenciais." };
+        }
+        const history = deriveHistoricalVarianceSamples(getAuditTrail ? getAuditTrail() : []);
+        const advanced = computeAdvancedPricing({
+          state: s,
+          essential,
+          useMonteCarlo: !!s.enableMonteCarlo,
+          historicalSamples: history,
+        });
+        if (!advanced.ok || !advanced.output || !advanced.output.ok) {
+          return {
+            mode: "advanced_fallback",
+            effective: essential,
+            essential,
+            advanced: null,
+            warning: (advanced && advanced.error && advanced.error.message) || "Modo Avancado invalido. Retornamos para o Modo Essencial.",
+          };
+        }
+        return { mode: "advanced", effective: advanced.output, essential, advanced, warning: "" };
+      }
+
+      function renderExplainability(s, ctx) {
+        if (!els.explainabilityCard || !els.explainabilityList || !els.advancedWarnings || !els.advancedModelLabel) return;
+        const isAdvanced = s.advancedMode && ctx.mode === "advanced" && ctx.advanced;
+        els.explainabilityCard.classList.toggle("hidden", !isAdvanced);
+        if (!isAdvanced) return;
+        const a = ctx.advanced;
+        const curr = sanitizeCurrency(s.currency);
+        const baseRef = Math.max(a.data.baseHourly, 0.0001);
+        const rows = [
+          ["Patrimonio (depreciacao + oportunidade)", a.data.contributions.patrimonio, "Cobertura do desgaste dos ativos e custo de capital."],
+          ["Risco de escopo", a.data.contributions.risco, "Ajuste de incerteza do escopo (volatilidade)."],
+          ["Escassez de agenda", a.data.contributions.escassez, "Ajuste por ocupacao e capacidade limitada."],
+          ["Exaustao operacional", a.data.contributions.exaustao, "Compensacao por carga semanal elevada."],
+        ];
+        els.explainabilityList.innerHTML = rows.map(([label, val, text]) => {
+          const value = Number(val || 0);
+          const pct = (Math.abs(value) / baseRef) * 100;
+          const signal = value >= 0 ? "+" : "-";
+          return `<div class="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+            <p class="font-medium">${label}</p>
+            <p class="text-indigo-100">${signal}${fmtMoney(Math.abs(value), curr)} · ${fmtNumber(pct, 1)}%</p>
+            <p class="text-slate-300">${text}</p>
+          </div>`;
+        }).join("");
+        if (a.mode === "montecarlo" && a.stochastic) {
+          els.advancedModelLabel.textContent = `Modelo: Monte Carlo (P50 ${fmtNumber(a.stochastic.p50, 2)}x · P80 ${fmtNumber(a.stochastic.p80, 2)}x · P95 ${fmtNumber(a.stochastic.p95, 2)}x)`;
+        } else {
+          els.advancedModelLabel.textContent = "Modelo: estimativa por faixa (deterministico)";
+        }
+        const warns = getAdvancedWarningsBundle(s, ctx.essential, ctx.advanced);
+        els.advancedWarnings.innerHTML = warns.length
+          ? warns.map((w) => `<div class="rounded-lg border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-amber-100">${w}</div>`).join("")
+          : '<div class="rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-2 text-emerald-100">Sem alertas criticos no modo avancado.</div>';
+      }
+
       function scheduleAuditSnapshot() {
         clearTimeout(auditDebounceTimer);
         auditDebounceTimer = setTimeout(() => {
           const s = getStateFromInputs();
-          const r = compute(s);
+          const r = buildPricingContext(s).effective;
           if (!r.ok || !hasAcceptedTerms()) return;
           const snapshot = {
             inputs: { ...s },
@@ -1572,7 +1770,8 @@
 
       function updateUI() {
         const s = getStateFromInputs();
-        const r = compute(s);
+        const pricingCtx = buildPricingContext(s);
+        const r = pricingCtx.effective;
 
         // normalize inputs (clamp) — only when elements exist
         if (els.taxRate) els.taxRate.value = s.taxRate;
@@ -1584,11 +1783,19 @@
         if (els.vacationWeeks) els.vacationWeeks.value = s.vacationWeeks;
         if (els.scopeRisk) els.scopeRisk.value = s.scopeRisk;
         if (els.discount) els.discount.value = s.discount;
+        if (els.assetValue) els.assetValue.value = s.assetValue;
+        if (els.assetUsefulLifeMonths) els.assetUsefulLifeMonths.value = s.assetUsefulLifeMonths;
+        if (els.opportunityRateAnnual) els.opportunityRateAnnual.value = s.opportunityRateAnnual;
+        if (els.occupancyRate) els.occupancyRate.value = s.occupancyRate;
+        if (els.weeklyHours) els.weeklyHours.value = s.weeklyHours;
 
         const curr = s.currency;
 
         if (els.resultError) {
-          if (!r.ok && r.error) {
+          if (pricingCtx.warning) {
+            els.resultError.textContent = pricingCtx.warning;
+            els.resultError.classList.remove("hidden");
+          } else if (!r.ok && r.error) {
             els.resultError.textContent = r.error.message;
             els.resultError.classList.remove("hidden");
           } else {
@@ -1669,14 +1876,18 @@
           safeText(els.proposalText, "—");
         }
 
-        renderComposition(s, r);
+        renderComposition(s, r, pricingCtx);
         renderAlerts(s, r);
         renderScenariosComparison();
+        renderExplainability(s, pricingCtx);
 
         persistState(s);
 
         if (els.configWrapper) {
           els.configWrapper.classList.toggle("hidden", !!s.proposalMode);
+        }
+        if (els.advancedConfigCard) {
+          els.advancedConfigCard.classList.toggle("hidden", !s.advancedMode);
         }
         if (els.calcCard) {
           if (s.proposalMode) {
@@ -1756,7 +1967,12 @@
 
       function persistState(s) {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+          const payload = {
+            schemaVersion: STORAGE_SCHEMA_VERSION,
+            data: s,
+            savedAt: new Date().toISOString(),
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
         } catch {
           // ignore
         }
@@ -1764,8 +1980,23 @@
 
       function loadState() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          return raw ? JSON.parse(raw) : null;
+          const rawV2 = localStorage.getItem(STORAGE_KEY);
+          if (rawV2) {
+            const parsed = JSON.parse(rawV2);
+            if (parsed && typeof parsed === "object" && parsed.schemaVersion === STORAGE_SCHEMA_VERSION && parsed.data) {
+              return parsed.data;
+            }
+            if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+              return parsed;
+            }
+          }
+
+          const rawLegacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+          if (!rawLegacy) return null;
+          const legacyParsed = JSON.parse(rawLegacy);
+          if (!legacyParsed || typeof legacyParsed !== "object" || Array.isArray(legacyParsed)) return null;
+          persistState({ ...defaultState(), ...legacyParsed });
+          return { ...defaultState(), ...legacyParsed };
         } catch {
           return null;
         }
@@ -1797,6 +2028,14 @@
         "scopeRisk",
         "discount",
         "proposalMode",
+        "advancedMode",
+        "enableMonteCarlo",
+        "assetValue",
+        "assetUsefulLifeMonths",
+        "opportunityRateAnnual",
+        "occupancyRate",
+        "weeklyHours",
+        "scopeVolatility",
       ];
 
       function buildShareUrl(s, includePii) {
@@ -1836,6 +2075,14 @@
         if (p.has("scopeRisk")) s.scopeRisk = toNum(p.get("scopeRisk"));
         if (p.has("discount")) s.discount = toNum(p.get("discount"));
         if (p.has("proposalMode")) s.proposalMode = p.get("proposalMode") === "true";
+        if (p.has("advancedMode")) s.advancedMode = p.get("advancedMode") === "true";
+        if (p.has("enableMonteCarlo")) s.enableMonteCarlo = p.get("enableMonteCarlo") === "true";
+        if (p.has("assetValue")) s.assetValue = toNum(p.get("assetValue"));
+        if (p.has("assetUsefulLifeMonths")) s.assetUsefulLifeMonths = toNum(p.get("assetUsefulLifeMonths"));
+        if (p.has("opportunityRateAnnual")) s.opportunityRateAnnual = toNum(p.get("opportunityRateAnnual"));
+        if (p.has("occupancyRate")) s.occupancyRate = toNum(p.get("occupancyRate"));
+        if (p.has("weeklyHours")) s.weeklyHours = toNum(p.get("weeklyHours"));
+        if (p.has("scopeVolatility")) s.scopeVolatility = (p.get("scopeVolatility") || "medium").toLowerCase();
         setInputsFromState(s);
         return true;
       }
@@ -1859,6 +2106,14 @@
           scopeRisk: 15,
           discount: 0,
           proposalMode: false,
+          advancedMode: false,
+          enableMonteCarlo: false,
+          assetValue: 0,
+          assetUsefulLifeMonths: 48,
+          opportunityRateAnnual: 12,
+          occupancyRate: 70,
+          weeklyHours: 40,
+          scopeVolatility: "medium",
         };
       }
 
@@ -1868,7 +2123,7 @@
           return;
         }
         const s = getStateFromInputs();
-        const r = compute(s);
+        const r = buildPricingContext(s).effective;
         const curr = s.currency;
         const proposalMode = !!s.proposalMode;
 
@@ -2080,6 +2335,7 @@
       function resetAll() {
         try {
           localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
         } catch {
           // ignore
         }
@@ -2106,6 +2362,12 @@
           els.projectHours,
           els.scopeRisk,
           els.discount,
+          els.assetValue,
+          els.assetUsefulLifeMonths,
+          els.opportunityRateAnnual,
+          els.occupancyRate,
+          els.weeklyHours,
+          els.scopeVolatility,
         ];
         for (const el of inputs) {
           if (el) {
@@ -2120,7 +2382,7 @@
             return;
           }
           const s = getStateFromInputs();
-          const r = compute(s);
+          const r = buildPricingContext(s).effective;
           if (!r.ok || r.hourly == null) return showToast("Nada para copiar.");
           copyToClipboard(fmtMoney(r.hourly, s.currency), "Taxa/hora copiada.");
         });
@@ -2130,7 +2392,7 @@
             return;
           }
           const s = getStateFromInputs();
-          const r = compute(s);
+          const r = buildPricingContext(s).effective;
           if (!r.ok || r.projectNet == null || s.projectHours <= 0) return showToast("Nada para copiar.");
           copyToClipboard(fmtMoney(r.projectNet, s.currency), "Valor do projeto copiado.");
         });
@@ -2212,6 +2474,12 @@
 
         if (els.proposalMode) {
           els.proposalMode.addEventListener("change", updateUI);
+        }
+        if (els.advancedMode) {
+          els.advancedMode.addEventListener("change", updateUI);
+        }
+        if (els.enableMonteCarlo) {
+          els.enableMonteCarlo.addEventListener("change", updateUI);
         }
       }
 
