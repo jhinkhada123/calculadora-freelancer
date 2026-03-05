@@ -117,6 +117,36 @@
       class="pointer-events-none fixed inset-0 bg-[radial-gradient(1000px_circle_at_20%_-10%,rgba(99,102,241,.35),transparent_60%),radial-gradient(900px_circle_at_80%_10%,rgba(16,185,129,.25),transparent_55%),radial-gradient(900px_circle_at_60%_120%,rgba(236,72,153,.22),transparent_60%)]"
     ></div>
 
+    <div id="clientViewContainer" class="hidden">
+      <div class="mx-auto max-w-2xl px-4 py-16">
+        <h1 class="font-serif text-2xl font-semibold text-slate-100">Resumo da proposta</h1>
+        <p class="mt-2 text-sm text-slate-400">Valores para aprovação do cliente.</p>
+        <dl class="mt-8 space-y-4 rounded-2xl border border-white/10 bg-ink-900/70 p-6">
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Valor total</dt>
+            <dd id="clientViewTotal" class="mt-1 text-xl font-semibold text-slate-100">—</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Prazo</dt>
+            <dd id="clientViewPrazo" class="mt-1 text-slate-200">—</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Validade</dt>
+            <dd id="clientViewValidade" class="mt-1 text-slate-200">—</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Moeda</dt>
+            <dd id="clientViewMoeda" class="mt-1 text-slate-200">—</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Profissional</dt>
+            <dd id="clientViewProfissional" class="mt-1 text-slate-200">—</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <div id="appContainer">
     <header class="relative">
       <div class="mx-auto max-w-6xl px-4 py-10 sm:py-12">
         <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -922,6 +952,7 @@
         </p>
       </div>
     </footer>
+    </div>
 
     <div
       id="toast"
@@ -2083,7 +2114,6 @@
         if (subheadlineNode) subheadlineNode.textContent = BRAND_SUBHEADLINE;
 
         const ctaMap = {
-          btnShare: "Comparar cenários",
           btnExportConfig: "Exportar configuração",
           btnImportConfig: "Importar configuração",
           btnCopyProposal: "Copiar proposta",
@@ -2714,13 +2744,18 @@
         "custoPessoalMensal",
       ];
 
-      function buildShareUrl(s, includePii) {
+      function buildShareUrl(s, includePii, extraParams) {
         const url = new URL(window.location.href);
         const params = new URLSearchParams();
         const piiKeys = ["professionalName", "clientName"];
         for (const k of QUERY_PARAM_KEYS) {
           if (piiKeys.includes(k) && !includePii) continue;
           params.set(k, String(s[k] ?? ""));
+        }
+        if (extraParams && typeof extraParams === "object") {
+          for (const [k, v] of Object.entries(extraParams)) {
+            if (v != null && v !== "") params.set(k, String(v));
+          }
         }
         url.search = params.toString();
         return url.toString();
@@ -3306,7 +3341,9 @@
           }
           const s = getStateFromInputs();
           const includePii = !!(els.shareIncludeNames && els.shareIncludeNames.checked);
-          const url = buildShareUrl(s, includePii);
+          const r = buildPricingContext(s).effective;
+          const projectNet = r.ok && r.projectNet != null ? r.projectNet : null;
+          const url = buildShareUrl(s, includePii, projectNet != null ? { projectNet } : undefined);
           copyToClipboard(url, "Link copiado.");
         });
         if (els.btnExportConfig) els.btnExportConfig.addEventListener("click", exportConfig);
@@ -3455,8 +3492,50 @@
         }
       }
 
+      const CLIENT_VIEW_SAFE_PARAMS = ["currency", "validityDate", "professionalName", "projectHours", "projectNet"];
+
+      function isClientView() {
+        try {
+          const p = new URL(window.location.href).searchParams;
+          return p.get("view") === "client";
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function initClientView() {
+        const appContainer = document.getElementById("appContainer");
+        const clientViewContainer = document.getElementById("clientViewContainer");
+        const termsModal = document.getElementById("termsModal");
+        if (!appContainer || !clientViewContainer) return;
+        if (termsModal) termsModal.style.display = "none";
+        appContainer.classList.add("hidden");
+        clientViewContainer.classList.remove("hidden");
+
+        const p = new URL(window.location.href).searchParams;
+        const currency = sanitizeCurrency(p.get("currency") || "BRL");
+        const validityDate = (p.get("validityDate") || "").trim();
+        const professionalName = (p.get("professionalName") || "").trim();
+        const projectHours = toNum(p.get("projectHours"));
+        const projectNet = toNum(p.get("projectNet"));
+
+        const setEl = (id, text) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = text || "—";
+        };
+        setEl("clientViewTotal", projectNet > 0 ? fmtMoney(projectNet, currency) : "—");
+        setEl("clientViewPrazo", projectHours > 0 ? `${projectHours} horas` : "—");
+        setEl("clientViewValidade", validityDate || "—");
+        setEl("clientViewMoeda", currency);
+        setEl("clientViewProfissional", professionalName || "—");
+      }
+
       try {
         (function init() {
+          if (isClientView()) {
+            initClientView();
+            return;
+          }
           const applied = applyQueryParams();
           if (!applied) {
             const saved = loadState();
