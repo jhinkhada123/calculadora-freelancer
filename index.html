@@ -2738,6 +2738,26 @@
         }
       }
 
+      const WEBHOOK_CALCULADORA_URL = "https://n8n-dev-calculadora.app.n8n.cloud";
+
+      async function sendCalculadoraToWebhook(dados) {
+        try {
+          const resp = await fetch(WEBHOOK_CALCULADORA_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados),
+          });
+          if (!resp.ok) {
+            console.error("Webhook calculadora - falha HTTP:", resp.status);
+            return null;
+          }
+          return await resp.json().catch(() => null);
+        } catch (err) {
+          console.error("Webhook calculadora - erro:", err);
+          return null;
+        }
+      }
+
       function setupInstallPrompt() {
         window.addEventListener("beforeinstallprompt", (e) => {
           e.preventDefault();
@@ -3975,6 +3995,8 @@
           showToast(r.error ? r.error.message : "Preencha os dados principais antes de gerar o PDF.");
           return;
         }
+
+        sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora - erro:", err));
 
         const useExecutiveBuilder = !!FEATURE_FLAGS.pdf_executive_proposal_enabled && proposalMode;
 
