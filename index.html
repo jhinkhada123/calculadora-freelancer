@@ -3457,15 +3457,12 @@
               }
             }
             const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
-            const disclaimerLines = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
             const validadeTexto = (s.validityDate && String(s.validityDate).trim())
-              ? `Proposta válida até ${String(s.validityDate).trim()}.`
-              : "Proposta válida por 7 dias.";
+              ? `Proposta v\u00E1lida at\u00E9 ${String(s.validityDate).trim()}.`
+              : "Proposta v\u00E1lida por 7 dias.";
             const approvalLine = `${validadeTexto} Para aprovar, responda esta proposta com 'APROVADO'.`;
-            const approvalLines = doc.splitTextToSize(approvalLine, pageWidth - 2 * margin);
             const investmentBlockHeight = projectOk ? 58 : 46;
-            const footerHeight = (disclaimerLines.length * 10) + 4 + (approvalLines.length * 10);
-            ensureSpace(investmentBlockHeight + footerHeight + 12);
+            ensureSpace(investmentBlockHeight + 40);
 
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
@@ -3484,13 +3481,12 @@
               doc.text("Preencha as horas estimadas para calcular o investimento.", margin, y);
             }
 
+            advanceY(projectOk ? 26 : 18);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
-            let footerY = pageHeight - margin - (disclaimerLines.length * 10) - (approvalLines.length * 10) - 14;
-            doc.text(disclaimerLines, margin, footerY);
-            footerY += disclaimerLines.length * 10 + 4;
+            writeWrappedSummary(LEGAL_DISCLAIMER, { lineHeight: 10, spacingAfter: 6, minRoom: 28 });
             doc.setFontSize(9);
-            doc.text(approvalLines, margin, footerY);
+            writeWrappedSummary(approvalLine, { lineHeight: 10, spacingAfter: 0, minRoom: 24 });
           } else {
             if (logoDataUrl) {
               const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
@@ -4118,6 +4114,7 @@
     </script>
   </body>
 </html>
+
 
 
 
