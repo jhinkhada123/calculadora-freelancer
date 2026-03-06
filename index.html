@@ -3494,16 +3494,15 @@
               const logoHeight = 40;
               doc.addImage(logoDataUrl, format, pageWidth - margin - logoWidth, margin - 10, logoWidth, logoHeight);
             }
-            doc.setFont("helvetica", "bold");
+                        doc.setFont("helvetica", "bold");
             doc.setFontSize(18);
-            doc.text(
-              pdfV2
-                ? `${BRAND_NAME} - Relatório Consultivo de Precificação`
-                : `${BRAND_NAME} - Proposta de Prestação de Serviços`,
-              margin,
-              y
-            );
-            y += 26;
+            const reportTitle = pdfV2
+              ? `${BRAND_NAME} - Relatório Consultivo de Precificação`
+              : `${BRAND_NAME} - Proposta de Prestação de Serviços`;
+            const titleMaxWidth = pageWidth - (2 * margin) - (logoDataUrl ? 136 : 0);
+            const titleLines = doc.splitTextToSize(reportTitle, Math.max(240, titleMaxWidth));
+            doc.text(titleLines, margin, y);
+            y += titleLines.length * 22;
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
             if (s.professionalName) {
@@ -4114,6 +4113,7 @@
     </script>
   </body>
 </html>
+
 
 
 
