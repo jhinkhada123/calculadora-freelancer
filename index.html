@@ -581,46 +581,6 @@
                   >
                     Ferramentas
                   </button>
-                  <div
-                    id="toolsDropdown"
-                    class="absolute right-0 top-full z-[140] mt-1 hidden min-w-[260px] rounded-xl border border-white/15 bg-ink-900 shadow-soft py-2"
-                    role="menu"
-                  >
-                    <button id="toolsReset" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Resetar</button>
-                    <button id="toolsExport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Exportar configura&ccedil;&otilde;es</button>
-                    <button id="toolsImport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Importar configura&ccedil;&otilde;es</button>
-                    <input id="importConfigInput" type="file" accept=".txt,.json,application/json,text/plain" class="hidden" />
-                    <button id="toolsInstall" type="button" class="hidden w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Instalar app</button>
-                    <div class="my-2 border-t border-white/10"></div>
-                    <div class="px-4 py-2">
-                      <p class="mb-2 text-[10px] text-slate-400">Compartilhamento interno</p>
-                      <label class="inline-flex items-center gap-2 text-xs text-slate-300">
-                        <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
-                        Incluir nomes no link
-                      </label>
-                      <button
-                        id="btnShare"
-                        type="button"
-                        class="btn-compact mt-2 h-9 w-full rounded-lg border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:cursor-not-allowed disabled:opacity-50"
-                        title="Copiar link interno (uso interno; para cliente envie o PDF)"
-                        aria-label="Copiar link interno"
-                        role="menuitem"
-                      >
-                        Copiar link interno
-                      </button>
-                    </div>
-                    <div class="my-2 border-t border-white/10"></div>
-                    <div class="px-4 py-2">
-                      <p class="mb-2 text-[10px] text-slate-400">Logo</p>
-                      <div class="flex items-center gap-2">
-                        <label class="cursor-pointer rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10">
-                          <span id="logoStateText">Adicionar logo</span>
-                          <input id="logoInput" type="file" accept="image/*" class="hidden" />
-                        </label>
-                        <button id="btnRemoveLogo" type="button" class="hidden rounded-lg border border-amber-400/30 px-2 py-1 text-[11px] text-amber-200 hover:bg-amber-500/20">Remover logo</button>
-                      </div>
-                    </div>
-                  </div>
                 </div>
                 <button
                   id="btnPremiumOffer"
@@ -636,6 +596,61 @@
         </div>
       </div>
     </header>
+
+    <div id="toolsBackdrop" class="fixed inset-0 z-[150] hidden bg-black/45 backdrop-blur-[2px]" aria-hidden="true"></div>
+    <div
+      id="toolsDropdown"
+      class="fixed z-[160] hidden w-[340px] rounded-2xl border border-white/10 bg-ink-900/95 p-3 text-slate-100 shadow-soft"
+      role="menu"
+      aria-label="Ferramentas"
+    >
+      <div class="flex items-center justify-between px-1 pb-2">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-300">Ferramentas</p>
+        <button
+          id="toolsClose"
+          type="button"
+          class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-200 hover:bg-white/10"
+        >
+          Fechar
+        </button>
+      </div>
+      <div class="space-y-1">
+        <button id="toolsReset" type="button" class="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Resetar</button>
+        <button id="toolsExport" type="button" class="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Exportar configura&ccedil;&otilde;es</button>
+        <button id="toolsImport" type="button" class="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Importar configura&ccedil;&otilde;es</button>
+        <input id="importConfigInput" type="file" accept=".txt,.json,application/json,text/plain" class="hidden" />
+        <button id="toolsInstall" type="button" class="hidden w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Instalar app</button>
+      </div>
+
+      <div class="my-3 border-t border-white/10"></div>
+
+      <p class="px-1 text-[11px] uppercase tracking-wider text-slate-400">Compartilhamento interno</p>
+      <label class="mt-2 flex items-center gap-2 px-1 text-sm text-slate-200">
+        <input id="shareIncludeNames" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
+        Incluir nomes no link
+      </label>
+      <button
+        id="btnShare"
+        type="button"
+        class="btn-compact mt-2 h-9 w-full rounded-xl border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:cursor-not-allowed disabled:opacity-50"
+        title="Copiar link interno (uso interno; para cliente envie o PDF)"
+        aria-label="Copiar link interno"
+        role="menuitem"
+      >
+        Copiar link interno
+      </button>
+
+      <div class="my-3 border-t border-white/10"></div>
+
+      <p class="px-1 text-[11px] uppercase tracking-wider text-slate-400">Logo</p>
+      <div class="mt-2 flex items-center gap-2 px-1">
+        <label class="cursor-pointer rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-200 hover:bg-white/10">
+          <span id="logoStateText">Adicionar logo</span>
+          <input id="logoInput" type="file" accept="image/*" class="hidden" />
+        </label>
+        <button id="btnRemoveLogo" type="button" class="hidden rounded-xl border border-amber-400/30 px-3 py-2 text-[11px] text-amber-200 hover:bg-amber-500/20">Remover logo</button>
+      </div>
+    </div>
 
     <main class="relative z-10">
       <div id="mainGrid" class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-14 lg:grid-cols-12 lg:items-start">
@@ -1758,6 +1773,8 @@
         btnReset: $("btnReset"),
         btnToolsToggle: $("btnToolsToggle"),
         toolsDropdown: $("toolsDropdown"),
+        toolsBackdrop: $("toolsBackdrop"),
+        toolsClose: $("toolsClose"),
         toolsReset: $("toolsReset"),
         toolsExport: $("toolsExport"),
         toolsImport: $("toolsImport"),
@@ -4574,14 +4591,76 @@
         if (els.btnExportConfig) els.btnExportConfig.addEventListener("click", exportConfig);
         if (els.btnImportConfig) els.btnImportConfig.addEventListener("click", importConfig);
         if (els.btnReset) els.btnReset.addEventListener("click", resetAll);
-        function closeToolsDropdown() {
+        function isToolsMobileViewport() {
+          return window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+        }
+
+        function getToolsMenuItems() {
+          if (!els.toolsDropdown) return [];
+          return Array.from(els.toolsDropdown.querySelectorAll('[role="menuitem"]')).filter((el) => !el.classList.contains("hidden") && !el.disabled);
+        }
+
+        function positionToolsDropdown() {
+          if (!els.btnToolsToggle || !els.toolsDropdown) return;
+          const menu = els.toolsDropdown;
+
+          if (isToolsMobileViewport()) {
+            menu.style.left = "12px";
+            menu.style.right = "12px";
+            menu.style.top = "auto";
+            menu.style.bottom = "12px";
+            menu.style.width = "auto";
+            menu.style.maxHeight = "70vh";
+            menu.style.overflow = "auto";
+            return;
+          }
+
+          menu.style.width = "340px";
+          menu.style.maxHeight = "min(70vh, 520px)";
+          menu.style.overflow = "auto";
+          menu.style.bottom = "auto";
+
+          const anchorRect = els.btnToolsToggle.getBoundingClientRect();
+          const menuRect = menu.getBoundingClientRect();
+
+          let left = anchorRect.right - menuRect.width;
+          left = Math.max(12, Math.min(left, window.innerWidth - menuRect.width - 12));
+
+          let top = anchorRect.bottom + 8;
+          const overBottom = top + menuRect.height > window.innerHeight - 12;
+          if (overBottom) {
+            top = anchorRect.top - menuRect.height - 8;
+          }
+          top = Math.max(12, Math.min(top, window.innerHeight - menuRect.height - 12));
+
+          menu.style.left = left + "px";
+          menu.style.top = top + "px";
+          menu.style.right = "auto";
+        }
+
+        function openToolsDropdown() {
+          if (!els.toolsDropdown) return;
+          if (els.toolsBackdrop) els.toolsBackdrop.classList.remove("hidden");
+          els.toolsDropdown.classList.remove("hidden");
+          if (els.btnToolsToggle) els.btnToolsToggle.setAttribute("aria-expanded", "true");
+          positionToolsDropdown();
+          requestAnimationFrame(positionToolsDropdown);
+          const items = getToolsMenuItems();
+          if (items[0]) requestAnimationFrame(() => items[0].focus());
+        }
+
+        function closeToolsDropdown(options) {
+          const keepFocus = !!(options && options.keepFocus);
+          if (els.toolsBackdrop) els.toolsBackdrop.classList.add("hidden");
           if (els.toolsDropdown) els.toolsDropdown.classList.add("hidden");
           if (els.btnToolsToggle) els.btnToolsToggle.setAttribute("aria-expanded", "false");
+          if (!keepFocus && els.btnToolsToggle) els.btnToolsToggle.focus();
         }
-        if (els.toolsExport) els.toolsExport.addEventListener("click", () => { closeToolsDropdown(); exportConfig(); });
-        if (els.toolsImport) els.toolsImport.addEventListener("click", () => { closeToolsDropdown(); importConfig(); });
-        if (els.toolsReset) els.toolsReset.addEventListener("click", () => { closeToolsDropdown(); resetAll(); });
-        if (els.toolsInstall) els.toolsInstall.addEventListener("click", () => { closeToolsDropdown(); triggerAppInstall(); });
+
+        if (els.toolsExport) els.toolsExport.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); exportConfig(); });
+        if (els.toolsImport) els.toolsImport.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); importConfig(); });
+        if (els.toolsReset) els.toolsReset.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); resetAll(); });
+        if (els.toolsInstall) els.toolsInstall.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); triggerAppInstall(); });
         if (els.btnPrimaryPdfHeader) els.btnPrimaryPdfHeader.addEventListener("click", generatePdf);
         if (els.btnRemoveLogo) els.btnRemoveLogo.addEventListener("click", () => {
           logoDataUrl = null;
@@ -4589,26 +4668,44 @@
           showToast("Logo removida.");
         });
         if (els.btnToolsToggle && els.toolsDropdown) {
-          function getToolsMenuItems() {
-            return Array.from(els.toolsDropdown.querySelectorAll('[role="menuitem"]')).filter((el) => !el.classList.contains("hidden"));
-          }
           els.btnToolsToggle.addEventListener("click", (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            const wasHidden = els.toolsDropdown.classList.contains("hidden");
-            els.toolsDropdown.classList.toggle("hidden");
             const isOpen = !els.toolsDropdown.classList.contains("hidden");
-            els.btnToolsToggle.setAttribute("aria-expanded", String(isOpen));
             if (isOpen) {
-              const items = getToolsMenuItems();
-              if (items[0]) {
-                requestAnimationFrame(() => items[0].focus());
-              }
+              closeToolsDropdown({ keepFocus: true });
+            } else {
+              openToolsDropdown();
             }
           });
+
+          if (els.toolsBackdrop) {
+            els.toolsBackdrop.addEventListener("click", () => closeToolsDropdown({ keepFocus: true }));
+          }
+          if (els.toolsClose) {
+            els.toolsClose.addEventListener("click", () => closeToolsDropdown());
+          }
+
           document.addEventListener("click", (e) => {
+            if (els.toolsDropdown.classList.contains("hidden")) return;
             if (els.toolsDropdown.contains(e.target) || els.btnToolsToggle.contains(e.target)) return;
-            closeToolsDropdown();
+            closeToolsDropdown({ keepFocus: true });
           });
+
+          window.addEventListener("resize", () => {
+            if (!els.toolsDropdown.classList.contains("hidden")) positionToolsDropdown();
+          });
+          window.addEventListener("scroll", () => {
+            if (!els.toolsDropdown.classList.contains("hidden")) positionToolsDropdown();
+          }, true);
+
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && !els.toolsDropdown.classList.contains("hidden")) {
+              e.preventDefault();
+              closeToolsDropdown();
+            }
+          });
+
           els.toolsDropdown.addEventListener("keydown", (e) => {
             const items = getToolsMenuItems();
             if (items.length === 0) return;
@@ -4616,7 +4713,6 @@
             if (e.key === "Escape") {
               e.preventDefault();
               closeToolsDropdown();
-              if (els.btnToolsToggle) els.btnToolsToggle.focus();
               return;
             }
             if (e.key === "ArrowDown" || e.key === "ArrowRight") {
