@@ -2317,8 +2317,8 @@
 
       const TAB_PANELS = ["panel-essential", "panel-premium", "panel-strategist", "panel-scenario", "panel-governance"];
       const TAB_IDS = ["tab-essential", "tab-premium", "tab-strategist", "tab-scenario", "tab-governance"];
-      const TAB_ACTIVE_CLASS = "bg-white/10 border-white/20";
-      const TAB_INACTIVE_CLASS = "bg-white/5 border-white/15";
+      const TAB_ACTIVE_CLASSES = ["bg-white/10", "border-white/20"];
+      const TAB_INACTIVE_CLASSES = ["bg-white/5", "border-white/15"];
 
       function setupTabs() {
         const tablist = document.querySelector('[role="tablist"]');
@@ -2331,11 +2331,11 @@
             if (t) {
               t.setAttribute("aria-selected", String(selected));
               t.setAttribute("tabindex", selected ? "0" : "-1");
-              t.classList.remove(TAB_ACTIVE_CLASS, "border-indigo-300/30", "bg-indigo-500/15", "text-indigo-100");
-              t.classList.add(TAB_INACTIVE_CLASS);
+              t.classList.remove(...TAB_ACTIVE_CLASSES, "border-indigo-300/30", "bg-indigo-500/15", "text-indigo-100");
+              t.classList.add(...TAB_INACTIVE_CLASSES);
               if (selected) {
-                t.classList.remove(TAB_INACTIVE_CLASS);
-                t.classList.add(TAB_ACTIVE_CLASS);
+                t.classList.remove(...TAB_INACTIVE_CLASSES);
+                t.classList.add(...TAB_ACTIVE_CLASSES);
                 if (t.id === "tab-premium") t.classList.add("border-indigo-300/30", "bg-indigo-500/15", "text-indigo-100");
               }
             }
@@ -3978,6 +3978,8 @@
     </script>
   </body>
 </html>
+
+
 
 
 
