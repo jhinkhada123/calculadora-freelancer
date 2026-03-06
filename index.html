@@ -4315,20 +4315,35 @@
           if (!text) return showToast("Nada para copiar.");
           copyToClipboard(text, "Justificativa copiada.");
         });
-        if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
+                if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
             showToast("Para usar esta função, aceite os termos no início da página.");
             return;
           }
+          if (!els.proposalText) return;
           const s = getStateFromInputs();
           const r = buildPricingContext(s).effective;
           const n = buildNegotiationContext(s, r);
-          const baseText = (els.proposalText && els.proposalText.textContent && els.proposalText.textContent !== "—")
-            ? String(els.proposalText.textContent).trim()
+          const payload = String(buildJustificationClipboardText(s, n) || "").trim();
+          if (!payload) {
+            showToast("Nada para inserir.");
+            return;
+          }
+
+          const proposalNode = els.proposalText;
+          const currentText = (proposalNode.textContent && proposalNode.textContent !== "—")
+            ? String(proposalNode.textContent).trim()
             : "";
-          const payload = buildJustificationClipboardText(s, n);
+          const previousPayload = String(proposalNode.dataset.justificationInjected || "").trim();
+
+          let baseText = currentText;
+          if (previousPayload && currentText.endsWith(previousPayload)) {
+            baseText = currentText.slice(0, currentText.length - previousPayload.length).trim();
+          }
+
           const merged = [baseText, payload].filter(Boolean).join("\n\n");
-          if (els.proposalText) els.proposalText.textContent = merged || "—";
+          proposalNode.textContent = merged || "—";
+          proposalNode.dataset.justificationInjected = payload;
           showToast("Justificativa inserida no texto da proposta.");
         });
         if (els.btnShare) els.btnShare.addEventListener("click", () => {
