@@ -398,7 +398,7 @@
         URL.revokeObjectURL(url);
       }
 
-      const WEBHOOK_CALCULADORA_URL = "https://n8n-dev-calculadora.app.n8n.cloud";
+      const WEBHOOK_CALCULADORA_URL = "https://n8n-dev-calculadora.app.n8n.cloud/webhook-test/calculadora-premium";
 
       async function sendCalculadoraToWebhook(dados) {
         console.log("Tentando enviar para o n8n...");
@@ -2479,13 +2479,11 @@
       }
 
       function generatePdf() {
-        const s = getStateFromInputs();
-        sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora – erro:", err));
-
         if (!hasAcceptedTerms()) {
           showToast("Para gerar o PDF, aceite os termos no início da página.");
           return;
         }
+        const s = getStateFromInputs();
         const r = buildPricingContext(s).effective;
         const curr = s.currency;
         const proposalMode = !!s.proposalMode;
@@ -2516,6 +2514,8 @@
           showToast(r.error ? r.error.message : "Preencha os dados principais antes de gerar o PDF.");
           return;
         }
+
+        sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora – erro:", err));
 
         const useExecutiveBuilder = !!FEATURE_FLAGS.pdf_executive_proposal_enabled && proposalMode;
 
@@ -3201,26 +3201,7 @@
         if (els.toolsImport) els.toolsImport.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); importConfig(); });
         if (els.toolsReset) els.toolsReset.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); resetAll(); });
         if (els.toolsInstall) els.toolsInstall.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); triggerAppInstall(); });
-        // Event delegation: garante que sendCalculadoraToWebhook seja chamado ao clicar em qualquer botão "Gerar proposta"
-        const pdfButtonIds = ["btnPrimaryPdfHeader", "btnPrimaryPdfHeaderWrap", "btnPdf", "btnPdfProposal", "btnPdfFromPreview", "btnWizardBottomPdf", "btnMobileA11yPdf"];
-        document.addEventListener("click", (e) => {
-          const clicked = e.target.closest(pdfButtonIds.map((id) => "#" + id).join(", "));
-          if (clicked) {
-            const s = getStateFromInputs();
-            sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora – erro:", err));
-            console.log("Webhook calculadora – dados enviados (pergunta):", s);
-          }
-        }, true);
-
         if (els.btnPrimaryPdfHeader) els.btnPrimaryPdfHeader.addEventListener("click", generatePdf);
-        // Ligação explícita do clique para envio ao n8n (garante disparo do webhook)
-        const btnGerarProposta = document.getElementById("btnPrimaryPdfHeader");
-        if (btnGerarProposta) {
-          btnGerarProposta.addEventListener("click", function () {
-            const dados = getStateFromInputs();
-            sendCalculadoraToWebhook(dados).catch((err) => console.error("Webhook calculadora – erro:", err));
-          });
-        }
         if (els.btnPrimaryPdfHeaderWrap) {
           els.btnPrimaryPdfHeaderWrap.addEventListener("click", (e) => {
             if (e.target === els.btnPrimaryPdfHeader && !els.btnPrimaryPdfHeader.disabled) return;
