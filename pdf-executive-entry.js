@@ -6,7 +6,9 @@
 
 import { buildPdfContext } from "./pdf-context.js";
 import { getPdfDesignSystem } from "./pdf-design-system.js";
+import { loadPdfFonts } from "./pdf-font-loader.js";
 import { buildExecutiveCompletePdf } from "./pdf-proposal-builder.js";
+import { buildExecutiveCompactPdf } from "./pdf-compact-builder.js";
 
 /**
  * Gera o PDF executivo (formato complete).
@@ -15,6 +17,7 @@ import { buildExecutiveCompletePdf } from "./pdf-proposal-builder.js";
  * @param {Object} params.state - Estado da UI (getStateFromInputs)
  * @param {Object} params.jsPdf - Módulo { jsPDF }
  * @param {string|null} params.logoDataUrl - Base64 da logo ou null
+ * @param {string} [params.format] - "complete" | "compact"
  * @param {Object} [params.flags] - { pdf_impact_block_enabled, strategist_mode_enabled }
  * @param {Object} params.deps - Dependências injetadas
  * @param {Function} params.deps.buildPricingContext
@@ -30,12 +33,14 @@ import { buildExecutiveCompletePdf } from "./pdf-proposal-builder.js";
  * @param {string} [params.deps.STRATEGIST_CAVEAT]
  * @param {string} params.deps.LEGAL_DISCLAIMER
  * @param {string} params.deps.BRAND_NAME
- * @returns {Promise<void>} Resolve quando PDF foi salvo
+ * @param {Function} [params.deps.trackEvent]
+ * @returns {Promise<{ fontMode, fallbackUsed }>} Resolve quando PDF foi salvo
  */
 export async function generatePdfExecutive({
   state,
   jsPdf,
   logoDataUrl,
+  format = "complete",
   flags = {},
   deps,
 }) {
@@ -78,10 +83,26 @@ export async function generatePdfExecutive({
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
+  const assets = {
+    logoDataUrl: logoDataUrl || null,
+    brandName: deps.BRAND_NAME || "Calculadora de Precificação para Freelancers",
+    playfairFontUrl: deps.playfairFontUrl ?? null,
+  };
+
+  const fontResult = await loadPdfFonts({
+    doc,
+    assets,
+    strategy: "premium",
+  });
+
+  if (fontResult.fallbackUsed && typeof deps.trackEvent === "function") {
+    deps.trackEvent("pdf_font_fallback_used", { reason: "playfair_unavailable" });
+  }
+
   const design = getPdfDesignSystem({
-    format: "complete",
+    format: format === "compact" ? "compact" : "complete",
     theme: "ink",
-    fontFallbackMode: "helvetica",
+    fonts: fontResult,
     pageWidth,
     pageHeight,
   });
@@ -91,24 +112,29 @@ export async function generatePdfExecutive({
     return deps.fmtMoney(Number(safe.toFixed(2)), curr);
   };
 
-  buildExecutiveCompletePdf({
-    doc,
-    context,
-    design,
-    layout: null,
-    assets: {
-      logoDataUrl: logoDataUrl || null,
-      brandName: deps.BRAND_NAME || "Calculadora de Precificação para Freelancers",
-    },
-    deps: {
-      ensurePdfYSpace: deps.ensurePdfYSpace,
-      fmtMoney: fmtMoneyPdf,
-      fmtNumber: deps.fmtNumber,
-      formatStrategistValue: deps.formatStrategistValue,
-      STRATEGIST_CAVEAT: deps.STRATEGIST_CAVEAT,
-      legalDisclaimer: deps.LEGAL_DISCLAIMER,
-    },
-  });
+  const buildDeps = {
+    ensurePdfYSpace: deps.ensurePdfYSpace,
+    fmtMoney: fmtMoneyPdf,
+    fmtNumber: deps.fmtNumber,
+    formatStrategistValue: deps.formatStrategistValue,
+    STRATEGIST_CAVEAT: deps.STRATEGIST_CAVEAT,
+    legalDisclaimer: deps.LEGAL_DISCLAIMER,
+  };
+
+  if (format === "compact") {
+    buildExecutiveCompactPdf({ doc, context, design, layout: null, assets, deps: buildDeps });
+  } else {
+    buildExecutiveCompletePdf({
+      doc,
+      context,
+      design,
+      layout: null,
+      assets,
+      deps: buildDeps,
+    });
+  }
 
   doc.save("proposta-freelancer.pdf");
+
+  return { fontMode: fontResult.fontMode, fallbackUsed: fontResult.fallbackUsed };
 }

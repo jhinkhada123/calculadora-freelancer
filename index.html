@@ -3740,11 +3740,13 @@
         loadJsPdf().then(async function(jspdfMod) {
         try {
           if (useExecutiveBuilder) {
+            const execFormat = (!!FEATURE_FLAGS.pdf_internal_compact_enabled && s.pdfInternalFormat === "compact") ? "compact" : "complete";
             const mod = await import("./pdf-executive-entry.js");
-            await mod.generatePdfExecutive({
+            const fontResult = await mod.generatePdfExecutive({
               state: s,
               jsPdf: jspdfMod,
               logoDataUrl,
+              format: execFormat,
               flags: FEATURE_FLAGS,
               deps: {
                 buildPricingContext,
@@ -3760,10 +3762,11 @@
                 STRATEGIST_CAVEAT,
                 LEGAL_DISCLAIMER,
                 BRAND_NAME,
+                trackEvent,
               },
             });
             const modeCtx = buildPricingContext(s);
-            trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode: true, pdfV2: !!FEATURE_FLAGS.pdf_v2_enabled, internalFormat: null, executiveBuilder: true });
+            trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode: true, pdfV2: !!FEATURE_FLAGS.pdf_v2_enabled, internalFormat: execFormat, executiveBuilder: true, fontMode: fontResult?.fontMode ?? "fallback", format: execFormat });
             showToast("PDF gerado.");
             return;
           }

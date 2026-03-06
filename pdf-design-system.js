@@ -21,7 +21,8 @@ const COLORS = {
  * @param {Object} params
  * @param {string} [params.format] - "complete" | "compact"
  * @param {string} [params.theme] - "ink" (default)
- * @param {string} [params.fontFallbackMode] - "helvetica" quando Playfair falha
+ * @param {Object} [params.fonts] - { titleFont, bodyFont, monoFont } do loadPdfFonts
+ * @param {string} [params.fontFallbackMode] - "helvetica" quando Playfair falha (legado)
  * @param {number} [params.pageWidth]
  * @param {number} [params.pageHeight]
  * @returns {Object} PdfDesignTokens
@@ -29,6 +30,7 @@ const COLORS = {
 export function getPdfDesignSystem({
   format = "complete",
   theme = "ink",
+  fonts: resolvedFonts,
   fontFallbackMode = "helvetica",
   pageWidth = 595,
   pageHeight = 842,
@@ -39,10 +41,14 @@ export function getPdfDesignSystem({
   const lineHeight = format === "compact" ? 10 : DEFAULT_LINE_HEIGHT;
   const titleSpacing = format === "compact" ? 14 : DEFAULT_TITLE_SPACING;
 
-  const titleFont = fontFallbackMode === "helvetica" ? "helvetica" : "helvetica";
+  const titleFont = resolvedFonts?.titleFont ?? (fontFallbackMode === "helvetica" ? "helvetica" : "helvetica");
+  const bodyFont = resolvedFonts?.bodyFont ?? "helvetica";
   const titleStyle = "bold";
-  const bodyFont = "helvetica";
   const bodyStyle = "normal";
+
+  const isPremium = resolvedFonts && !resolvedFonts.fallbackUsed;
+  const investmentFontSize = isPremium ? 20 : 18;
+  const titleFontSize = format === "compact" ? 12 : (isPremium ? 16 : 14);
 
   return {
     format,
@@ -54,13 +60,16 @@ export function getPdfDesignSystem({
     blockGap,
     lineHeight,
     titleSpacing,
+    investmentFontSize,
+    titleFontSize,
     colors: { ...COLORS },
     fonts: {
       title: titleFont,
       body: bodyFont,
+      mono: resolvedFonts?.monoFont ?? "courier",
       titleStyle,
       bodyStyle,
     },
-    fontFallbackMode,
+    fontFallbackMode: resolvedFonts?.fallbackUsed ? "helvetica" : fontFallbackMode,
   };
 }

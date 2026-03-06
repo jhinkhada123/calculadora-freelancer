@@ -66,6 +66,33 @@ describe("pdf-proposal-builder", () => {
     }).not.toThrow();
   });
 
+  test("buildExecutiveCompletePdf gera PDF com design usando fontes do loader (fallback)", () => {
+    const doc = mockDoc();
+    const context = mockContext();
+    const design = getPdfDesignSystem({
+      format: "complete",
+      pageWidth: 595,
+      pageHeight: 842,
+      fonts: { titleFont: "helvetica", bodyFont: "helvetica", fallbackUsed: true },
+    });
+    const deps = {
+      fmtMoney: (n) => `R$ ${Number(n).toFixed(2)}`,
+      fmtNumber: (n, d = 0) => Number(n).toFixed(d),
+      legalDisclaimer: "Estimativas não constituem garantia.",
+    };
+    expect(() => {
+      buildExecutiveCompletePdf({
+        doc,
+        context,
+        design,
+        layout: null,
+        assets: { logoDataUrl: null, brandName: "Test" },
+        deps,
+      });
+    }).not.toThrow();
+    expect(doc.getNumberOfPages()).toBe(1);
+  });
+
   test("buildExecutiveCompletePdf chama doc.text para rodapé", () => {
     const doc = mockDoc();
     const context = mockContext();

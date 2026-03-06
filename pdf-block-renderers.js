@@ -48,7 +48,7 @@ export function renderExecutiveHeader(doc, context, design, layout, assets, deps
   }
 
   doc.setFont(design.fonts.title, design.fonts.titleStyle);
-  doc.setFontSize(14);
+  doc.setFontSize(design.titleFontSize ?? 14);
   doc.text(
     "Proposta Estratégica para " + (context.state?.clientName || "Cliente"),
     margin,
@@ -189,7 +189,7 @@ export function renderInvestment(doc, context, design, layout, assets, deps) {
   const curr = context.state?.currency || "BRL";
   if (context.projectOk) {
     doc.setFont(design.fonts.title, design.fonts.titleStyle);
-    doc.setFontSize(18);
+    doc.setFontSize(design.investmentFontSize ?? 18);
     doc.text(
       fmtMoney(Number(context.effective?.projectNet || 0), curr),
       margin,
