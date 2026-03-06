@@ -118,6 +118,14 @@
       .btn-focus { outline: none; }
       .btn-focus:focus-visible { outline: 2px solid rgba(165, 180, 252, 0.5); outline-offset: 2px; }
       .btn-focus-emerald:focus-visible { outline-color: rgba(52, 211, 153, 0.6); }
+      .wizard-container[data-wizard-enabled="false"] .wizard-step { display: block !important; }
+      .wizard-container[data-wizard-enabled="false"] .wizard-step-indicator,
+      .wizard-container[data-wizard-enabled="false"] .wizard-nav,
+      .wizard-container[data-wizard-enabled="false"] .wizard-bottom-bar { display: none !important; }
+      .wizard-container[data-wizard-enabled="true"] .wizard-step { display: none; }
+      .wizard-container[data-wizard-enabled="true"] .wizard-step[data-current="true"] { display: block; }
+      .wizard-bottom-bar { padding-bottom: env(safe-area-inset-bottom, 0); }
+      body.wizard-bar-visible main { padding-bottom: 5.5rem; }
     </style>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
@@ -349,7 +357,7 @@
     </header>
 
     <main class="relative">
-      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-14 lg:grid-cols-12">
+      <div id="mainGrid" class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-14 lg:grid-cols-12">
         <!-- Inputs -->
         <section class="lg:col-span-7">
           <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
@@ -378,6 +386,9 @@
 
             <div id="panel-essential" role="tabpanel" aria-labelledby="tab-essential" class="tab-panel">
             <div id="essentialArea">
+            <div id="wizardContainer" class="wizard-container" data-wizard-enabled="false">
+              <p id="wizardStepIndicator" class="wizard-step-indicator mb-3 text-xs font-medium text-slate-400" aria-live="polite">Passo 1 de 3</p>
+              <div id="wizardStep1" class="wizard-step" data-step="1" data-current="true">
             <div id="configWrapper" class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="targetIncome">Renda líquida desejada / mês</label>
@@ -514,7 +525,9 @@
                 </p>
               </div>
             </div>
+            </div>
 
+            <div id="wizardStep2" class="wizard-step hidden" data-step="2" data-current="false">
             <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -606,7 +619,11 @@
                 </div>
               </div>
 
-              <p class="mt-3 text-[11px] text-slate-400">Quando fechar, gere o PDF do cliente.</p>
+            </div>
+            </div>
+
+            <div id="wizardStep3" class="wizard-step hidden" data-step="3" data-current="false">
+              <p class="mt-6 text-[11px] text-slate-400">Quando fechar, gere o PDF do cliente.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
@@ -634,6 +651,13 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div id="wizardNav" class="wizard-nav mt-6 flex flex-wrap items-center gap-3">
+              <button id="btnWizardPrev" type="button" class="hidden rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-200 hover:bg-white/10">← Voltar</button>
+              <button id="btnWizardNext" type="button" class="rounded-xl border border-indigo-400/40 bg-indigo-500/20 px-4 py-2 text-sm font-medium text-indigo-100 hover:bg-indigo-500/30">Avançar →</button>
+              <a id="btnWizardAdvanced" href="#" class="text-xs text-slate-400 hover:text-slate-300 underline-offset-2 hover:underline">Ir para Avançado</a>
+            </div>
             </div>
             </div>
             </div>
@@ -1127,6 +1151,18 @@
         </p>
       </div>
     </footer>
+
+    <div id="wizardBottomBar" class="wizard-bottom-bar fixed bottom-0 left-0 right-0 z-40 hidden border-t border-white/10 bg-ink-900/95 backdrop-blur sm:hidden" aria-hidden="true">
+      <div class="flex items-center justify-between gap-3 px-4 py-3">
+        <div>
+          <p class="text-[11px] text-slate-400">Valor principal</p>
+          <p id="wizardBottomBarValue" class="text-lg font-semibold tabular-nums text-slate-100">—</p>
+        </div>
+        <button id="btnWizardBottomPdf" type="button" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          Gerar PDF
+        </button>
+      </div>
+    </div>
     </div>
 
     <div
@@ -1341,6 +1377,8 @@
         pdf_impact_block_enabled: false,
         premium_soft_lock_enabled: true,
         pdf_internal_compact_enabled: false,
+        ui_split_enabled: false,
+        ui_wizard_enabled: false,
       };
       let logoDataUrl = null;
       let calcCardStash = null;
@@ -1458,6 +1496,18 @@
 
         proposalMode: $("proposalMode"),
         configWrapper: $("configWrapper"),
+        wizardContainer: $("wizardContainer"),
+        wizardStep1: $("wizardStep1"),
+        wizardStep2: $("wizardStep2"),
+        wizardStep3: $("wizardStep3"),
+        wizardStepIndicator: $("wizardStepIndicator"),
+        wizardNav: $("wizardNav"),
+        btnWizardPrev: $("btnWizardPrev"),
+        btnWizardNext: $("btnWizardNext"),
+        btnWizardAdvanced: $("btnWizardAdvanced"),
+        wizardBottomBar: $("wizardBottomBar"),
+        wizardBottomBarValue: $("wizardBottomBarValue"),
+        btnWizardBottomPdf: $("btnWizardBottomPdf"),
         calcCard: $("calcCard"),
         logoInput: $("logoInput"),
         resultCardsInternal: $("resultCardsInternal"),
@@ -2581,6 +2631,54 @@
         activateTab(0, false, true);
       }
 
+      let wizardCurrentStep = 1;
+      function setupWizard() {
+        const container = els.wizardContainer;
+        if (!container) return;
+        const enabled = !!FEATURE_FLAGS.ui_wizard_enabled;
+        container.setAttribute("data-wizard-enabled", enabled ? "true" : "false");
+        if (!enabled) return;
+        const steps = [els.wizardStep1, els.wizardStep2, els.wizardStep3].filter(Boolean);
+        function goToStep(step) {
+          wizardCurrentStep = Math.max(1, Math.min(3, step));
+          steps.forEach((s, i) => {
+            if (!s) return;
+            const isCurrent = i + 1 === wizardCurrentStep;
+            s.classList.toggle("hidden", !isCurrent);
+            s.setAttribute("data-current", String(isCurrent));
+          });
+          if (els.wizardStepIndicator) els.wizardStepIndicator.textContent = "Passo " + wizardCurrentStep + " de 3";
+          if (els.btnWizardPrev) els.btnWizardPrev.classList.toggle("hidden", wizardCurrentStep <= 1);
+          if (els.btnWizardNext) els.btnWizardNext.classList.toggle("hidden", wizardCurrentStep >= 3);
+        }
+        if (els.btnWizardNext) {
+          els.btnWizardNext.addEventListener("click", () => {
+            const s = getStateFromInputs();
+            const r = buildPricingContext(s).effective;
+            if (wizardCurrentStep < 3 && !r.ok && wizardCurrentStep === 1) {
+              showToast("Faltam campos para cálculo completo. Avançar mesmo assim.");
+            }
+            goToStep(wizardCurrentStep + 1);
+          });
+        }
+        if (els.btnWizardPrev) {
+          els.btnWizardPrev.addEventListener("click", () => goToStep(wizardCurrentStep - 1));
+        }
+        if (els.btnWizardAdvanced) {
+          els.btnWizardAdvanced.addEventListener("click", (e) => {
+            e.preventDefault();
+            const tablist = document.querySelector('[role="tablist"]');
+            if (tablist) tablist.scrollIntoView({ behavior: "smooth" });
+          });
+        }
+        if (els.btnWizardBottomPdf) {
+          els.btnWizardBottomPdf.addEventListener("click", () => {
+            if (typeof generatePdf === "function") generatePdf();
+          });
+        }
+        goToStep(1);
+      }
+
       function getAdvancedWarningsBundle(s, essential, advanced) {
         const warnings = [];
         if (!advanced || !advanced.ok) return warnings;
@@ -2996,6 +3094,9 @@
         if (els.configWrapper) {
           els.configWrapper.classList.toggle("hidden", !!s.proposalMode);
         }
+        if (els.wizardContainer && FEATURE_FLAGS.ui_wizard_enabled) {
+          els.wizardContainer.classList.toggle("hidden", !!s.proposalMode);
+        }
         if (els.advancedConfigCard) {
           els.advancedConfigCard.classList.toggle("hidden", !s.advancedMode);
         }
@@ -3056,6 +3157,18 @@
         }
         if (els.pdfInternalFormatWrap) {
           els.pdfInternalFormatWrap.classList.toggle("hidden", !!s.proposalMode || !FEATURE_FLAGS.pdf_internal_compact_enabled);
+        }
+        if (FEATURE_FLAGS.ui_wizard_enabled && els.wizardBottomBar && els.wizardBottomBarValue && els.btnWizardBottomPdf) {
+          const showBar = !s.proposalMode;
+          els.wizardBottomBar.classList.toggle("hidden", !showBar);
+          els.wizardBottomBar.setAttribute("aria-hidden", String(!showBar));
+          document.body.classList.toggle("wizard-bar-visible", showBar);
+          if (showBar) {
+            const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
+            const val = projectOk ? fmtMoney(r.projectNet, s.currency) : (r.ok && r.hourly != null ? fmtMoney(r.hourly, s.currency) : "—");
+            safeText(els.wizardBottomBarValue, val);
+            els.btnWizardBottomPdf.disabled = !pdfOk || !hasAcceptedTerms();
+          }
         }
         if (els.advancedModeWrap && els.advancedModeLabel) {
           const isPremium = !!s.advancedMode;
@@ -4185,6 +4298,8 @@
 
       try {
         (function init() {
+          const grid = document.getElementById("mainGrid");
+          if (grid) grid.setAttribute("data-ui-split", FEATURE_FLAGS.ui_split_enabled ? "true" : "false");
           if (isClientView()) {
             initClientView();
             return;
@@ -4198,6 +4313,7 @@
           applyButtonHelp();
           wireHelpToggles();
           setupTabs();
+          setupWizard();
           setupInstallPrompt();
           registerServiceWorker();
           applyBranding();
