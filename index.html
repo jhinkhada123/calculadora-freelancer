@@ -111,6 +111,13 @@
         opacity: 1;
         transform: translateY(0);
       }
+      .tabular-nums { font-variant-numeric: tabular-nums; }
+      .btn-default { font-size: 0.875rem; padding: 0.625rem 1rem; }
+      .btn-compact { font-size: 0.75rem; padding: 0.5rem 0.75rem; }
+      .btn-micro { font-size: 11px; padding: 0.375rem 0.75rem; }
+      .btn-focus { outline: none; }
+      .btn-focus:focus-visible { outline: 2px solid rgba(165, 180, 252, 0.5); outline-offset: 2px; }
+      .btn-focus-emerald:focus-visible { outline-color: rgba(52, 211, 153, 0.6); }
     </style>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
@@ -181,7 +188,7 @@
     </div>
 
     <div
-      class="pointer-events-none fixed inset-0 bg-[radial-gradient(1000px_circle_at_20%_-10%,rgba(99,102,241,.35),transparent_60%),radial-gradient(900px_circle_at_80%_10%,rgba(16,185,129,.25),transparent_55%),radial-gradient(900px_circle_at_60%_120%,rgba(236,72,153,.22),transparent_60%)]"
+      class="pointer-events-none fixed inset-0 bg-[radial-gradient(1000px_circle_at_20%_-10%,rgba(99,102,241,.28),transparent_60%),radial-gradient(900px_circle_at_80%_10%,rgba(16,185,129,.18),transparent_55%),radial-gradient(900px_circle_at_60%_120%,rgba(236,72,153,.10),transparent_60%)]"
     ></div>
 
     <div id="clientViewContainer" class="hidden">
@@ -191,7 +198,7 @@
         <dl class="mt-8 space-y-4 rounded-2xl border border-white/10 bg-ink-900/70 p-6">
           <div>
             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Valor total</dt>
-            <dd id="clientViewTotal" class="mt-1 text-xl font-semibold text-slate-100">—</dd>
+            <dd id="clientViewTotal" class="mt-1 text-xl font-semibold text-slate-100 tabular-nums">—</dd>
           </div>
           <div>
             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Prazo</dt>
@@ -259,7 +266,7 @@
                 <button
                   id="btnPrimaryPdfHeader"
                   type="button"
-                  class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="btn-default rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Gerar proposta em PDF
                 </button>
@@ -268,7 +275,7 @@
               <button
                 id="btnPremiumOffer"
                 type="button"
-                class="rounded-xl border border-indigo-400/50 bg-indigo-500/25 px-4 py-2.5 text-sm font-medium text-indigo-100 hover:bg-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-300/50"
+                class="btn-default rounded-xl border border-indigo-400/40 bg-indigo-500/15 font-semibold text-indigo-100 hover:bg-indigo-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 aria-label="Conhecer Premium - patrimônio, risco, escassez e exaustão"
               >
                 Conhecer Premium 🔒
@@ -281,7 +288,7 @@
                 <button
                   id="btnShare"
                   type="button"
-                  class="rounded-xl border border-white/20 bg-ink-900/60 px-4 py-2 text-sm text-slate-200 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="btn-compact rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-slate-300 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Copiar link interno (uso interno; para cliente envie o PDF)"
                   aria-label="Copiar link interno"
                 >
@@ -292,7 +299,7 @@
                 <button
                   id="btnToolsToggle"
                   type="button"
-                  class="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-200 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  class="btn-default rounded-xl border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   aria-expanded="false"
                   aria-haspopup="true"
                   aria-controls="toolsDropdown"
@@ -339,7 +346,7 @@
                 <span class="text-xs text-slate-300">Moeda</span>
                 <select
                   id="currency"
-                  class="rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  class="rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-sm text-slate-100 outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 >
                   <option value="BRL" selected>BRL (R$)</option>
                   <option value="USD">USD ($)</option>
@@ -349,11 +356,11 @@
             </div>
 
             <p id="activeModeLabel" class="mt-3 text-xs font-medium text-slate-400">Modo ativo: Essencial</p>
-            <div class="mt-2 flex flex-wrap gap-1 rounded-xl border border-white/10 bg-ink-900/50 p-1" role="tablist" aria-label="Seções de configuração">
-              <button type="button" id="tab-essential" role="tab" aria-selected="true" aria-controls="panel-essential" tabindex="0" data-tab-panel="panel-essential" class="tab-btn rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150">Essencial ✓</button>
-              <button type="button" id="tab-strategist" role="tab" aria-selected="false" aria-controls="panel-strategist" tabindex="-1" data-tab-panel="panel-strategist" class="strategist-accordion-btn tab-btn hidden rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150">Estrategista</button>
-              <button type="button" id="tab-scenario" role="tab" aria-selected="false" aria-controls="panel-scenario" tabindex="-1" data-tab-panel="panel-scenario" class="tab-btn rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150">Comparação</button>
-              <button type="button" id="tab-governance" role="tab" aria-selected="false" aria-controls="panel-governance" tabindex="-1" data-tab-panel="panel-governance" class="tab-btn rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150">Governança</button>
+            <div class="mt-2 flex flex-wrap gap-1 rounded-xl border border-white/15 bg-ink-900/50 p-1" role="tablist" aria-label="Seções de configuração">
+              <button type="button" id="tab-essential" role="tab" aria-selected="true" aria-controls="panel-essential" tabindex="0" data-tab-panel="panel-essential" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Essencial</button>
+              <button type="button" id="tab-strategist" role="tab" aria-selected="false" aria-controls="panel-strategist" tabindex="-1" data-tab-panel="panel-strategist" class="strategist-accordion-btn tab-btn hidden rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Estrategista</button>
+              <button type="button" id="tab-scenario" role="tab" aria-selected="false" aria-controls="panel-scenario" tabindex="-1" data-tab-panel="panel-scenario" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Comparação</button>
+              <button type="button" id="tab-governance" role="tab" aria-selected="false" aria-controls="panel-governance" tabindex="-1" data-tab-panel="panel-governance" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Governança</button>
             </div>
 
             <div id="panel-essential" role="tabpanel" aria-labelledby="tab-essential" class="tab-panel">
@@ -367,7 +374,7 @@
                   inputmode="decimal"
                   min="0"
                   step="100"
-                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 />
                 <p class="text-xs text-slate-400">
                   Quanto você quer “levar pra casa” por mês.
@@ -382,7 +389,7 @@
                   inputmode="decimal"
                   min="0"
                   step="50"
-                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 />
                 <p class="text-xs text-slate-400">Softwares, internet, coworking, contabilidade, etc.</p>
               </div>
@@ -396,7 +403,7 @@
                     min="0"
                     max="70"
                     step="0.5"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                   <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                 </div>
@@ -412,7 +419,7 @@
                     min="0"
                     max="200"
                     step="0.5"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                   <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                 </div>
@@ -428,7 +435,7 @@
                     min="0"
                     max="100"
                     step="0.5"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                   <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                 </div>
@@ -444,7 +451,7 @@
                     min="10"
                     max="100"
                     step="1"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                   <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                 </div>
@@ -459,7 +466,7 @@
                   min="1"
                   max="16"
                   step="0.5"
-                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 />
                 <p class="text-xs text-slate-400">Carga diária de trabalho total.</p>
               </div>
@@ -472,7 +479,7 @@
                   min="1"
                   max="7"
                   step="1"
-                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                  class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 />
                 <p class="text-xs text-slate-400">Seu ritmo semanal típico.</p>
               </div>
@@ -486,7 +493,7 @@
                     min="0"
                     max="20"
                     step="0.5"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                 </div>
                 <p class="text-xs text-slate-400">
@@ -520,7 +527,7 @@
                     id="professionalName"
                     type="text"
                     maxlength="140"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                   <p class="text-xs text-slate-400">Seu nome ou nome da sua marca.</p>
                 </div>
@@ -530,7 +537,7 @@
                     id="clientName"
                     type="text"
                     maxlength="140"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                   <p class="text-xs text-slate-400">Esse nome aparecerá no PDF.</p>
                 </div>
@@ -539,7 +546,7 @@
                   <input
                     id="validityDate"
                     type="date"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                   <p class="text-xs text-slate-400">Ex.: validade de 7 a 15 dias.</p>
                 </div>
@@ -553,7 +560,7 @@
                     type="number"
                     min="0"
                     step="1"
-                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                    class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
                 </div>
                 <div class="space-y-2">
@@ -565,7 +572,7 @@
                       min="0"
                       max="100"
                       step="0.5"
-                      class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                      class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                     />
                     <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                   </div>
@@ -579,7 +586,7 @@
                       min="0"
                       max="90"
                       step="0.5"
-                      class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-indigo-300/50"
+                      class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 pr-12 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                     />
                     <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                   </div>
@@ -590,7 +597,7 @@
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
-                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight">—</p>
+                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums">—</p>
                   <p id="projectHint" class="mt-1 text-xs text-slate-400">Preencha as horas para estimar.</p>
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -600,14 +607,14 @@
                     <button
                       id="btnCopyProposal"
                       type="button"
-                      class="w-full rounded-xl bg-emerald-500/90 px-3 py-2 text-xs font-medium text-emerald-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-xl bg-emerald-500/90 px-3 py-2 text-xs font-medium text-emerald-950 hover:bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Copiar proposta
                     </button>
                     <button
                       id="btnPdf"
                       type="button"
-                      class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-xs font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-xs font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Gerar proposta agora
                     </button>
@@ -635,7 +642,7 @@
               </div>
             </div>
 
-            <div id="advancedConfigCard" class="mt-6 hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.18),rgba(15,23,42,.55))] p-4 shadow-soft">
+            <div id="advancedConfigCard" class="mt-6 hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.18),rgba(15,23,42,.55))] p-4">
               <div class="flex items-center justify-between gap-2">
                 <div>
                   <div class="flex items-center gap-2">
@@ -655,27 +662,27 @@
               <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="assetValue">Valor de ativos (CAPEX total)</label>
-                  <input id="assetValue" type="number" min="0" step="100" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/60" />
+                  <input id="assetValue" type="number" min="0" step="100" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="assetUsefulLifeMonths">Vida útil dos ativos (meses)</label>
-                  <input id="assetUsefulLifeMonths" type="number" min="1" max="1200" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/60" />
+                  <input id="assetUsefulLifeMonths" type="number" min="1" max="1200" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="opportunityRateAnnual">Taxa anual de oportunidade (%)</label>
-                  <input id="opportunityRateAnnual" type="number" min="0" max="300" step="0.1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/60" />
+                  <input id="opportunityRateAnnual" type="number" min="0" max="300" step="0.1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="occupancyRate">Ocupação da agenda (%)</label>
-                  <input id="occupancyRate" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/60" />
+                  <input id="occupancyRate" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="weeklyHours">Horas semanais planejadas</label>
-                  <input id="weeklyHours" type="number" min="1" max="120" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/60" />
+                  <input id="weeklyHours" type="number" min="1" max="120" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="scopeVolatility">Volatilidade de escopo</label>
-                  <select id="scopeVolatility" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-300/60">
+                  <select id="scopeVolatility" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60">
                     <option value="low">Baixa</option>
                     <option value="medium" selected>Média</option>
                     <option value="high">Alta</option>
@@ -688,7 +695,7 @@
             </div>
 
             <div id="panel-strategist" role="tabpanel" aria-labelledby="tab-strategist" class="tab-panel hidden" aria-hidden="true">
-            <div id="strategistCard" class="mt-6 rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.12),rgba(15,23,42,.55))] p-4 shadow-soft">
+            <div id="strategistCard" class="mt-6 rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.12),rgba(15,23,42,.55))] p-4">
               <div class="flex items-center justify-between gap-2">
                 <div>
                   <p class="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-500/20 px-2 py-1 text-[11px] font-medium text-amber-100">Precificação por valor</p>
@@ -703,12 +710,12 @@
               <div id="strategistInputsWrap" class="mt-4 hidden grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="valorGanhoEstimado12m">Valor ganho estimado (12 meses)</label>
-                  <input id="valorGanhoEstimado12m" type="number" min="0" step="1000" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-300/60" placeholder="Ex: 120000" />
+                  <input id="valorGanhoEstimado12m" type="number" min="0" step="1000" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-amber-300/60" placeholder="Ex: 120000" />
                   <p class="text-xs text-slate-400">Ganho econômico esperado pelo cliente no período.</p>
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="custoOportunidadeMensal">Custo de oportunidade mensal</label>
-                  <input id="custoOportunidadeMensal" type="number" min="0" step="100" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-300/60" placeholder="Ex: 0" />
+                  <input id="custoOportunidadeMensal" type="number" min="0" step="100" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-amber-300/60" placeholder="Ex: 0" />
                   <p class="text-xs text-slate-400">Custo diário de atraso (CDO = valor/30).</p>
                 </div>
               </div>
@@ -716,7 +723,7 @@
             </div>
             </div>
 
-            <div id="negotiationConfigCard" class="mt-6 rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(16,185,129,.10),rgba(15,23,42,.55))] p-4 shadow-soft">
+            <div id="negotiationConfigCard" class="mt-6 rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(16,185,129,.10),rgba(15,23,42,.55))] p-4">
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-500/20 px-2 py-1 text-[11px] font-medium text-emerald-100">v2.1</p>
@@ -727,7 +734,7 @@
               <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="complexidadeProjeto">Complexidade do projeto</label>
-                  <select id="complexidadeProjeto" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                  <select id="complexidadeProjeto" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixa">Baixa</option>
                     <option value="media" selected>Média</option>
                     <option value="alta">Alta</option>
@@ -735,7 +742,7 @@
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="prazoEntrega">Prazo de entrega</label>
-                  <select id="prazoEntrega" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                  <select id="prazoEntrega" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="flexivel">Flexível</option>
                     <option value="normal" selected>Normal</option>
                     <option value="curto">Curto</option>
@@ -744,7 +751,7 @@
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="criticidadeNegocio">Criticidade para o negócio</label>
-                  <select id="criticidadeNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                  <select id="criticidadeNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixa">Baixa</option>
                     <option value="media" selected>Média</option>
                     <option value="alta">Alta</option>
@@ -752,7 +759,7 @@
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="envolvimentoCliente">Envolvimento do cliente</label>
-                  <select id="envolvimentoCliente" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                  <select id="envolvimentoCliente" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixo">Baixo</option>
                     <option value="medio" selected>Médio</option>
                     <option value="alto">Alto</option>
@@ -760,7 +767,7 @@
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="impactoNoNegocio">Impacto no negócio</label>
-                  <select id="impactoNoNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60">
+                  <select id="impactoNoNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixo">Baixo</option>
                     <option value="medio" selected>Médio</option>
                     <option value="alto">Alto</option>
@@ -769,23 +776,23 @@
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="areaImpacto">Área impactada (ROI)</label>
-                  <input id="areaImpacto" type="text" placeholder="ex.: Operações, Vendas, Financeiro" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                  <input id="areaImpacto" type="text" placeholder="ex.: Operações, Vendas, Financeiro" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="ocupacaoAgenda">Ocupação da agenda para conveniência (%)</label>
-                  <input id="ocupacaoAgenda" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                  <input id="ocupacaoAgenda" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="reservaMetaMeses">Meta de reserva (meses)</label>
-                  <input id="reservaMetaMeses" type="number" min="1" max="60" step="1" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                  <input id="reservaMetaMeses" type="number" min="1" max="60" step="1" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="reservaAtual">Reserva atual (opcional)</label>
-                  <input id="reservaAtual" type="number" min="0" step="100" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                  <input id="reservaAtual" type="number" min="0" step="100" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="custoPessoalMensal">Custo pessoal mensal (opcional)</label>
-                  <input id="custoPessoalMensal" type="number" min="0" step="100" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-300/60" />
+                  <input id="custoPessoalMensal" type="number" min="0" step="100" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
                 </div>
               </div>
               <div class="mt-4 rounded-xl border border-emerald-300/20 bg-black/20 p-3">
@@ -890,24 +897,24 @@
                 <div class="mt-5 grid grid-cols-1 gap-3">
                   <div class="rounded-2xl border border-white/10 bg-ink-900/40 p-4">
                     <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                    <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight">—</p>
+                    <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums">—</p>
                     <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
                   </div>
 
                   <div class="grid grid-cols-2 gap-3">
                     <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                       <p id="dailyLabel" class="text-xs text-slate-400">Taxa/dia</p>
-                      <p id="dailyRate" class="mt-1 text-lg font-semibold">—</p>
+                      <p id="dailyRate" class="mt-1 text-lg font-semibold tabular-nums">—</p>
                     </div>
                     <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                       <p class="text-xs text-slate-400">Horas faturáveis/mês</p>
-                      <p id="billableHours" class="mt-1 text-lg font-semibold">—</p>
+                      <p id="billableHours" class="mt-1 text-lg font-semibold tabular-nums">—</p>
                     </div>
                   </div>
 
                   <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
-                    <p id="revenueTarget" class="mt-1 text-lg font-semibold">—</p>
+                    <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums">—</p>
                     <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
                   </div>
                 </div>
@@ -918,7 +925,7 @@
                 <p class="mt-1 text-xs text-slate-400">Resumo para proposta comercial.</p>
                 <div class="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6">
                   <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Investimento Total do Projeto</p>
-                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white">—</p>
+                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums">—</p>
                   <p class="mt-4 text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
                   <p id="resultProposalPrazo" class="mt-1 text-xl font-semibold text-slate-100">—</p>
                 </div>
@@ -926,7 +933,7 @@
                   <button
                     id="btnPdfProposal"
                     type="button"
-                    class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus:ring-2 focus:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full rounded-xl border border-white/20 bg-ink-900/60 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-ink-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Gerar proposta agora
                   </button>
@@ -934,7 +941,7 @@
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
               <h3 class="text-sm font-semibold">Composição do Faturamento</h3>
               <p class="mt-1 text-xs text-slate-400">Distribuição estimada do faturamento alvo mensal.</p>
               <div class="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
@@ -943,13 +950,13 @@
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
               <h3 class="text-sm font-semibold">Alertas Inteligentes</h3>
               <p class="mt-1 text-xs text-slate-400">Sinais práticos para reduzir risco de sobrecarga e precificação frágil.</p>
               <div id="alertsList" class="mt-4 space-y-2 text-sm text-slate-200"></div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
               <h3 class="text-sm font-semibold">Base de Confiança</h3>
               <p class="mt-1 text-xs text-slate-400">Referências consultivas para decisões profissionais, sem promessas absolutas.</p>
               <ul id="trustMicrocopyList" class="mt-3 list-disc space-y-1 pl-5 text-xs text-slate-200">
@@ -968,7 +975,7 @@
               </ul>
             </div>
 
-            <div id="explainabilityCard" class="hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.20),rgba(15,23,42,.60))] p-5 shadow-soft backdrop-blur">
+            <div id="explainabilityCard" class="hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.20),rgba(15,23,42,.60))] p-5 backdrop-blur">
               <h3 class="text-sm font-semibold text-indigo-100">Como chegamos nesse preço</h3>
               <p id="advancedModelLabel" class="mt-1 text-xs text-indigo-200/80">Modelo: estimativa por faixa</p>
               <div class="mt-3 grid grid-cols-2 gap-2">
@@ -985,7 +992,7 @@
               <div id="advancedWarnings" class="mt-4 space-y-2 text-xs"></div>
             </div>
 
-            <div id="negotiationOutputCard" class="rounded-2xl border border-emerald-400/25 bg-[linear-gradient(135deg,rgba(16,185,129,.14),rgba(15,23,42,.6))] p-5 shadow-soft backdrop-blur">
+            <div id="negotiationOutputCard" class="rounded-2xl border border-emerald-400/25 bg-[linear-gradient(135deg,rgba(16,185,129,.14),rgba(15,23,42,.6))] p-5 backdrop-blur">
               <div class="flex items-center justify-between gap-3">
                 <h3 class="text-sm font-semibold text-emerald-100">Pacote de Negociação (v2.1)</h3>
                 <div class="flex gap-2">
@@ -1020,7 +1027,7 @@
               </div>
             </div>
 
-            <div id="auditModeCard" class="hidden rounded-2xl border border-emeraldlux-700/35 bg-emeraldlux-900/20 p-5 shadow-soft backdrop-blur">
+            <div id="auditModeCard" class="hidden rounded-2xl border border-emeraldlux-700/35 bg-emeraldlux-900/20 p-5 backdrop-blur">
               <h3 class="font-serif text-base font-semibold text-emerald-100">Modo Auditoria</h3>
               <p class="mt-1 text-xs text-emerald-100/80">Leitura proativa de risco operacional e comercial.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1038,24 +1045,24 @@
               <div id="riskScoreBreakdown" class="mt-3 text-xs text-emerald-50/90"></div>
             </div>
 
-            <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+            <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
               <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
                   <p class="text-xs text-slate-400">1) Custo mensal (pessoal + negócio)</p>
-                  <p id="stepCost" class="mt-1 font-medium">—</p>
+                  <p id="stepCost" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
                   <p class="text-xs text-slate-400">2) Percentual total (imposto + lucro + buffer)</p>
-                  <p id="stepTax" class="mt-1 font-medium">—</p>
+                  <p id="stepTax" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
                   <p class="text-xs text-slate-400">3) Base ÷ (1 − %) = Faturamento alvo</p>
-                  <p id="stepProfit" class="mt-1 font-medium">—</p>
+                  <p id="stepProfit" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
                   <p class="text-xs text-slate-400">4) Divide pelas horas faturáveis</p>
-                  <p id="stepHours" class="mt-1 font-medium">—</p>
+                  <p id="stepHours" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
               </ol>
 
@@ -1068,7 +1075,7 @@
               </p>
             </div>
 
-            <div id="strategistResultsCard" class="strategist-results-card hidden rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.08),rgba(15,23,42,.55))] p-5 shadow-soft backdrop-blur">
+            <div id="strategistResultsCard" class="strategist-results-card hidden rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.08),rgba(15,23,42,.55))] p-5 backdrop-blur">
               <h3 class="text-sm font-semibold text-amber-100">Impacto Econômico Estimado</h3>
               <p class="mt-1 text-xs text-slate-400">VCE, ROIx e CDO para precificação por valor.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -1131,11 +1138,11 @@
         <div class="mt-4 space-y-3">
           <div>
             <label for="sheetsEndpointInput" class="text-xs text-slate-300">URL Apps Script (Google Sheets)</label>
-            <input id="sheetsEndpointInput" type="url" placeholder="https://script.google.com/macros/s/SEU-ID/exec" class="mt-1 w-full rounded-xl border border-white/10 bg-ink-800 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300/50" />
+            <input id="sheetsEndpointInput" type="url" placeholder="https://script.google.com/macros/s/SEU-ID/exec" class="mt-1 w-full rounded-xl border border-white/10 bg-ink-800 px-3 py-2 text-sm text-slate-100 outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50" />
           </div>
           <div>
             <label for="notionEndpointInput" class="text-xs text-slate-300">URL relay/webhook (Notion)</label>
-            <input id="notionEndpointInput" type="url" placeholder="https://seu-relay.exemplo.com/notion" class="mt-1 w-full rounded-xl border border-white/10 bg-ink-800 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300/50" />
+            <input id="notionEndpointInput" type="url" placeholder="https://seu-relay.exemplo.com/notion" class="mt-1 w-full rounded-xl border border-white/10 bg-ink-800 px-3 py-2 text-sm text-slate-100 outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50" />
           </div>
         </div>
         <div class="mt-4 flex justify-end gap-2">
@@ -2442,13 +2449,11 @@
           tabsArr.forEach((t, i) => {
             if (!t) return;
             const selected = i === selectedIndex;
-            t.classList.remove("bg-indigo-600", "text-white", "border-indigo-400/50", "bg-white/5", "text-slate-400", "border-transparent");
+            t.classList.remove("bg-indigo-500/20", "ring-1", "ring-white/10", "bg-white/5", "text-slate-400", "border-transparent");
             if (selected) {
-              t.classList.add("bg-white/15", "text-white", "border-indigo-400/50");
-              t.textContent = (t.id === "tab-essential" ? "Essencial ✓" : TAB_MODE_LABELS[i]);
+              t.classList.add("bg-indigo-500/20", "ring-1", "ring-white/10", "text-white");
             } else {
               t.classList.add("bg-white/5", "text-slate-400", "border-transparent");
-              t.textContent = TAB_MODE_LABELS[i];
             }
           });
         }
