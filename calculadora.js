@@ -1,7 +1,7 @@
 /**
- * Lógica de cálculo da calculadora de precificação (contrato v2).
- * Faturamento alvo: cálculo "por dentro" — base ÷ (1 − totalPercent/100).
- * Erro explícito: ok: false, error: { code, message }, valores numéricos null.
+ * Logica de calculo da calculadora de precificacao (contrato v2).
+ * Faturamento alvo: calculo "por dentro" — base / (1 - totalPercent/100).
+ * Erro explicito: ok: false, error: { code, message }, valores numericos null.
  */
 const TOTAL_PERCENT_ERROR = {
   code: "TOTAL_PERCENT_INVALID",
@@ -9,15 +9,15 @@ const TOTAL_PERCENT_ERROR = {
 };
 const INVALID_INPUTS_ERROR = {
   code: "INVALID_INPUTS",
-  message: "Informe valores válidos para renda e custos para continuar.",
+  message: "Informe valores validos para renda e custos para continuar.",
 };
 const INVALID_PERCENT_ERROR = {
   code: "INVALID_PERCENT",
-  message: "Preencha todos os percentuais (impostos, margem de lucro, buffer) com números válidos.",
+  message: "Preencha todos os percentuais (impostos, margem de lucro, buffer) com numeros validos.",
 };
 const BILLABLE_HOURS_ERROR = {
   code: "BILLABLE_HOURS_INVALID",
-  message: "Para calcular a taxa/hora, ajuste utilização, horas por dia ou férias para que as horas faturáveis sejam maiores que zero.",
+  message: "Para calcular a taxa/hora, ajuste utilizacao, horas por dia ou ferias para que as horas faturaveis sejam maiores que zero.",
 };
 
 function round2(x) {
@@ -47,13 +47,13 @@ function invalidInputsPayload(baseNeed, totalPercent, workingWeeks, hoursPerMont
   };
 }
 
-/** Normaliza número com default; evita NaN/undefined em fórmulas. */
+/** Normaliza numero com default; evita NaN/undefined em formulas. */
 function num(x, def) {
   const n = Number(x);
   return Number.isFinite(n) ? n : def;
 }
 
-export function compute(s) {
+export function compute(s = {}) {
   const targetIncome = num(s.targetIncome, 0);
   const monthlyCosts = num(s.monthlyCosts, 0);
   if (targetIncome < 0 || monthlyCosts < 0) {
