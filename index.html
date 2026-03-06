@@ -263,13 +263,26 @@
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <div class="flex flex-col gap-0.5">
-                <button
-                  id="btnPrimaryPdfHeader"
-                  type="button"
-                  class="btn-default rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Gerar proposta em PDF
-                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button
+                    id="btnPrimaryPdfHeader"
+                    type="button"
+                    class="btn-default rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Gerar proposta em PDF
+                  </button>
+                  <div id="pdfInternalFormatWrap" class="hidden flex items-center gap-2">
+                    <label for="pdfInternalFormat" class="text-[11px] text-slate-400">Formato interno:</label>
+                    <select
+                      id="pdfInternalFormat"
+                      class="rounded-lg border border-white/15 bg-ink-900/70 px-2 py-1.5 text-xs text-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                      aria-label="Formato do PDF interno"
+                    >
+                      <option value="complete">Completo</option>
+                      <option value="compact">Compacto (1 página)</option>
+                    </select>
+                  </div>
+                </div>
                 <p class="text-[10px] text-slate-400">Para cliente: use PDF.</p>
               </div>
               <button
@@ -1327,6 +1340,7 @@
         strategist_mode_enabled: false,
         pdf_impact_block_enabled: false,
         premium_soft_lock_enabled: true,
+        pdf_internal_compact_enabled: false,
       };
       let logoDataUrl = null;
       let calcCardStash = null;
@@ -1380,6 +1394,8 @@
         btnPdf: $("btnPdf"),
         btnPdfProposal: $("btnPdfProposal"),
         btnPrimaryPdfHeader: $("btnPrimaryPdfHeader"),
+        pdfInternalFormat: $("pdfInternalFormat"),
+        pdfInternalFormatWrap: $("pdfInternalFormatWrap"),
         btnShare: $("btnShare"),
         shareIncludeNames: $("shareIncludeNames"),
         btnExportConfig: $("btnExportConfig"),
@@ -1768,6 +1784,7 @@
           clientName: ((els.clientName && els.clientName.value) || "").trim(),
           validityDate: (els.validityDate && els.validityDate.value) || "",
           proposalMode: !!(els.proposalMode && els.proposalMode.checked),
+          pdfInternalFormat: (els.pdfInternalFormat && els.pdfInternalFormat.value) || "complete",
           advancedMode: !!(els.advancedMode && els.advancedMode.checked),
           enableMonteCarlo: !!(els.enableMonteCarlo && els.enableMonteCarlo.checked),
 
@@ -1818,6 +1835,10 @@
         if (els.validityDate) els.validityDate.value = s.validityDate ?? "";
         if (els.proposalMode) {
           els.proposalMode.checked = !!s.proposalMode;
+        }
+        if (els.pdfInternalFormat) {
+          const v = (s.pdfInternalFormat === "compact" ? "compact" : "complete");
+          els.pdfInternalFormat.value = v;
         }
         if (els.advancedMode) {
           els.advancedMode.checked = !!s.advancedMode;
@@ -3033,6 +3054,9 @@
           els.btnPrimaryPdfHeader.title = (pdfOk && termsOk) ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
           els.btnPrimaryPdfHeader.textContent = s.proposalMode ? "Gerar proposta agora" : "Gerar proposta em PDF";
         }
+        if (els.pdfInternalFormatWrap) {
+          els.pdfInternalFormatWrap.classList.toggle("hidden", !!s.proposalMode || !FEATURE_FLAGS.pdf_internal_compact_enabled);
+        }
         if (els.advancedModeWrap && els.advancedModeLabel) {
           const isPremium = !!s.advancedMode;
           els.advancedModeLabel.textContent = isPremium ? "Premium" : "Essencial";
@@ -3266,6 +3290,7 @@
           scopeRisk: 15,
           discount: 0,
           proposalMode: false,
+          pdfInternalFormat: "complete",
           advancedMode: false,
           enableMonteCarlo: false,
           assetValue: 0,
@@ -3493,6 +3518,69 @@
             doc.setFontSize(9);
             writeWrappedSummary(approvalLine, { lineHeight: 10, spacingAfter: 0, minRoom: 24 });
           } else {
+            const useCompact = !!FEATURE_FLAGS.pdf_internal_compact_enabled && s.pdfInternalFormat === "compact";
+            if (useCompact) {
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(14);
+              doc.text(`${BRAND_NAME} - Resumo Compacto`, margin, y);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(9);
+              y += 20;
+              if (s.professionalName) { doc.text(`Profissional: ${s.professionalName}`, margin, y); y += 12; }
+              if (s.clientName) { doc.text(`Cliente: ${s.clientName}`, margin, y); y += 12; }
+              doc.text(`Moeda: ${curr}`, margin, y);
+              y += 18;
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.text("Resumo financeiro", margin, y);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(9);
+              y += 14;
+              doc.text(`Faturamento alvo/mês: ${fmtMoneyPdf(r.revenueTarget, curr)}`, margin, y);
+              y += 11;
+              doc.text(`Taxa/hora: ${fmtMoneyPdf(r.hourly, curr)} | Taxa/dia: ${fmtMoneyPdf(r.daily, curr)}`, margin, y);
+              y += 11;
+              const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
+              if (projectOk) {
+                doc.text(`Preço projeto (${fmtNumber(s.projectHours, 0)}h): ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
+                y += 14;
+                const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
+                doc.text(`Prazo estimado: ~${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
+                y += 18;
+              } else {
+                y += 8;
+              }
+              const proposta = getProposalTextForPdf();
+              if (proposta) {
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(9);
+                doc.text("Recomendação", margin, y);
+                doc.setFont("helvetica", "normal");
+                y += 12;
+                const maxWidth = pageWidth - 2 * margin;
+                const lines = doc.splitTextToSize(proposta, maxWidth);
+                const maxLines = 4;
+                const showLines = lines.slice(0, maxLines);
+                const truncated = lines.length > maxLines;
+                doc.text(showLines, margin, y);
+                y += showLines.length * 10;
+                if (truncated) {
+                  doc.setFontSize(8);
+                  doc.text("…", margin, y);
+                  y += 10;
+                }
+                y += 12;
+              }
+              const footerY = pageHeight - margin - 50;
+              doc.setFontSize(7);
+              const disclaimerLines = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
+              doc.text(disclaimerLines, margin, footerY);
+              doc.setFontSize(8);
+              const validadeTexto = (s.validityDate && String(s.validityDate).trim())
+                ? `Proposta válida até ${String(s.validityDate).trim()}.`
+                : "Proposta válida por 7 dias.";
+              doc.text(validadeTexto, margin, footerY + disclaimerLines.length * 7 + 4);
+            } else {
             if (logoDataUrl) {
               const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
               const logoWidth = 120;
@@ -3680,11 +3768,13 @@
               ? `Proposta válida até ${String(s.validityDate).trim()}.`
               : "Proposta válida por 7 dias.";
             doc.text(`${validadeTextoRelatorio} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, footerYRel);
+            }
           }
 
           doc.save("proposta-freelancer.pdf");
           const modeCtx = buildPricingContext(s);
-          trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode, pdfV2 });
+          const internalFormat = !proposalMode ? (s.pdfInternalFormat === "compact" ? "compact" : "complete") : null;
+          trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode, pdfV2, internalFormat });
           showToast("PDF gerado.");
         } catch {
           showToast("Não foi possível gerar o PDF.");
@@ -3954,6 +4044,9 @@
 
         if (els.proposalMode) {
           els.proposalMode.addEventListener("change", updateUI);
+        }
+        if (els.pdfInternalFormat) {
+          els.pdfInternalFormat.addEventListener("change", updateUI);
         }
         if (els.advancedMode) {
           els.advancedMode.addEventListener("change", () => {
