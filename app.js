@@ -36,6 +36,8 @@
       }
       (async function bootstrap() {
         tuneHeroSignalSpacing();
+        ensureMotionFoundationStyles();
+        ensureRiskThermometer();
         try {
           const calcMod = await import("./calculadora.js");
           compute = calcMod.compute;
@@ -190,7 +192,12 @@
         ui_wizard_enabled: false,
         ui_preview_anchor_enabled: false,
         ui_trust_badges_enabled: false,
-        ui_micro_interactions_enabled: false,
+        ui_micro_interactions_enabled: true,
+        ui_counter_up_enabled: true,
+        ui_panel_fade_enabled: true,
+        ui_skeleton_tabs_enabled: true,
+        ui_risk_thermometer_enabled: true,
+        ui_glassmorphism_boost_enabled: true,
         ui_mobile_a11y_enabled: false,
         pdf_playfair_font_url: "",
         pdf_playfair_font_base64: "",
@@ -202,6 +209,8 @@
       let deferredInstallPrompt = null;
       let riskTelemetryState = null;
       let proposalJustificationPinned = false;
+      const counterAnimationState = new WeakMap();
+      let riskThermometerRefs = null;
 
       const $ = (id) => document.getElementById(id);
 
@@ -561,6 +570,207 @@
         showToast._t = setTimeout(() => els.toast.classList.add("hidden"), 1800);
       }
 
+      function ensureMotionFoundationStyles() {
+        if (document.getElementById("uiMotionFoundationStyles")) return;
+        const style = document.createElement("style");
+        style.id = "uiMotionFoundationStyles";
+        style.textContent = `
+          @keyframes uiFadeSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes uiSkeletonShimmer {
+            0% { background-position: -220% 0; }
+            100% { background-position: 220% 0; }
+          }
+          .tab-panel-relative { position: relative; }
+          .motion-fade-in {
+            animation: uiFadeSlideIn .28s ease-out;
+          }
+          #panel-essential.tab-panel-visible .card-macro,
+          #panel-scenario.tab-panel-visible #scenarioCard,
+          #panel-governance.tab-panel-visible #governanceCard,
+          #panel-strategist.tab-panel-visible #strategistCard,
+          #panel-strategist.tab-panel-visible #auditModeCard,
+          #panel-strategist.tab-panel-visible #negotiationOutputCard,
+          #panel-strategist.tab-panel-visible #explainabilityCard {
+            animation: uiFadeSlideIn .32s ease-out;
+          }
+          .tab-skeleton-overlay {
+            position: absolute;
+            inset: .4rem;
+            z-index: 4;
+            border-radius: .9rem;
+            border: 1px solid rgba(148,163,184,.18);
+            background: rgba(7,10,18,.52);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: grid;
+            align-content: center;
+            gap: .55rem;
+            padding: .9rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .14s ease-out;
+          }
+          .tab-skeleton-overlay.is-visible { opacity: 1; }
+          .tab-skeleton-overlay.is-hiding { opacity: 0; }
+          .tab-skeleton-line {
+            height: .62rem;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(148,163,184,.16), rgba(148,163,184,.33), rgba(148,163,184,.16));
+            background-size: 220% 100%;
+            animation: uiSkeletonShimmer 1.1s linear infinite;
+          }
+          .tab-skeleton-line.short { width: 56%; }
+          .risk-thermo-track {
+            height: .55rem;
+            width: 100%;
+            border-radius: 999px;
+            background: rgba(148,163,184,.2);
+            overflow: hidden;
+          }
+          .risk-thermo-fill {
+            height: 100%;
+            width: 8%;
+            border-radius: inherit;
+            background: hsl(120 80% 45%);
+            transition: width .28s ease-out, background-color .28s ease-out;
+          }
+          .risk-thermo-label {
+            transition: color .28s ease-out;
+          }
+          ${FEATURE_FLAGS.ui_glassmorphism_boost_enabled ? `
+          .card-macro,
+          #scenarioCard,
+          #governanceCard,
+          #auditModeCard,
+          #negotiationOutputCard,
+          #explainabilityCard {
+            backdrop-filter: blur(12px) saturate(130%);
+            -webkit-backdrop-filter: blur(12px) saturate(130%);
+          }
+          input:focus-visible,
+          select:focus-visible,
+          textarea:focus-visible {
+            box-shadow: 0 0 0 2px rgba(52,211,153,.48), 0 0 0 7px rgba(16,185,129,.16) !important;
+            border-color: rgba(16,185,129,.62) !important;
+          }
+          ` : ""}
+        `;
+        document.head.appendChild(style);
+      }
+
+      function showTabSkeleton(panel) {
+        if (!FEATURE_FLAGS.ui_skeleton_tabs_enabled || !panel) return;
+        panel.querySelectorAll(".tab-skeleton-overlay").forEach((n) => n.remove());
+        const overlay = document.createElement("div");
+        overlay.className = "tab-skeleton-overlay";
+        overlay.innerHTML = '<span class="tab-skeleton-line"></span><span class="tab-skeleton-line short"></span>';
+        panel.classList.add("tab-panel-relative");
+        panel.appendChild(overlay);
+        requestAnimationFrame(() => overlay.classList.add("is-visible"));
+        window.setTimeout(() => {
+          overlay.classList.add("is-hiding");
+          window.setTimeout(() => overlay.remove(), 180);
+        }, 230);
+      }
+
+      function animatePanelEntrance(panel) {
+        if (!FEATURE_FLAGS.ui_panel_fade_enabled || !panel) return;
+        panel.classList.remove("motion-fade-in");
+        void panel.offsetWidth;
+        panel.classList.add("motion-fade-in");
+      }
+
+      function animateMoneyCounter(node, targetValue, currency) {
+        if (!node) return;
+        if (!FEATURE_FLAGS.ui_counter_up_enabled || !Number.isFinite(targetValue)) {
+          safeMoney(node, Number.isFinite(targetValue) ? fmtMoney(targetValue, currency) : "—");
+          counterAnimationState.delete(node);
+          return;
+        }
+        const prev = counterAnimationState.get(node);
+        if (prev && prev.raf) cancelAnimationFrame(prev.raf);
+        const from = prev && Number.isFinite(prev.current) ? prev.current : targetValue;
+        const to = Number(targetValue);
+        if (Math.abs(to - from) < 0.01) {
+          safeMoney(node, fmtMoney(to, currency));
+          counterAnimationState.set(node, { current: to, raf: null });
+          return;
+        }
+        const start = performance.now();
+        const duration = 560;
+        const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+        const tick = (now) => {
+          const progress = Math.min(1, (now - start) / duration);
+          const value = from + (to - from) * easeOut(progress);
+          safeMoney(node, fmtMoney(value, currency));
+          if (progress < 1) {
+            const raf = requestAnimationFrame(tick);
+            counterAnimationState.set(node, { current: value, raf });
+          } else {
+            counterAnimationState.set(node, { current: to, raf: null });
+          }
+        };
+        const raf = requestAnimationFrame(tick);
+        counterAnimationState.set(node, { current: from, raf });
+      }
+
+      function ensureRiskThermometer() {
+        if (!FEATURE_FLAGS.ui_risk_thermometer_enabled || riskThermometerRefs) return;
+        const firstRisk = els.riskHistoricoAlteracoes;
+        if (!firstRisk) return;
+        const host = firstRisk.closest(".rounded-xl");
+        if (!host) return;
+        const wrap = document.createElement("div");
+        wrap.id = "riskThermometerWrap";
+        wrap.className = "mt-3 space-y-1";
+        wrap.innerHTML = `
+          <div class="flex items-center justify-between text-[11px] text-slate-300">
+            <span>Termômetro de risco</span>
+            <span id="riskThermometerLabel" class="risk-thermo-label text-emerald-300">Baixo (0/5)</span>
+          </div>
+          <div class="risk-thermo-track">
+            <div id="riskThermometerFill" class="risk-thermo-fill"></div>
+          </div>
+        `;
+        host.appendChild(wrap);
+        riskThermometerRefs = {
+          label: wrap.querySelector("#riskThermometerLabel"),
+          fill: wrap.querySelector("#riskThermometerFill"),
+        };
+      }
+
+      function updateRiskThermometer(state) {
+        if (!FEATURE_FLAGS.ui_risk_thermometer_enabled) return;
+        ensureRiskThermometer();
+        if (!riskThermometerRefs || !state) return;
+        const checks = [
+          !!state.riskHistoricoAlteracoes,
+          !!state.riskComunicacaoFragmentada,
+          !!state.riskTomadorIndefinido,
+          !!state.riskEscopoIncompleto,
+          !!state.riskUrgenciaSemBriefing,
+        ];
+        const count = checks.filter(Boolean).length;
+        const ratio = count / checks.length;
+        const hue = 120 - Math.round(120 * ratio);
+        const width = Math.max(8, Math.round(ratio * 100));
+        const levels = ["Baixo", "Leve", "Moderado", "Alto", "Crítico", "Crítico"];
+        const level = levels[Math.min(levels.length - 1, count)] || "Baixo";
+        riskThermometerRefs.fill.style.width = `${width}%`;
+        riskThermometerRefs.fill.style.backgroundColor = `hsl(${hue} 82% 48%)`;
+        riskThermometerRefs.label.textContent = `${level} (${count}/5)`;
+        riskThermometerRefs.label.style.color = `hsl(${hue} 80% 68%)`;
+      }
+
+      function normalizeCopyToastMessage(okMsg) {
+        if (!okMsg) return "Copiado para a área de transferência! 🎉";
+        return /copiad|copiar/i.test(okMsg)
+          ? "Copiado para a área de transferência! 🎉"
+          : okMsg;
+      }
       const LOGO_MAX_KB = 500;
       const LOGO_MAX_WIDTH_PX = 300;
       const LOGO_IMPORT_MAX_CHARS = 2 * 1024 * 1024;
@@ -1473,6 +1683,8 @@
               if (show) {
                 p.classList.remove("hidden", "tab-panel-enter");
                 p.classList.add("tab-panel-visible");
+                animatePanelEntrance(p);
+                if (fromClick) showTabSkeleton(p);
               } else {
                 p.classList.add("hidden");
                 p.classList.remove("tab-panel-visible");
@@ -1488,7 +1700,7 @@
         tabs.forEach((tab, index) => {
           if (!tab) return;
           tab.addEventListener("click", () => {
-            activateTab(index, false);
+            activateTab(index, true);
           });
           tab.addEventListener("keydown", (e) => {
             const visibleIndices = tabs.map((t, i) => (t && !t.classList.contains("hidden") ? i : -1)).filter((i) => i >= 0);
@@ -1510,7 +1722,7 @@
               next = visibleIndices[visibleIndices.length - 1] ?? index;
             } else return;
             if (next !== index && tabs[next]) {
-              activateTab(next, false);
+              activateTab(next, true);
               tabs[next].focus();
             }
           });
@@ -1982,7 +2194,11 @@
         }
 
         const hourlyOk = r.ok && r.hourly != null;
-        safeMoney(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+        if (FEATURE_FLAGS.ui_counter_up_enabled) {
+          animateMoneyCounter(els.hourlyRate, hourlyOk ? r.hourly : null, curr);
+        } else {
+          safeMoney(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+        }
         safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
         safeText(els.hourlyNote, s.advancedMode ? "Baseada na estratégia premium (patrimônio, risco, escassez e exaustão)." : "Baseada na sua capacidade faturável.");
         if (els.dailyLabel) {
@@ -2030,7 +2246,11 @@
 
         // Projeto
         const projectOk = hourlyOk && s.projectHours > 0 && r.ok && r.projectNet != null;
-        safeMoney(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
+        if (FEATURE_FLAGS.ui_counter_up_enabled) {
+          animateMoneyCounter(els.projectPrice, projectOk ? r.projectNet : null, curr);
+        } else {
+          safeMoney(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
+        }
         if (els.projectHint) {
           if (s.proposalMode) {
             safeText(els.projectHint, "");
@@ -2065,6 +2285,7 @@
         renderScenariosComparison();
         renderExplainability(s, pricingCtx);
         renderRiskAudit(s, pricingCtx);
+        updateRiskThermometer(s);
         renderNegotiationOutputs(s, r, negotiationCtx);
 
         const strategistEnabled = !!FEATURE_FLAGS.strategist_mode_enabled;
@@ -2307,7 +2528,7 @@
         if (!text) return;
         navigator.clipboard
           .writeText(text)
-          .then(() => showToast(okMsg))
+          .then(() => showToast(normalizeCopyToastMessage(okMsg)))
           .catch(() => showToast("Não foi possível copiar."));
       }
 
