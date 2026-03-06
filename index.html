@@ -207,6 +207,15 @@
       body.input-focused .mobile-a11y-bar { display: none !important; }
       body.input-focused.wizard-bar-visible main,
       body.input-focused.mobile-a11y-bar-visible main { padding-bottom: 0 !important; }
+      @media (min-width: 1024px) {
+        #mainGrid[data-ui-split="false"] {
+          grid-template-columns: 1fr !important;
+        }
+        #mainGrid[data-ui-split="false"] > section,
+        #mainGrid[data-ui-split="false"] > aside {
+          grid-column: 1 / -1 !important;
+        }
+      }
     </style>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
@@ -993,7 +1002,7 @@
 
         <!-- Outputs -->
         <aside class="lg:col-span-5">
-          <div class="space-y-7 lg:sticky lg:top-6 lg:self-start">
+          <div class="space-y-7">
             <div id="previewAnchorCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <div id="resultError" class="hidden rounded-xl border border-white/10 bg-ink-800/80 px-4 py-3 text-sm text-slate-300" role="alert"></div>
               <div id="resultCardsInternal" class="preview-anchor preview-anchor-grid" data-anchor-enabled="false">
@@ -2578,7 +2587,7 @@
           btnImportConfig: "Importar configuração",
           btnCopyProposal: "Copiar proposta",
           btnCopyJustification: "Copiar justificativa técnica",
-          btnInsertProposalJustification: "Inserir justificativa na proposta",
+          btnInsertProposalJustification: "Usar texto com justificativa",
         };
         Object.entries(ctaMap).forEach(([id, label]) => {
           const node = document.getElementById(id);
@@ -2599,7 +2608,7 @@
           enableMonteCarlo: "Ativa simulação estocástica quando houver histórico suficiente.",
           advancedMode: "Alterna entre cálculo essencial e precificação avançada.",
           btnCopyJustification: "Copia os blocos de justificativa para proposta comercial.",
-          btnInsertProposalJustification: "Insere os blocos de justificativa no texto da proposta atual.",
+          btnInsertProposalJustification: "Alterna entre o texto curto e a versão com justificativa técnica.",
         };
         Object.entries(helpMap).forEach(([id, text]) => {
           const el = document.getElementById(id);
@@ -2625,7 +2634,7 @@
       function syncProposalJustificationButton() {
         if (!els.btnInsertProposalJustification) return;
         const isPinned = !!proposalJustificationPinned;
-        const label = isPinned ? "Remover justificativa da proposta" : "Inserir justificativa na proposta";
+        const label = isPinned ? "Usar texto curto da proposta" : "Usar texto com justificativa";
         els.btnInsertProposalJustification.textContent = label;
         els.btnInsertProposalJustification.setAttribute("aria-pressed", String(isPinned));
       }
@@ -3307,17 +3316,9 @@
         let proposalFinalText = proposalBaseText;
         if (proposalJustificationPinned && proposalBaseText !== "—") {
           const payload = String(buildJustificationClipboardText(s, negotiationCtx) || "").trim();
-          if (payload) {
-            proposalFinalText = [proposalBaseText, payload].filter(Boolean).join("\n\n");
-            if (els.proposalText) els.proposalText.dataset.justificationInjected = payload;
-          } else if (els.proposalText) {
-            delete els.proposalText.dataset.justificationInjected;
-          }
-        } else if (els.proposalText) {
-          delete els.proposalText.dataset.justificationInjected;
+          if (payload) proposalFinalText = payload;
         }
         safeText(els.proposalText, proposalFinalText);
-        if (els.proposalText) els.proposalText.dataset.proposalBaseText = proposalBaseText;
 
         renderComposition(s, r, pricingCtx);
         renderAlerts(s, r);
@@ -3506,18 +3507,17 @@
         if (els.btnCopyJustification) {
           els.btnCopyJustification.disabled = !termsOk;
           els.btnCopyJustification.title = termsOk ? "" : "Aceite os termos no início da página para copiar.";
-        }
-                if (els.btnInsertProposalJustification) {
+        }        if (els.btnInsertProposalJustification) {
           const isPinned = !!proposalJustificationPinned;
           els.btnInsertProposalJustification.disabled = !termsOk;
           els.btnInsertProposalJustification.title = termsOk
-            ? (isPinned ? "Remove os blocos de justificativa do texto da proposta." : "Insere os blocos de justificativa no texto da proposta e mantém atualização automática.")
-            : "Aceite os termos no início da página para inserir justificativa.";
+            ? (isPinned ? "Usando a versão com justificativa. Clique para voltar ao texto curto." : "Substitui o texto rápido pela versão com justificativa técnica.")
+            : "Aceite os termos no início da página para alternar o texto da proposta.";
           els.btnInsertProposalJustification.setAttribute(
             "aria-label",
             termsOk
-              ? (isPinned ? "Remover justificativa da proposta" : "Inserir justificativa na proposta")
-              : "Aceite os termos no início da página para inserir justificativa."
+              ? (isPinned ? "Usar texto curto da proposta" : "Usar texto com justificativa")
+              : "Aceite os termos no início da página para alternar o texto da proposta."
           );
         }
         syncProposalJustificationButton();
@@ -4346,7 +4346,7 @@
           if (!text) return showToast("Nada para copiar.");
           copyToClipboard(text, "Justificativa copiada.");
         });
-                        if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
+        if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
             showToast("Para usar esta função, aceite os termos no início da página.");
             return;
@@ -4358,12 +4358,14 @@
             showToast("Preencha as horas do projeto para montar a proposta.");
             return;
           }
+          const prevY = window.scrollY;
           proposalJustificationPinned = !proposalJustificationPinned;
           updateUI();
+          requestAnimationFrame(() => window.scrollTo(0, prevY));
           showToast(
             proposalJustificationPinned
-              ? "Justificativa inserida e vinculada à proposta."
-              : "Justificativa removida da proposta."
+              ? "Texto da proposta alterado para a versão com justificativa."
+              : "Texto da proposta voltou para a versão curta."
           );
         });
         if (els.btnShare) els.btnShare.addEventListener("click", () => {
