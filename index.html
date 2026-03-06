@@ -3456,55 +3456,22 @@
                 advanceY(caveatLines.length * 10 + 12);
               }
             }
-            ensureSpace(140);
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.text("Justificativas de negociação", margin, y);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            advanceY(16);
-            const jLines = doc.splitTextToSize(justificationText, pageWidth - 2 * margin);
-            doc.text(jLines, margin, y);
-            advanceY(jLines.length * 12 + 16);
-            if (negotiationCtx.roi.enabled && negotiationCtx.roi.text) {
-              ensureSpace(60);
-              const roiLines = doc.splitTextToSize(`${negotiationCtx.roi.text} ${negotiationCtx.roi.caveat}`, pageWidth - 2 * margin);
-              doc.text(roiLines, margin, y);
-              advanceY(roiLines.length * 12 + 12);
-            }
-            ensureSpace(72);
-            doc.setFontSize(10);
-            writeWrappedSummary(
-              `Proteção de Escopo: ${fmtNumber(negotiationCtx.scopeShield.markupPct, 1)}% (${formatScopeLevel(negotiationCtx.scopeShield.level)}). ` +
-                `Prêmio de conveniência: ${fmtNumber(negotiationCtx.scarcity.markupPct, 1)}%.`,
-              { lineHeight: 12, spacingAfter: 4, minRoom: 60 }
-            );
-            writeWrappedSummary(
-              `Fôlego financeiro atual: ${fmtNumber(negotiationCtx.runway.runwayMesesAtual, 1)} meses | pós-projeto: ${fmtNumber(negotiationCtx.runway.runwayMesesPosProjeto, 1)} meses.`,
-              { lineHeight: 12, spacingAfter: 4, minRoom: 56 }
-            );
-            writeWrappedSummary(
-              `Projetos para meta de reserva: ${negotiationCtx.runway.projetosNecessarios == null ? "n/d" : fmtNumber(negotiationCtx.runway.projetosNecessarios, 0)}.`,
-              { lineHeight: 12, spacingAfter: 12, minRoom: 48 }
-            );
-            ensureSpace(120);
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(11);
-            doc.text("Frases de negociação sugeridas", margin, y);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            advanceY(14);
-            antiDiscountPhrases.forEach((phrase) => {
-              writeWrappedSummary(`- ${phrase}`, { lineHeight: 12, spacingAfter: 2, minRoom: 44 });
-            });
-            advanceY(8);
-            ensureSpace(110);
+            const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
+            const disclaimerLines = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
+            const validadeTexto = (s.validityDate && String(s.validityDate).trim())
+              ? `Proposta v�lida at� ${String(s.validityDate).trim()}.`
+              : "Proposta v�lida por 7 dias.";
+            const approvalLine = `${validadeTexto} Para aprovar, responda esta proposta com 'APROVADO'.`;
+            const approvalLines = doc.splitTextToSize(approvalLine, pageWidth - 2 * margin);
+            const investmentBlockHeight = projectOk ? 58 : 46;
+            const footerHeight = (disclaimerLines.length * 10) + 4 + (approvalLines.length * 10);
+            ensureSpace(investmentBlockHeight + footerHeight + 12);
+
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
             doc.text("Investimento Total", margin, y);
             doc.setFont("helvetica", "normal");
             advanceY(20);
-            const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
             if (projectOk) {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(18);
@@ -3516,17 +3483,14 @@
               doc.setFontSize(11);
               doc.text("Preencha as horas estimadas para calcular o investimento.", margin, y);
             }
+
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
-            const disclaimerLines = doc.splitTextToSize(LEGAL_DISCLAIMER, pageWidth - 2 * margin);
-            let footerY = pageHeight - margin - disclaimerLines.length * 10 - 14;
+            let footerY = pageHeight - margin - (disclaimerLines.length * 10) - (approvalLines.length * 10) - 14;
             doc.text(disclaimerLines, margin, footerY);
             footerY += disclaimerLines.length * 10 + 4;
             doc.setFontSize(9);
-            const validadeTexto = (s.validityDate && String(s.validityDate).trim())
-              ? `Proposta válida até ${String(s.validityDate).trim()}.`
-              : "Proposta válida por 7 dias.";
-            doc.text(`${validadeTexto} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, footerY);
+            doc.text(approvalLines, margin, footerY);
           } else {
             if (logoDataUrl) {
               const format = logoDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
