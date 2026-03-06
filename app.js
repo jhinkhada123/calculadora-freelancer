@@ -24,8 +24,18 @@
         }
         if (typeof console !== "undefined" && console.error) console.error(context || "Boot", err);
       }
-
+      function tuneHeroSignalSpacing() {
+        const signals = document.querySelector(".hero-signal-inline");
+        if (signals) {
+          signals.style.setProperty("margin-top", "2.65rem", "important");
+        }
+        const trustLine = document.querySelector(".hero-trust-line");
+        if (trustLine) {
+          trustLine.style.setProperty("margin-top", "0.95rem");
+        }
+      }
       (async function bootstrap() {
+        tuneHeroSignalSpacing();
         try {
           const calcMod = await import("./calculadora.js");
           compute = calcMod.compute;
