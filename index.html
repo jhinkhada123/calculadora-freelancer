@@ -1494,6 +1494,8 @@
         ui_trust_badges_enabled: false,
         ui_micro_interactions_enabled: false,
         ui_mobile_a11y_enabled: false,
+        pdf_playfair_font_url: "",
+        pdf_playfair_font_base64: "",
       };
       let logoDataUrl = null;
       let calcCardStash = null;
@@ -3763,6 +3765,8 @@
                 LEGAL_DISCLAIMER,
                 BRAND_NAME,
                 trackEvent,
+                playfairFontUrl: FEATURE_FLAGS.pdf_playfair_font_url || null,
+                playfairFontBase64: FEATURE_FLAGS.pdf_playfair_font_base64 || null,
               },
             });
             const modeCtx = buildPricingContext(s);
@@ -3777,6 +3781,7 @@
           if (execErr && !useExecutiveBuilder) throw execErr;
         }
 
+        try {
         const { jsPDF } = jspdfMod;
         const doc = new jsPDF({ unit: "pt", format: "a4" });
         const margin = 56;
