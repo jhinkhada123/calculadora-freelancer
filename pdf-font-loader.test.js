@@ -51,10 +51,23 @@ describe("pdf-font-loader", () => {
     expect(result).toHaveProperty("fontMode");
   });
 
+  test("retorna premium quando playfairFontBase64 fornecido", async () => {
+    const doc = mockDoc();
+    const fakeBase64 = "AAEAAAASAQAABAAgRFNJRwAAAAEAA";
+    const result = await loadPdfFonts({
+      doc,
+      assets: { playfairFontBase64: fakeBase64 },
+    });
+    expect(result.fallbackUsed).toBe(false);
+    expect(result.fontMode).toBe("premium");
+    expect(result.titleFont).toBe("Playfair");
+  });
+
   test("retorna premium quando addFont não lança (mock)", async () => {
     const origFetch = globalThis.fetch;
     globalThis.fetch = () => Promise.resolve({
       ok: true,
+      headers: { get: () => null },
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(100)),
     });
     const doc = mockDoc();

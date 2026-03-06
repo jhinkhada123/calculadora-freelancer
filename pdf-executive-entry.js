@@ -87,6 +87,7 @@ export async function generatePdfExecutive({
     logoDataUrl: logoDataUrl || null,
     brandName: deps.BRAND_NAME || "Calculadora de Precificação para Freelancers",
     playfairFontUrl: deps.playfairFontUrl ?? null,
+    playfairFontBase64: deps.playfairFontBase64 ?? null,
   };
 
   const fontResult = await loadPdfFonts({
