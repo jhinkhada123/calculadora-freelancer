@@ -92,6 +92,21 @@
       };
     </script>
     <style>
+      /* === Fase 3: Tokens visuais centralizados === */
+      :root {
+        --token-radius: 1rem;
+        --token-radius-lg: 1.5rem;
+        --token-border: 1px solid rgba(255,255,255,.1);
+        --token-border-inner: 1px solid rgba(255,255,255,.08);
+        --token-bg-inner: rgba(255,255,255,.03);
+        --token-shadow-macro: 0 12px 40px rgba(0,0,0,.35);
+        --token-shadow-inner: none;
+        --token-spacing: 0.25rem;
+        --token-spacing-md: 0.5rem;
+        --token-spacing-lg: 1rem;
+        --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --font-serif: "Playfair Display", Georgia, serif;
+      }
       input[type="number"]::-webkit-outer-spin-button,
       input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -126,6 +141,22 @@
       .wizard-container[data-wizard-enabled="true"] .wizard-step[data-current="true"] { display: block; }
       .wizard-bottom-bar { padding-bottom: env(safe-area-inset-bottom, 0); }
       body.wizard-bar-visible main { padding-bottom: 5.5rem; }
+      /* Fase 3: Tipografia técnica x proposta */
+      .font-result-title { font-family: var(--font-serif); }
+      /* Fase 3: Cards macro vs internos */
+      .card-macro { box-shadow: var(--token-shadow-macro); }
+      .card-inner { border: var(--token-border-inner); background: var(--token-bg-inner); }
+      /* Fase 4: Preview anchor reorder (quando ui_preview_anchor_enabled) */
+      .preview-anchor { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+      .preview-anchor[data-anchor-enabled="true"] { display: flex; flex-direction: column; gap: var(--token-spacing-lg); }
+      .preview-anchor[data-anchor-enabled="true"] .preview-block[data-order="1"] { order: 1; }
+      .preview-anchor[data-anchor-enabled="true"] .preview-block[data-order="2"] { order: 2; }
+      .preview-anchor[data-anchor-enabled="true"] .preview-block[data-order="3"] { order: 3; }
+      .preview-anchor[data-anchor-enabled="true"] .preview-block[data-order="4"] { order: 4; }
+      /* Fase 4: Trust badges */
+      .trust-badges { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 11px; color: rgba(148,163,184,.9); }
+      .trust-badges li { list-style: none; display: flex; align-items: center; gap: 0.35rem; }
+      .trust-badges li::before { content: "✓"; color: rgba(52,211,153,.8); font-weight: 600; }
     </style>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
@@ -360,7 +391,7 @@
       <div id="mainGrid" class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-14 lg:grid-cols-12">
         <!-- Inputs -->
         <section class="lg:col-span-7">
-          <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+          <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
             <div class="flex items-center justify-between gap-3">
               <h2 class="text-base font-semibold">Entradas</h2>
               <div class="flex items-center gap-2">
@@ -528,7 +559,7 @@
             </div>
 
             <div id="wizardStep2" class="wizard-step hidden" data-step="2" data-current="false">
-            <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4">
+            <div class="mt-6 rounded-2xl border border-white/10 bg-ink-900/40 p-4 card-inner">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h3 class="text-sm font-semibold">Estimativa de projeto</h3>
@@ -625,12 +656,12 @@
             <div id="wizardStep3" class="wizard-step hidden" data-step="3" data-current="false">
               <p class="mt-6 text-[11px] text-slate-400">Quando fechar, gere o PDF do cliente.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
                   <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
-                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums">—</p>
+                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums font-result-title">—</p>
                   <p id="projectHint" class="mt-1 text-xs text-slate-400">Preencha as horas para estimar.</p>
                 </div>
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
                   <p class="text-xs text-slate-400">Texto rápido para proposta</p>
                   <p id="proposalText" class="mt-2 text-sm text-slate-200">—</p>
                   <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -913,10 +944,10 @@
         <!-- Outputs -->
         <aside class="lg:col-span-5">
           <div class="sticky top-6 space-y-7">
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 shadow-soft backdrop-blur">
+            <div id="previewAnchorCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <div id="resultError" class="hidden rounded-xl border border-white/10 bg-ink-800/80 px-4 py-3 text-sm text-slate-300" role="alert"></div>
-              <div id="resultCardsInternal">
-                <div class="flex items-start justify-between gap-4">
+              <div id="resultCardsInternal" class="preview-anchor preview-anchor-grid" data-anchor-enabled="false">
+                <div class="flex items-start justify-between gap-4 preview-block" data-order="0">
                   <div>
                     <h2 class="text-base font-semibold">Resultado</h2>
                     <p class="mt-1 text-xs text-slate-400">Atualiza automaticamente conforme você ajusta as entradas.</p>
@@ -931,42 +962,52 @@
                   </button>
                 </div>
 
-                <div class="mt-5 grid grid-cols-1 gap-3">
-                  <div class="rounded-2xl border border-white/10 bg-ink-900/40 p-4">
-                    <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                    <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums">—</p>
-                    <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
-                  </div>
+                <div class="preview-block mt-5 rounded-2xl border border-white/10 bg-ink-900/40 p-4 card-inner" data-order="1">
+                  <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
+                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-title">—</p>
+                  <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
+                </div>
 
-                  <div class="grid grid-cols-2 gap-3">
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <p id="dailyLabel" class="text-xs text-slate-400">Taxa/dia</p>
-                      <p id="dailyRate" class="mt-1 text-lg font-semibold tabular-nums">—</p>
-                    </div>
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <p class="text-xs text-slate-400">Horas faturáveis/mês</p>
-                      <p id="billableHours" class="mt-1 text-lg font-semibold tabular-nums">—</p>
-                    </div>
+                <div class="preview-block grid grid-cols-2 gap-3" data-order="2">
+                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
+                    <p id="dailyLabel" class="text-xs text-slate-400">Taxa/dia</p>
+                    <p id="dailyRate" class="mt-1 text-lg font-semibold tabular-nums">—</p>
                   </div>
+                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
+                    <p class="text-xs text-slate-400">Horas faturáveis/mês</p>
+                    <p id="billableHours" class="mt-1 text-lg font-semibold tabular-nums">—</p>
+                  </div>
+                </div>
 
-                  <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
-                    <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums">—</p>
-                    <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
-                  </div>
+                <div class="preview-block rounded-2xl border border-white/10 bg-white/5 p-4 card-inner" data-order="3">
+                  <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
+                  <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums font-result-title">—</p>
+                  <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
+                </div>
+
+                <div class="preview-block hidden" data-order="4" id="resultCardsCtaBlock">
+                  <button id="btnPdfFromPreview" type="button" class="w-full rounded-xl bg-emerald-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Gerar proposta em PDF
+                  </button>
                 </div>
               </div>
 
-              <div id="resultCardProposal" class="hidden">
-                <h2 class="text-base font-semibold">Resultado</h2>
-                <p class="mt-1 text-xs text-slate-400">Resumo para proposta comercial.</p>
-                <div class="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6">
+              <div id="resultCardProposal" class="hidden preview-anchor" data-anchor-enabled="false">
+                <h2 class="text-base font-semibold font-result-title preview-block" data-order="0">Resultado</h2>
+                <p class="mt-1 text-xs text-slate-400 preview-block" data-order="0">Resumo para proposta comercial.</p>
+                <div id="proposalValorGanhoBlock" class="preview-block hidden rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4" data-order="1">
+                  <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Valor/ganho esperado</p>
+                  <p id="resultProposalValorGanho" class="mt-1 text-xl font-semibold text-slate-100 tabular-nums">—</p>
+                </div>
+                <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="3">
                   <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Investimento Total do Projeto</p>
-                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums">—</p>
-                  <p class="mt-4 text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
+                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums font-result-title">—</p>
+                </div>
+                <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="2">
+                  <p class="text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
                   <p id="resultProposalPrazo" class="mt-1 text-xl font-semibold text-slate-100">—</p>
                 </div>
-                <div class="mt-4">
+                <div class="preview-block mt-4" data-order="4">
                   <button
                     id="btnPdfProposal"
                     type="button"
@@ -976,9 +1017,17 @@
                   </button>
                 </div>
               </div>
+
+              <div id="trustBadgesBlock" class="mt-4 hidden" aria-live="polite">
+                <ul class="trust-badges">
+                  <li>Dados salvos no navegador</li>
+                  <li>Sem cadastro</li>
+                  <li>Metodologia transparente</li>
+                </ul>
+              </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <h3 class="text-sm font-semibold">Composição do Faturamento</h3>
               <p class="mt-1 text-xs text-slate-400">Distribuição estimada do faturamento alvo mensal.</p>
               <div class="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
@@ -987,13 +1036,13 @@
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <h3 class="text-sm font-semibold">Alertas Inteligentes</h3>
               <p class="mt-1 text-xs text-slate-400">Sinais práticos para reduzir risco de sobrecarga e precificação frágil.</p>
               <div id="alertsList" class="mt-4 space-y-2 text-sm text-slate-200"></div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <h3 class="text-sm font-semibold">Base de Confiança</h3>
               <p class="mt-1 text-xs text-slate-400">Referências consultivas para decisões profissionais, sem promessas absolutas.</p>
               <ul id="trustMicrocopyList" class="mt-3 list-disc space-y-1 pl-5 text-xs text-slate-200">
@@ -1012,7 +1061,7 @@
               </ul>
             </div>
 
-            <div id="explainabilityCard" class="hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.20),rgba(15,23,42,.60))] p-5 backdrop-blur">
+            <div id="explainabilityCard" class="hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.20),rgba(15,23,42,.60))] p-5 card-macro backdrop-blur">
               <h3 class="text-sm font-semibold text-indigo-100">Como chegamos nesse preço</h3>
               <p id="advancedModelLabel" class="mt-1 text-xs text-indigo-200/80">Modelo: estimativa por faixa</p>
               <div class="mt-3 grid grid-cols-2 gap-2">
@@ -1029,7 +1078,7 @@
               <div id="advancedWarnings" class="mt-4 space-y-2 text-xs"></div>
             </div>
 
-            <div id="negotiationOutputCard" class="rounded-2xl border border-emerald-400/25 bg-[linear-gradient(135deg,rgba(16,185,129,.14),rgba(15,23,42,.6))] p-5 backdrop-blur">
+            <div id="negotiationOutputCard" class="rounded-2xl border border-emerald-400/25 bg-[linear-gradient(135deg,rgba(16,185,129,.14),rgba(15,23,42,.6))] p-5 card-macro backdrop-blur">
               <div class="flex items-center justify-between gap-3">
                 <h3 class="text-sm font-semibold text-emerald-100">Pacote de Negociação (v2.1)</h3>
                 <div class="flex gap-2">
@@ -1064,7 +1113,7 @@
               </div>
             </div>
 
-            <div id="auditModeCard" class="hidden rounded-2xl border border-emeraldlux-700/35 bg-emeraldlux-900/20 p-5 backdrop-blur">
+            <div id="auditModeCard" class="hidden rounded-2xl border border-emeraldlux-700/35 bg-emeraldlux-900/20 p-5 card-macro backdrop-blur">
               <h3 class="font-serif text-base font-semibold text-emerald-100">Modo Auditoria</h3>
               <p class="mt-1 text-xs text-emerald-100/80">Leitura proativa de risco operacional e comercial.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1082,28 +1131,28 @@
               <div id="riskScoreBreakdown" class="mt-3 text-xs text-emerald-50/90"></div>
             </div>
 
-            <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 backdrop-blur">
+            <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
-                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
                   <p class="text-xs text-slate-400">1) Custo mensal (pessoal + negócio)</p>
                   <p id="stepCost" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
-                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
                   <p class="text-xs text-slate-400">2) Percentual total (imposto + lucro + buffer)</p>
                   <p id="stepTax" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
-                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
                   <p class="text-xs text-slate-400">3) Base ÷ (1 − %) = Faturamento alvo</p>
                   <p id="stepProfit" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
-                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3">
+                <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
                   <p class="text-xs text-slate-400">4) Divide pelas horas faturáveis</p>
                   <p id="stepHours" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
               </ol>
 
-              <div class="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-slate-300">
+              <div class="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 card-inner text-xs text-slate-300">
                 Dica: se sua taxa/hora ficou alta, normalmente é porque a taxa de horas faturáveis está baixa,
                 as folgas/ano são altas, ou seus custos/impostos estão subestimados.
               </div>
@@ -1112,7 +1161,7 @@
               </p>
             </div>
 
-            <div id="strategistResultsCard" class="strategist-results-card hidden rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.08),rgba(15,23,42,.55))] p-5 backdrop-blur">
+            <div id="strategistResultsCard" class="strategist-results-card hidden rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.08),rgba(15,23,42,.55))] p-5 card-macro backdrop-blur">
               <h3 class="text-sm font-semibold text-amber-100">Impacto Econômico Estimado</h3>
               <p class="mt-1 text-xs text-slate-400">VCE, ROIx e CDO para precificação por valor.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -1379,6 +1428,8 @@
         pdf_internal_compact_enabled: false,
         ui_split_enabled: false,
         ui_wizard_enabled: false,
+        ui_preview_anchor_enabled: false,
+        ui_trust_badges_enabled: false,
       };
       let logoDataUrl = null;
       let calcCardStash = null;
@@ -1514,6 +1565,11 @@
         resultCardProposal: $("resultCardProposal"),
         resultProposalTotal: $("resultProposalTotal"),
         resultProposalPrazo: $("resultProposalPrazo"),
+        resultProposalValorGanho: $("resultProposalValorGanho"),
+        proposalValorGanhoBlock: $("proposalValorGanhoBlock"),
+        resultCardsCtaBlock: $("resultCardsCtaBlock"),
+        btnPdfFromPreview: $("btnPdfFromPreview"),
+        trustBadgesBlock: $("trustBadgesBlock"),
         compositionChart: $("compositionChart"),
         compositionLegend: $("compositionLegend"),
         alertsList: $("alertsList"),
@@ -2679,6 +2735,26 @@
         goToStep(1);
       }
 
+      function setupPreviewAnchor() {
+        const enabled = !!FEATURE_FLAGS.ui_preview_anchor_enabled;
+        if (els.resultCardsInternal) {
+          els.resultCardsInternal.setAttribute("data-anchor-enabled", enabled ? "true" : "false");
+        }
+        if (els.resultCardProposal) {
+          els.resultCardProposal.setAttribute("data-anchor-enabled", enabled ? "true" : "false");
+        }
+        if (els.resultCardsCtaBlock) {
+          els.resultCardsCtaBlock.classList.toggle("hidden", !enabled);
+        }
+      }
+
+      function setupTrustBadges() {
+        const enabled = !!FEATURE_FLAGS.ui_trust_badges_enabled;
+        if (els.trustBadgesBlock) {
+          els.trustBadgesBlock.classList.toggle("hidden", !enabled);
+        }
+      }
+
       function getAdvancedWarningsBundle(s, essential, advanced) {
         const warnings = [];
         if (!advanced || !advanced.ok) return warnings;
@@ -3131,6 +3207,11 @@
           const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
           safeText(els.resultProposalPrazo, projectOk ? `~${fmtNumber(prazoDias, 0)} dias úteis` : "—");
         }
+        if (FEATURE_FLAGS.ui_preview_anchor_enabled && els.proposalValorGanhoBlock && els.resultProposalValorGanho) {
+          const hasValorGanho = !!s.modoEstrategista && s.valorGanhoEstimado12m > 0;
+          els.proposalValorGanhoBlock.classList.toggle("hidden", !hasValorGanho);
+          if (hasValorGanho) safeText(els.resultProposalValorGanho, fmtMoney(s.valorGanhoEstimado12m, s.currency));
+        }
 
         if (r.ok && hasAcceptedTerms()) {
           scheduleAuditSnapshot();
@@ -3148,6 +3229,10 @@
         if (els.btnPdfProposal) {
           els.btnPdfProposal.disabled = els.btnPdf ? els.btnPdf.disabled : true;
           els.btnPdfProposal.title = els.btnPdf ? els.btnPdf.title : (errMsg || "Preencha os dados para gerar o PDF.");
+        }
+        if (els.btnPdfFromPreview) {
+          els.btnPdfFromPreview.disabled = !pdfOk || !termsOk;
+          els.btnPdfFromPreview.title = (pdfOk && termsOk) ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
         }
         const termsOk = hasAcceptedTerms();
         if (els.btnPrimaryPdfHeader) {
@@ -4107,6 +4192,9 @@
         if (els.btnPdfProposal) {
           els.btnPdfProposal.addEventListener("click", generatePdf);
         }
+        if (els.btnPdfFromPreview) {
+          els.btnPdfFromPreview.addEventListener("click", generatePdf);
+        }
 
         if (els.logoInput) {
           els.logoInput.addEventListener("change", async (event) => {
@@ -4314,6 +4402,8 @@
           wireHelpToggles();
           setupTabs();
           setupWizard();
+          setupPreviewAnchor();
+          setupTrustBadges();
           setupInstallPrompt();
           registerServiceWorker();
           applyBranding();
