@@ -127,7 +127,24 @@
         opacity: 1;
         transform: translateY(0);
       }
-      .tabular-nums { font-variant-numeric: tabular-nums; }
+      .tab-btn {
+        color: rgba(203,213,225,.86);
+      }
+      .tab-btn[aria-selected="false"]:hover {
+        background: rgba(255,255,255,.06);
+        color: rgba(248,250,252,.96);
+      }
+      .tab-btn[aria-selected="true"] {
+        background: rgba(255,255,255,.1);
+        color: #fff;
+        font-weight: 600;
+        box-shadow: inset 0 0 0 1px rgba(148,163,184,.35), 0 0 0 1px rgba(255,255,255,.04);
+      }
+      .tabular-nums {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums lining-nums;
+        font-feature-settings: "tnum" 1, "lnum" 1;
+      }
       .btn-default { font-size: 0.875rem; padding: 0.625rem 1rem; }
       .btn-compact { font-size: 0.75rem; padding: 0.5rem 0.75rem; }
       .btn-micro { font-size: 11px; padding: 0.375rem 0.75rem; }
@@ -241,6 +258,12 @@
       .mode-toggle-input:checked + .mode-toggle-track .mode-toggle-knob {
         transform: translateX(1rem);
         background: #fff;
+      }
+      main input[type="text"],
+      main input[type="number"],
+      main input[type="date"],
+      main select {
+        min-height: 2.75rem;
       }
       .wizard-container[data-wizard-enabled="false"] .wizard-step { display: block !important; }
       .wizard-container[data-wizard-enabled="false"] .wizard-step-indicator,
@@ -394,7 +417,7 @@
     </div>
 
     <div
-      class="pointer-events-none fixed inset-0 bg-[radial-gradient(1000px_circle_at_20%_-10%,rgba(99,102,241,.28),transparent_60%),radial-gradient(900px_circle_at_80%_10%,rgba(16,185,129,.18),transparent_55%),radial-gradient(900px_circle_at_60%_120%,rgba(236,72,153,.10),transparent_60%)]"
+      class="pointer-events-none fixed inset-0 bg-[radial-gradient(1000px_circle_at_20%_-10%,rgba(99,102,241,.18),transparent_60%),radial-gradient(900px_circle_at_80%_10%,rgba(16,185,129,.12),transparent_55%),radial-gradient(900px_circle_at_60%_120%,rgba(236,72,153,.08),transparent_60%)]"
     ></div>
 
     <div id="clientViewContainer" class="hidden">
@@ -492,11 +515,11 @@
               <button
                 id="btnPrimaryPdfHeader"
                 type="button"
-                class="btn-default op-btn op-btn-primary mt-4 h-11 w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:cursor-not-allowed disabled:opacity-50"
+                class="btn-default op-btn op-btn-primary mt-4 h-11 w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Gerar proposta em PDF
               </button>
-              <p class="mt-2 text-[10px] text-slate-400">Para cliente: use PDF.</p>
+              <p class="mt-3 text-[10px] text-slate-300/80">Para cliente: use PDF.</p>
 
               <div id="pdfInternalFormatWrap" class="hidden mt-2 items-center gap-2">
                 <label for="pdfInternalFormat" class="text-[11px] text-slate-400">Formato interno:</label>
@@ -515,7 +538,7 @@
                   <button
                     id="btnToolsToggle"
                     type="button"
-                    class="btn-default op-btn op-btn-ghost h-10 w-full rounded-xl border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                    class="btn-default op-btn op-btn-ghost h-11 w-full rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
                     aria-expanded="false"
                     aria-haspopup="true"
                     aria-controls="toolsDropdown"
@@ -566,7 +589,7 @@
                 <button
                   id="btnPremiumOffer"
                   type="button"
-                  class="btn-default op-btn op-btn-subtle h-10 rounded-xl border border-indigo-400/35 bg-indigo-500/10 font-medium text-indigo-100 hover:bg-indigo-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                  class="btn-default op-btn op-btn-subtle h-11 rounded-xl border border-indigo-400/35 bg-indigo-500/10 font-medium text-indigo-100 hover:bg-indigo-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
                   aria-label="Conhecer Premium - patrim&ocirc;nio, risco, escassez e exaust&atilde;o"
                 >
                   Conhecer Premium &#128274;
@@ -599,7 +622,7 @@
             </div>
 
             <p id="activeModeLabel" class="mt-3 text-xs font-medium text-slate-400">Modo ativo: Essencial</p>
-            <div class="mt-2 flex flex-wrap gap-1 rounded-xl border border-white/15 bg-ink-900/50 p-1" role="tablist" aria-label="Seções de configuração">
+            <div class="mt-2 flex flex-wrap gap-1 rounded-xl border border-white/10 bg-ink-900/50 p-1" role="tablist" aria-label="Seções de configuração">
               <button type="button" id="tab-essential" role="tab" aria-selected="true" aria-controls="panel-essential" tabindex="0" data-tab-panel="panel-essential" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Essencial</button>
               <button type="button" id="tab-strategist" role="tab" aria-selected="false" aria-controls="panel-strategist" tabindex="-1" data-tab-panel="panel-strategist" class="strategist-accordion-btn tab-btn hidden rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Estrategista</button>
               <button type="button" id="tab-scenario" role="tab" aria-selected="false" aria-controls="panel-scenario" tabindex="-1" data-tab-panel="panel-scenario" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Comparação</button>
