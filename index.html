@@ -156,7 +156,7 @@
       /* Fase 4: Trust badges */
       .trust-badges { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 11px; color: rgba(148,163,184,.9); }
       .trust-badges li { list-style: none; display: flex; align-items: center; gap: 0.35rem; }
-      .trust-badges li::before { content: "✓"; color: rgba(52,211,153,.8); font-weight: 600; }
+      .trust-badge-icon { color: rgba(52,211,153,.9); font-weight: 600; }
     </style>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
@@ -1019,10 +1019,10 @@
               </div>
 
               <div id="trustBadgesBlock" class="mt-4 hidden" aria-live="polite">
-                <ul class="trust-badges">
-                  <li>Dados salvos no navegador</li>
-                  <li>Sem cadastro</li>
-                  <li>Metodologia transparente</li>
+                <ul class="trust-badges" role="list">
+                  <li><span class="trust-badge-icon" aria-hidden="true">✓</span> Dados salvos no navegador</li>
+                  <li><span class="trust-badge-icon" aria-hidden="true">✓</span> Sem cadastro obrigatório</li>
+                  <li><span class="trust-badge-icon" aria-hidden="true">✓</span> Metodologia transparente</li>
                 </ul>
               </div>
             </div>
@@ -3207,10 +3207,14 @@
           const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
           safeText(els.resultProposalPrazo, projectOk ? `~${fmtNumber(prazoDias, 0)} dias úteis` : "—");
         }
-        if (FEATURE_FLAGS.ui_preview_anchor_enabled && els.proposalValorGanhoBlock && els.resultProposalValorGanho) {
-          const hasValorGanho = !!s.modoEstrategista && s.valorGanhoEstimado12m > 0;
-          els.proposalValorGanhoBlock.classList.toggle("hidden", !hasValorGanho);
-          if (hasValorGanho) safeText(els.resultProposalValorGanho, fmtMoney(s.valorGanhoEstimado12m, s.currency));
+        if (els.proposalValorGanhoBlock && els.resultProposalValorGanho) {
+          if (FEATURE_FLAGS.ui_preview_anchor_enabled) {
+            const hasValorGanho = !!s.modoEstrategista && s.valorGanhoEstimado12m > 0;
+            els.proposalValorGanhoBlock.classList.remove("hidden");
+            safeText(els.resultProposalValorGanho, hasValorGanho ? fmtMoney(s.valorGanhoEstimado12m, s.currency) : "Preencha dados estratégicos para estimar.");
+          } else {
+            els.proposalValorGanhoBlock.classList.add("hidden");
+          }
         }
 
         if (r.ok && hasAcceptedTerms()) {
@@ -3219,6 +3223,7 @@
 
         const calcOk = r.ok;
         const errMsg = r.error ? r.error.message : "";
+        const termsOk = hasAcceptedTerms();
         const pdfOk = s.proposalMode
           ? (r.ok && s.projectHours > 0 && r.projectNet != null)
           : calcOk;
@@ -3234,7 +3239,6 @@
           els.btnPdfFromPreview.disabled = !pdfOk || !termsOk;
           els.btnPdfFromPreview.title = (pdfOk && termsOk) ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
         }
-        const termsOk = hasAcceptedTerms();
         if (els.btnPrimaryPdfHeader) {
           els.btnPrimaryPdfHeader.disabled = !pdfOk || !termsOk;
           els.btnPrimaryPdfHeader.title = (pdfOk && termsOk) ? "" : (errMsg || "Preencha os dados para gerar o PDF.");
