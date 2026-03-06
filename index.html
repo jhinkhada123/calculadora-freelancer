@@ -139,6 +139,9 @@
       .wizard-container[data-wizard-enabled="false"] .wizard-bottom-bar { display: none !important; }
       .wizard-container[data-wizard-enabled="true"] .wizard-step { display: none; }
       .wizard-container[data-wizard-enabled="true"] .wizard-step[data-current="true"] { display: block; }
+      .wizard-container.micro-interactions-on[data-wizard-enabled="true"] .wizard-step { display: block; position: absolute; opacity: 0; pointer-events: none; transition: opacity 150ms ease-out, transform 150ms ease-out; }
+      .wizard-container.micro-interactions-on[data-wizard-enabled="true"] .wizard-step[data-current="true"] { position: relative; opacity: 1; pointer-events: auto; }
+      .wizard-container.micro-interactions-on[data-wizard-enabled="true"] { position: relative; }
       .wizard-bottom-bar { padding-bottom: env(safe-area-inset-bottom, 0); }
       body.wizard-bar-visible main { padding-bottom: 5.5rem; }
       /* Fase 3: Tipografia técnica x proposta */
@@ -157,6 +160,28 @@
       .trust-badges { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 11px; color: rgba(148,163,184,.9); }
       .trust-badges li { list-style: none; display: flex; align-items: center; gap: 0.35rem; }
       .trust-badge-icon { color: rgba(52,211,153,.9); font-weight: 600; }
+      /* Fase 5: Microinterações (quando ui_micro_interactions_enabled) */
+      .micro-transition { transition: opacity 150ms ease-out, transform 150ms ease-out; }
+      .micro-transition-step { transition: opacity 150ms ease-out, transform 150ms ease-out; }
+      .micro-transition-step.micro-step-enter { opacity: 0; transform: translateX(8px); }
+      .micro-transition-step.micro-step-visible { opacity: 1; transform: translateX(0); }
+      .micro-result-value { transition: opacity 120ms ease-out; }
+      .micro-result-value.micro-value-updating { opacity: 0.7; }
+      .input-validation-valid { border-color: rgba(52,211,153,.4); box-shadow: 0 0 0 1px rgba(52,211,153,.2); }
+      .input-validation-invalid { border-color: rgba(239,68,68,.4); box-shadow: 0 0 0 1px rgba(239,68,68,.2); }
+      @media (prefers-reduced-motion: reduce) {
+        .micro-transition, .micro-transition-step, .micro-result-value,
+        .tab-panel, .wizard-container.micro-interactions-on .wizard-step { transition: none !important; }
+      }
+      /* Fase 6: Mobile + A11y (quando ui_mobile_a11y_enabled) */
+      .mobile-a11y-touch { min-height: 44px; min-width: 44px; }
+      .mobile-a11y-bar { padding-bottom: env(safe-area-inset-bottom, 0); }
+      body.mobile-a11y-bar-visible main { padding-bottom: 5.5rem; }
+      /* Teclado aberto: esconder barra para não cobrir campo focado (Android/iOS) */
+      body.input-focused .wizard-bottom-bar,
+      body.input-focused .mobile-a11y-bar { display: none !important; }
+      body.input-focused.wizard-bar-visible main,
+      body.input-focused.mobile-a11y-bar-visible main { padding-bottom: 0 !important; }
     </style>
   </head>
   <body class="min-h-screen bg-ink-950 text-slate-100 antialiased">
@@ -658,7 +683,7 @@
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
                   <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
-                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums font-result-title">—</p>
+                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums font-result-title micro-result-value">—</p>
                   <p id="projectHint" class="mt-1 text-xs text-slate-400">Preencha as horas para estimar.</p>
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
@@ -964,7 +989,7 @@
 
                 <div class="preview-block mt-5 rounded-2xl border border-white/10 bg-ink-900/40 p-4 card-inner" data-order="1">
                   <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-title">—</p>
+                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-title micro-result-value">—</p>
                   <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
                 </div>
 
@@ -981,7 +1006,7 @@
 
                 <div class="preview-block rounded-2xl border border-white/10 bg-white/5 p-4 card-inner" data-order="3">
                   <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
-                  <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums font-result-title">—</p>
+                  <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums font-result-title micro-result-value">—</p>
                   <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
                 </div>
 
@@ -1001,7 +1026,7 @@
                 </div>
                 <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="3">
                   <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Investimento Total do Projeto</p>
-                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums font-result-title">—</p>
+                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums font-result-title micro-result-value">—</p>
                 </div>
                 <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="2">
                   <p class="text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
@@ -1207,7 +1232,18 @@
           <p class="text-[11px] text-slate-400">Valor principal</p>
           <p id="wizardBottomBarValue" class="text-lg font-semibold tabular-nums text-slate-100">—</p>
         </div>
-        <button id="btnWizardBottomPdf" type="button" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button id="btnWizardBottomPdf" type="button" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60">
+          Gerar PDF
+        </button>
+      </div>
+    </div>
+    <div id="mobileA11yBar" class="mobile-a11y-bar fixed bottom-0 left-0 right-0 z-40 hidden border-t border-white/10 bg-ink-900/95 backdrop-blur sm:hidden" aria-hidden="true">
+      <div class="flex items-center justify-between gap-3 px-4 py-3">
+        <div>
+          <p class="text-[11px] text-slate-400">Valor principal</p>
+          <p id="mobileA11yBarValue" class="text-lg font-semibold tabular-nums text-slate-100">—</p>
+        </div>
+        <button id="btnMobileA11yPdf" type="button" class="mobile-a11y-touch rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60">
           Gerar PDF
         </button>
       </div>
@@ -1430,6 +1466,8 @@
         ui_wizard_enabled: false,
         ui_preview_anchor_enabled: false,
         ui_trust_badges_enabled: false,
+        ui_micro_interactions_enabled: false,
+        ui_mobile_a11y_enabled: false,
       };
       let logoDataUrl = null;
       let calcCardStash = null;
@@ -1558,6 +1596,9 @@
         btnWizardAdvanced: $("btnWizardAdvanced"),
         wizardBottomBar: $("wizardBottomBar"),
         wizardBottomBarValue: $("wizardBottomBarValue"),
+        mobileA11yBar: $("mobileA11yBar"),
+        mobileA11yBarValue: $("mobileA11yBarValue"),
+        btnMobileA11yPdf: $("btnMobileA11yPdf"),
         btnWizardBottomPdf: $("btnWizardBottomPdf"),
         calcCard: $("calcCard"),
         logoInput: $("logoInput"),
@@ -2010,7 +2051,14 @@
       }
 
       function safeText(node, text) {
-        if (node) node.textContent = text;
+        if (!node) return;
+        if (FEATURE_FLAGS.ui_micro_interactions_enabled && node.classList && node.classList.contains("micro-result-value")) {
+          node.classList.add("micro-value-updating");
+          node.textContent = text;
+          requestAnimationFrame(() => requestAnimationFrame(() => node.classList.remove("micro-value-updating")));
+        } else {
+          node.textContent = text;
+        }
       }
 
       function loadJsonStorage(key, fallback) {
@@ -2755,6 +2803,52 @@
         }
       }
 
+      function setupMicroInteractions() {
+        const enabled = !!FEATURE_FLAGS.ui_micro_interactions_enabled;
+        const root = document.documentElement;
+        root.classList.toggle("micro-interactions-on", enabled);
+        if (els.wizardContainer) els.wizardContainer.classList.toggle("micro-interactions-on", enabled);
+        if (!enabled) return;
+        const numInputs = ["targetIncome", "monthlyCosts", "taxRate", "profitMargin", "buffer", "utilization", "hoursPerDay", "daysPerWeek", "vacationWeeks", "projectHours", "scopeRisk", "discount"];
+        numInputs.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener("blur", () => {
+            const v = el.value;
+            const min = parseFloat(el.getAttribute("min")) ?? -Infinity;
+            const max = parseFloat(el.getAttribute("max")) ?? Infinity;
+            const n = parseFloat(v);
+            el.classList.remove("input-validation-valid", "input-validation-invalid");
+            if (v === "" || isNaN(n)) return;
+            if (n >= min && n <= max) el.classList.add("input-validation-valid");
+            else el.classList.add("input-validation-invalid");
+          });
+        });
+        const steps = [els.wizardStep1, els.wizardStep2, els.wizardStep3].filter(Boolean);
+        steps.forEach((s) => s && s.classList.add("micro-transition-step"));
+      }
+
+      function setupMobileA11y() {
+        const enabled = !!FEATURE_FLAGS.ui_mobile_a11y_enabled;
+        document.documentElement.classList.toggle("mobile-a11y-on", enabled);
+        const touchButtons = [els.btnPrimaryPdfHeader, els.btnPdfProposal, els.btnPdfFromPreview, els.btnWizardBottomPdf, els.btnMobileA11yPdf, els.btnToolsToggle].filter(Boolean);
+        touchButtons.forEach((btn) => btn && btn.classList.toggle("mobile-a11y-touch", enabled));
+        if (!enabled && els.mobileA11yBar) {
+          els.mobileA11yBar.classList.add("hidden");
+          document.body.classList.remove("mobile-a11y-bar-visible");
+        }
+        const hasMobileBar = FEATURE_FLAGS.ui_mobile_a11y_enabled || FEATURE_FLAGS.ui_wizard_enabled;
+        if (hasMobileBar) {
+          const isInputLike = (el) => el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT");
+          document.addEventListener("focusin", (e) => {
+            if (isInputLike(e.target)) document.body.classList.add("input-focused");
+          });
+          document.addEventListener("focusout", (e) => {
+            if (isInputLike(e.target) && !isInputLike(e.relatedTarget)) document.body.classList.remove("input-focused");
+          });
+        }
+      }
+
       function getAdvancedWarningsBundle(s, essential, advanced) {
         const warnings = [];
         if (!advanced || !advanced.ok) return warnings;
@@ -3257,6 +3351,18 @@
             const val = projectOk ? fmtMoney(r.projectNet, s.currency) : (r.ok && r.hourly != null ? fmtMoney(r.hourly, s.currency) : "—");
             safeText(els.wizardBottomBarValue, val);
             els.btnWizardBottomPdf.disabled = !pdfOk || !hasAcceptedTerms();
+          }
+        }
+        if (FEATURE_FLAGS.ui_mobile_a11y_enabled && !FEATURE_FLAGS.ui_wizard_enabled && els.mobileA11yBar && els.mobileA11yBarValue && els.btnMobileA11yPdf) {
+          const showBar = !s.proposalMode;
+          els.mobileA11yBar.classList.toggle("hidden", !showBar);
+          els.mobileA11yBar.setAttribute("aria-hidden", String(!showBar));
+          document.body.classList.toggle("mobile-a11y-bar-visible", showBar);
+          if (showBar) {
+            const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
+            const val = projectOk ? fmtMoney(r.projectNet, s.currency) : (r.ok && r.hourly != null ? fmtMoney(r.hourly, s.currency) : "—");
+            safeText(els.mobileA11yBarValue, val);
+            els.btnMobileA11yPdf.disabled = !pdfOk || !hasAcceptedTerms();
           }
         }
         if (els.advancedModeWrap && els.advancedModeLabel) {
@@ -4199,6 +4305,9 @@
         if (els.btnPdfFromPreview) {
           els.btnPdfFromPreview.addEventListener("click", generatePdf);
         }
+        if (els.btnMobileA11yPdf) {
+          els.btnMobileA11yPdf.addEventListener("click", generatePdf);
+        }
 
         if (els.logoInput) {
           els.logoInput.addEventListener("change", async (event) => {
@@ -4240,6 +4349,12 @@
         if (els.integrationSettingsModal) {
           els.integrationSettingsModal.addEventListener("click", (e) => {
             if (e.target === els.integrationSettingsModal) closeIntegrationSettingsModal();
+          });
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && els.integrationSettingsModal && els.integrationSettingsModal.classList.contains("flex")) {
+              closeIntegrationSettingsModal();
+              if (els.btnOpenIntegrationSettings) els.btnOpenIntegrationSettings.focus();
+            }
           });
         }
 
@@ -4408,6 +4523,8 @@
           setupWizard();
           setupPreviewAnchor();
           setupTrustBadges();
+          setupMicroInteractions();
+          setupMobileA11y();
           setupInstallPrompt();
           registerServiceWorker();
           applyBranding();
