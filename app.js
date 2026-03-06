@@ -585,7 +585,7 @@
           }
           .tab-panel-relative { position: relative; }
           .motion-fade-in {
-            animation: uiFadeSlideIn .28s ease-out;
+            animation: uiFadeSlideIn .24s cubic-bezier(.22,.9,.28,1);
           }
           #panel-essential.tab-panel-visible .card-macro,
           #panel-scenario.tab-panel-visible #scenarioCard,
@@ -594,7 +594,7 @@
           #panel-strategist.tab-panel-visible #auditModeCard,
           #panel-strategist.tab-panel-visible #negotiationOutputCard,
           #panel-strategist.tab-panel-visible #explainabilityCard {
-            animation: uiFadeSlideIn .32s ease-out;
+            animation: uiFadeSlideIn .26s cubic-bezier(.22,.9,.28,1);
           }
           .tab-skeleton-overlay {
             position: absolute;
@@ -602,16 +602,16 @@
             z-index: 4;
             border-radius: .9rem;
             border: 1px solid rgba(148,163,184,.18);
-            background: rgba(7,10,18,.52);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background: rgba(7,10,18,.42);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: grid;
             align-content: center;
             gap: .55rem;
             padding: .9rem;
             opacity: 0;
             pointer-events: none;
-            transition: opacity .14s ease-out;
+            transition: opacity .12s ease-out;
           }
           .tab-skeleton-overlay.is-visible { opacity: 1; }
           .tab-skeleton-overlay.is-hiding { opacity: 0; }
@@ -653,8 +653,8 @@
           input:focus-visible,
           select:focus-visible,
           textarea:focus-visible {
-            box-shadow: 0 0 0 2px rgba(52,211,153,.48), 0 0 0 7px rgba(16,185,129,.16) !important;
-            border-color: rgba(16,185,129,.62) !important;
+            box-shadow: 0 0 0 1.5px rgba(45,212,191,.58), 0 0 0 6px rgba(45,212,191,.14), 0 10px 24px rgba(16,185,129,.12) !important;
+            border-color: rgba(45,212,191,.64) !important;
           }
           ` : ""}
         `;
@@ -672,8 +672,8 @@
         requestAnimationFrame(() => overlay.classList.add("is-visible"));
         window.setTimeout(() => {
           overlay.classList.add("is-hiding");
-          window.setTimeout(() => overlay.remove(), 180);
-        }, 230);
+          window.setTimeout(() => overlay.remove(), 140);
+        }, 190);
       }
 
       function animatePanelEntrance(panel) {
