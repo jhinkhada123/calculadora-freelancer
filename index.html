@@ -1483,6 +1483,7 @@
       const FEATURE_FLAGS = {
         risk_score_enabled: true,
         pdf_v2_enabled: true,
+        pdf_executive_proposal_enabled: false,
         strategist_mode_enabled: false,
         pdf_impact_block_enabled: false,
         premium_soft_lock_enabled: true,
@@ -3734,41 +3735,78 @@
           return;
         }
 
-        loadJsPdf().then(function(jspdfMod) {
+        const useExecutiveBuilder = !!FEATURE_FLAGS.pdf_executive_proposal_enabled && proposalMode;
+
+        loadJsPdf().then(async function(jspdfMod) {
         try {
-          const { jsPDF } = jspdfMod;
-          const doc = new jsPDF({ unit: "pt", format: "a4" });
-          const margin = 56;
-          const pageWidth = doc.internal.pageSize.getWidth();
-          const pageHeight = doc.internal.pageSize.getHeight();
-          let y = margin;
-          const pdfV2 = !!FEATURE_FLAGS.pdf_v2_enabled;
-          const ensureSpace = (needed = 84) => {
-            const guard = ensurePdfYSpaceModel
-              ? ensurePdfYSpaceModel(y, needed, pageHeight, margin, 72)
-              : { y, addPage: false };
-            if (guard.addPage) {
-              doc.addPage();
-              y = guard.y;
-            }
-          };
-          const advanceY = (step = 0) => {
-            y = advancePdfYModel ? advancePdfYModel(y, step) : (y + step);
-          };
-          const advanceYByLines = (lineCount, lineHeight = 12, spacingAfter = 0) => {
-            y = advancePdfYByLinesModel ? advancePdfYByLinesModel(y, lineCount, lineHeight, spacingAfter) : (y + (lineCount * lineHeight) + spacingAfter);
-          };
-          const writeWrappedSummary = (text, opts = {}) => {
-            const maxWidth = opts.maxWidth || (pageWidth - 2 * margin);
-            const lineHeight = opts.lineHeight || 12;
-            const spacingAfter = opts.spacingAfter || 0;
-            const minRoom = opts.minRoom || 56;
-            const lines = doc.splitTextToSize(String(text || ""), maxWidth);
-            const needed = Math.max(minRoom, (lines.length * lineHeight) + spacingAfter + 8);
-            ensureSpace(needed);
-            doc.text(lines, margin, y);
-            advanceYByLines(lines.length, lineHeight, spacingAfter);
-          };
+          if (useExecutiveBuilder) {
+            const mod = await import("./pdf-executive-entry.js");
+            await mod.generatePdfExecutive({
+              state: s,
+              jsPdf: jspdfMod,
+              logoDataUrl,
+              flags: FEATURE_FLAGS,
+              deps: {
+                buildPricingContext,
+                buildNegotiationContext,
+                getProposalTextForPdf,
+                getAntiDiscountPhrases,
+                buildJustificationClipboardText,
+                computeStrategistMetrics,
+                ensurePdfYSpace: ensurePdfYSpaceModel,
+                fmtMoney,
+                fmtNumber,
+                formatStrategistValue,
+                STRATEGIST_CAVEAT,
+                LEGAL_DISCLAIMER,
+                BRAND_NAME,
+              },
+            });
+            const modeCtx = buildPricingContext(s);
+            trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode: true, pdfV2: !!FEATURE_FLAGS.pdf_v2_enabled, internalFormat: null, executiveBuilder: true });
+            showToast("PDF gerado.");
+            return;
+          }
+        } catch (execErr) {
+          if (useExecutiveBuilder) {
+            showToast("Erro ao gerar PDF executivo. Usando versão anterior.");
+          }
+          if (execErr && !useExecutiveBuilder) throw execErr;
+        }
+
+        const { jsPDF } = jspdfMod;
+        const doc = new jsPDF({ unit: "pt", format: "a4" });
+        const margin = 56;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        let y = margin;
+        const pdfV2 = !!FEATURE_FLAGS.pdf_v2_enabled;
+        const ensureSpace = (needed = 84) => {
+          const guard = ensurePdfYSpaceModel
+            ? ensurePdfYSpaceModel(y, needed, pageHeight, margin, 72)
+            : { y, addPage: false };
+          if (guard.addPage) {
+            doc.addPage();
+            y = guard.y;
+          }
+        };
+        const advanceY = (step = 0) => {
+          y = advancePdfYModel ? advancePdfYModel(y, step) : (y + step);
+        };
+        const advanceYByLines = (lineCount, lineHeight = 12, spacingAfter = 0) => {
+          y = advancePdfYByLinesModel ? advancePdfYByLinesModel(y, lineCount, lineHeight, spacingAfter) : (y + (lineCount * lineHeight) + spacingAfter);
+        };
+        const writeWrappedSummary = (text, opts = {}) => {
+          const maxWidth = opts.maxWidth || (pageWidth - 2 * margin);
+          const lineHeight = opts.lineHeight || 12;
+          const spacingAfter = opts.spacingAfter || 0;
+          const minRoom = opts.minRoom || 56;
+          const lines = doc.splitTextToSize(String(text || ""), maxWidth);
+          const needed = Math.max(minRoom, (lines.length * lineHeight) + spacingAfter + 8);
+          ensureSpace(needed);
+          doc.text(lines, margin, y);
+          advanceYByLines(lines.length, lineHeight, spacingAfter);
+        };
 
           if (proposalMode) {
             if (logoDataUrl) {
@@ -4149,7 +4187,7 @@
           doc.save("proposta-freelancer.pdf");
           const modeCtx = buildPricingContext(s);
           const internalFormat = !proposalMode ? (s.pdfInternalFormat === "compact" ? "compact" : "complete") : null;
-          trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode, pdfV2, internalFormat });
+          trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode, pdfV2, internalFormat, executiveBuilder: useExecutiveBuilder });
           showToast("PDF gerado.");
         } catch {
           showToast("Não foi possível gerar o PDF.");
