@@ -134,6 +134,51 @@
       .btn-focus { outline: none; }
       .btn-focus:focus-visible { outline: 2px solid rgba(165, 180, 252, 0.5); outline-offset: 2px; }
       .btn-focus-emerald:focus-visible { outline-color: rgba(52, 211, 153, 0.6); }
+      .op-btn {
+        transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+      .op-btn:hover { transform: translateY(-1px); }
+      .op-btn:active { transform: translateY(0); }
+      .op-btn-primary {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 12px 28px rgba(16,185,129,.22);
+      }
+      .op-btn-primary:hover {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 30px rgba(16,185,129,.28);
+      }
+      .op-btn-ghost {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      }
+      .op-btn-subtle {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      }
+      .hero-signal-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+      }
+      .hero-signal-card {
+        border: 1px solid rgba(255,255,255,.1);
+        background: rgba(255,255,255,.03);
+        border-radius: 0.75rem;
+        padding: 0.6rem 0.7rem;
+      }
+      .hero-signal-card p:first-child {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: rgba(148,163,184,.85);
+      }
+      .hero-signal-card p:last-child {
+        margin-top: 0.25rem;
+        font-size: 12px;
+        color: rgba(226,232,240,.95);
+        font-weight: 500;
+      }
+      @media (max-width: 640px) {
+        .hero-signal-grid {
+          grid-template-columns: 1fr;
+        }
+      }
       .wizard-container[data-wizard-enabled="false"] .wizard-step { display: block !important; }
       .wizard-container[data-wizard-enabled="false"] .wizard-step-indicator,
       .wizard-container[data-wizard-enabled="false"] .wizard-nav,
@@ -327,22 +372,44 @@
               class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200"
             >
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-              <span id="brandTaglineText">Precificação profissional em minutos</span>
+              <span id="brandTaglineText">Precifica&ccedil;&atilde;o profissional em minutos</span>
             </p>
             <h1 id="brandHeroHeadlineText" class="font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              Precificação estratégica para quem entrega valor, não horas.
+              Precifica&ccedil;&atilde;o estrat&eacute;gica para quem entrega valor, n&atilde;o horas.
             </h1>
             <p id="brandSubtitleText" class="text-sm font-semibold text-slate-100">
-              Calculadora de Precificação para Freelancers
+              Calculadora de Precifica&ccedil;&atilde;o para Freelancers
             </p>
             <p id="brandSubheadlineText" class="max-w-2xl text-sm leading-relaxed text-slate-300">
-              Calcule taxas sustentáveis, justifique propostas com respaldo técnico e negocie com clareza em uma única ferramenta.
+              Calcule taxas sustent&aacute;veis, justifique propostas com respaldo t&eacute;cnico e negocie com clareza em uma &uacute;nica ferramenta.
             </p>
+            <div class="hero-signal-grid mt-4 max-w-2xl">
+              <div class="hero-signal-card">
+                <p>Posicionamento</p>
+                <p>Proposta consultiva</p>
+              </div>
+              <div class="hero-signal-card">
+                <p>Entrega</p>
+                <p>PDF executivo</p>
+              </div>
+              <div class="hero-signal-card">
+                <p>Confianca</p>
+                <p>Sem cadastro</p>
+              </div>
+            </div>
+            <ul class="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-300">
+              <li class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1">Dados salvos localmente</li>
+              <li class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1">Metodologia transparente</li>
+              <li class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1">Sem promessa irreal</li>
+            </ul>
           </div>
 
           <div class="lg:col-span-5">
             <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-4 card-macro backdrop-blur sm:p-5">
-              <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">Painel de operação</p>
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">Painel de opera&ccedil;&atilde;o</p>
+                <p class="text-[10px] text-slate-500">Fluxo guiado</p>
+              </div>
 
               <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <label
@@ -353,7 +420,7 @@
                     <input id="advancedMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
                     <span id="advancedModeLabel">Essencial</span>
                   </span>
-                  <span id="advancedModeSubtext" class="text-[10px] text-slate-400">patrimônio, risco, escassez, exaustão + explicação</span>
+                  <span id="advancedModeSubtext" class="text-[10px] text-slate-400">patrim&ocirc;nio, risco, escassez, exaust&atilde;o + explica&ccedil;&atilde;o</span>
                 </label>
                 <label
                   class="inline-flex min-h-[52px] cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs font-medium text-slate-100 transition-colors hover:bg-ink-800"
@@ -363,23 +430,13 @@
                 </label>
               </div>
 
-              <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <button
-                  id="btnPrimaryPdfHeader"
-                  type="button"
-                  class="btn-default h-11 rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Gerar proposta em PDF
-                </button>
-                <button
-                  id="btnPremiumOffer"
-                  type="button"
-                  class="btn-default h-11 rounded-xl border border-indigo-400/40 bg-indigo-500/15 font-semibold text-indigo-100 hover:bg-indigo-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
-                  aria-label="Conhecer Premium - patrimônio, risco, escassez e exaustão"
-                >
-                  Conhecer Premium 🔒
-                </button>
-              </div>
+              <button
+                id="btnPrimaryPdfHeader"
+                type="button"
+                class="btn-default op-btn op-btn-primary mt-4 h-11 w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Gerar proposta em PDF
+              </button>
               <p class="mt-2 text-[10px] text-slate-400">Para cliente: use PDF.</p>
 
               <div id="pdfInternalFormatWrap" class="hidden mt-2 items-center gap-2">
@@ -390,59 +447,71 @@
                   aria-label="Formato do PDF interno"
                 >
                   <option value="complete">Completo</option>
-                  <option value="compact">Compacto (1 página)</option>
+                  <option value="compact">Compacto (1 p&aacute;gina)</option>
                 </select>
               </div>
 
-              <div class="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-3">
-                <label class="inline-flex items-center gap-2 text-xs text-slate-300">
-                  <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
-                  Incluir nomes no link
-                </label>
-                <button
-                  id="btnShare"
-                  type="button"
-                  class="btn-compact mt-2 h-10 w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:cursor-not-allowed disabled:opacity-50"
-                  title="Copiar link interno (uso interno; para cliente envie o PDF)"
-                  aria-label="Copiar link interno"
-                >
-                  Copiar link interno
-                </button>
-              </div>
-
-              <div class="relative mt-3">
-                <button
-                  id="btnToolsToggle"
-                  type="button"
-                  class="btn-default h-10 w-full rounded-xl border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
-                  aria-expanded="false"
-                  aria-haspopup="true"
-                  aria-controls="toolsDropdown"
-                >
-                  Ferramentas
-                </button>
-                <div
-                  id="toolsDropdown"
-                  class="absolute right-0 top-full z-50 mt-1 hidden min-w-[220px] rounded-xl border border-white/15 bg-ink-900 shadow-soft py-2"
-                  role="menu"
-                >
-                  <button id="toolsReset" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Resetar</button>
-                  <button id="toolsExport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Exportar configurações</button>
-                  <button id="toolsImport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Importar configurações</button>
-                  <input id="importConfigInput" type="file" accept=".txt,.json,application/json,text/plain" class="hidden" />
-                  <button id="toolsInstall" type="button" class="hidden w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Instalar app</button>
-                  <div class="my-2 border-t border-white/10"></div>
-                  <div class="border-t border-white/10 px-4 py-2">
-                    <p class="mb-2 text-[10px] text-slate-400">Logo</p>
-                    <div class="flex items-center gap-2">
-                      <label class="cursor-pointer rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10">
-                        <span id="logoStateText">Adicionar logo</span>
-                        <input id="logoInput" type="file" accept="image/*" class="hidden" />
+              <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div class="relative">
+                  <button
+                    id="btnToolsToggle"
+                    type="button"
+                    class="btn-default op-btn op-btn-ghost h-10 w-full rounded-xl border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    aria-controls="toolsDropdown"
+                  >
+                    Ferramentas
+                  </button>
+                  <div
+                    id="toolsDropdown"
+                    class="absolute right-0 top-full z-50 mt-1 hidden min-w-[260px] rounded-xl border border-white/15 bg-ink-900 shadow-soft py-2"
+                    role="menu"
+                  >
+                    <button id="toolsReset" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Resetar</button>
+                    <button id="toolsExport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Exportar configura&ccedil;&otilde;es</button>
+                    <button id="toolsImport" type="button" class="w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Importar configura&ccedil;&otilde;es</button>
+                    <input id="importConfigInput" type="file" accept=".txt,.json,application/json,text/plain" class="hidden" />
+                    <button id="toolsInstall" type="button" class="hidden w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Instalar app</button>
+                    <div class="my-2 border-t border-white/10"></div>
+                    <div class="px-4 py-2">
+                      <p class="mb-2 text-[10px] text-slate-400">Compartilhamento interno</p>
+                      <label class="inline-flex items-center gap-2 text-xs text-slate-300">
+                        <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
+                        Incluir nomes no link
                       </label>
-                      <button id="btnRemoveLogo" type="button" class="hidden rounded-lg border border-amber-400/30 px-2 py-1 text-[11px] text-amber-200 hover:bg-amber-500/20">Remover logo</button>
+                      <button
+                        id="btnShare"
+                        type="button"
+                        class="btn-compact mt-2 h-9 w-full rounded-lg border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:cursor-not-allowed disabled:opacity-50"
+                        title="Copiar link interno (uso interno; para cliente envie o PDF)"
+                        aria-label="Copiar link interno"
+                        role="menuitem"
+                      >
+                        Copiar link interno
+                      </button>
+                    </div>
+                    <div class="my-2 border-t border-white/10"></div>
+                    <div class="px-4 py-2">
+                      <p class="mb-2 text-[10px] text-slate-400">Logo</p>
+                      <div class="flex items-center gap-2">
+                        <label class="cursor-pointer rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10">
+                          <span id="logoStateText">Adicionar logo</span>
+                          <input id="logoInput" type="file" accept="image/*" class="hidden" />
+                        </label>
+                        <button id="btnRemoveLogo" type="button" class="hidden rounded-lg border border-amber-400/30 px-2 py-1 text-[11px] text-amber-200 hover:bg-amber-500/20">Remover logo</button>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <button
+                  id="btnPremiumOffer"
+                  type="button"
+                  class="btn-default op-btn op-btn-subtle h-10 rounded-xl border border-indigo-400/35 bg-indigo-500/10 font-medium text-indigo-100 hover:bg-indigo-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                  aria-label="Conhecer Premium - patrim&ocirc;nio, risco, escassez e exaust&atilde;o"
+                >
+                  Conhecer Premium &#128274;
+                </button>
               </div>
             </div>
           </div>
