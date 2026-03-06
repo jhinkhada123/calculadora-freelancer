@@ -321,77 +321,80 @@
     <div id="appContainer">
     <header class="relative">
       <div class="mx-auto max-w-6xl px-4 py-10 sm:py-12">
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div class="space-y-2">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
+          <div class="space-y-3 lg:col-span-7">
             <p
               class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200"
             >
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
               <span id="brandTaglineText">Precificação profissional em minutos</span>
             </p>
-            <h1 id="brandHeroHeadlineText" class="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 id="brandHeroHeadlineText" class="font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
               Precificação estratégica para quem entrega valor, não horas.
             </h1>
             <p id="brandSubtitleText" class="text-sm font-semibold text-slate-100">
               Calculadora de Precificação para Freelancers
             </p>
-            <p id="brandSubheadlineText" class="max-w-2xl text-sm text-slate-300">
+            <p id="brandSubheadlineText" class="max-w-2xl text-sm leading-relaxed text-slate-300">
               Calcule taxas sustentáveis, justifique propostas com respaldo técnico e negocie com clareza em uma única ferramenta.
             </p>
           </div>
 
-          <div class="flex flex-wrap items-center gap-3">
-            <div class="flex flex-wrap items-center gap-3">
-              <label
-                id="advancedModeWrap"
-                class="inline-flex cursor-pointer flex-col gap-0.5 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800 transition-colors"
-              >
-                <span class="inline-flex items-center gap-2">
-                  <input id="advancedMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
-                  <span id="advancedModeLabel">Essencial</span>
-                </span>
-                <span id="advancedModeSubtext" class="text-[10px] text-slate-400">patrimônio, risco, escassez, exaustão + explicação</span>
-              </label>
-              <label
-                class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800"
-              >
-                <input id="proposalMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
-                <span>Modo Proposta</span>
-              </label>
-            </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <div class="flex flex-col gap-0.5">
-                <div class="flex flex-wrap items-center gap-2">
-                  <button
-                    id="btnPrimaryPdfHeader"
-                    type="button"
-                    class="btn-default rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Gerar proposta em PDF
-                  </button>
-                  <div id="pdfInternalFormatWrap" class="hidden flex items-center gap-2">
-                    <label for="pdfInternalFormat" class="text-[11px] text-slate-400">Formato interno:</label>
-                    <select
-                      id="pdfInternalFormat"
-                      class="rounded-lg border border-white/15 bg-ink-900/70 px-2 py-1.5 text-xs text-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
-                      aria-label="Formato do PDF interno"
-                    >
-                      <option value="complete">Completo</option>
-                      <option value="compact">Compacto (1 página)</option>
-                    </select>
-                  </div>
-                </div>
-                <p class="text-[10px] text-slate-400">Para cliente: use PDF.</p>
+          <div class="lg:col-span-5">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-4 card-macro backdrop-blur sm:p-5">
+              <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">Painel de operação</p>
+
+              <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <label
+                  id="advancedModeWrap"
+                  class="inline-flex min-h-[52px] cursor-pointer flex-col justify-center gap-0.5 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs text-slate-100 transition-colors hover:bg-ink-800"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <input id="advancedMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
+                    <span id="advancedModeLabel">Essencial</span>
+                  </span>
+                  <span id="advancedModeSubtext" class="text-[10px] text-slate-400">patrimônio, risco, escassez, exaustão + explicação</span>
+                </label>
+                <label
+                  class="inline-flex min-h-[52px] cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-ink-900/70 px-3 py-2 text-xs font-medium text-slate-100 transition-colors hover:bg-ink-800"
+                >
+                  <input id="proposalMode" type="checkbox" class="h-4 w-4 rounded border-white/20 bg-ink-900/80" />
+                  <span>Modo Proposta</span>
+                </label>
               </div>
-              <button
-                id="btnPremiumOffer"
-                type="button"
-                class="btn-default rounded-xl border border-indigo-400/40 bg-indigo-500/15 font-semibold text-indigo-100 hover:bg-indigo-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
-                aria-label="Conhecer Premium - patrimônio, risco, escassez e exaustão"
-              >
-                Conhecer Premium 🔒
-              </button>
-              <div class="flex items-center gap-2">
+
+              <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button
+                  id="btnPrimaryPdfHeader"
+                  type="button"
+                  class="btn-default h-11 rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Gerar proposta em PDF
+                </button>
+                <button
+                  id="btnPremiumOffer"
+                  type="button"
+                  class="btn-default h-11 rounded-xl border border-indigo-400/40 bg-indigo-500/15 font-semibold text-indigo-100 hover:bg-indigo-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                  aria-label="Conhecer Premium - patrimônio, risco, escassez e exaustão"
+                >
+                  Conhecer Premium 🔒
+                </button>
+              </div>
+              <p class="mt-2 text-[10px] text-slate-400">Para cliente: use PDF.</p>
+
+              <div id="pdfInternalFormatWrap" class="hidden mt-2 items-center gap-2">
+                <label for="pdfInternalFormat" class="text-[11px] text-slate-400">Formato interno:</label>
+                <select
+                  id="pdfInternalFormat"
+                  class="rounded-lg border border-white/15 bg-ink-900/70 px-2 py-1.5 text-xs text-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                  aria-label="Formato do PDF interno"
+                >
+                  <option value="complete">Completo</option>
+                  <option value="compact">Compacto (1 página)</option>
+                </select>
+              </div>
+
+              <div class="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-3">
                 <label class="inline-flex items-center gap-2 text-xs text-slate-300">
                   <input id="shareIncludeNames" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
                   Incluir nomes no link
@@ -399,18 +402,19 @@
                 <button
                   id="btnShare"
                   type="button"
-                  class="btn-compact rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-slate-300 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="btn-compact mt-2 h-10 w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50 disabled:cursor-not-allowed disabled:opacity-50"
                   title="Copiar link interno (uso interno; para cliente envie o PDF)"
                   aria-label="Copiar link interno"
                 >
                   Copiar link interno
                 </button>
               </div>
-              <div class="relative">
+
+              <div class="relative mt-3">
                 <button
                   id="btnToolsToggle"
                   type="button"
-                  class="btn-default rounded-xl border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
+                  class="btn-default h-10 w-full rounded-xl border border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   aria-expanded="false"
                   aria-haspopup="true"
                   aria-controls="toolsDropdown"
@@ -429,7 +433,7 @@
                   <button id="toolsInstall" type="button" class="hidden w-full px-4 py-2 text-left text-sm text-slate-200 hover:bg-white/10" role="menuitem">Instalar app</button>
                   <div class="my-2 border-t border-white/10"></div>
                   <div class="border-t border-white/10 px-4 py-2">
-                    <p class="text-[10px] text-slate-400 mb-2">Logo</p>
+                    <p class="mb-2 text-[10px] text-slate-400">Logo</p>
                     <div class="flex items-center gap-2">
                       <label class="cursor-pointer rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10">
                         <span id="logoStateText">Adicionar logo</span>
