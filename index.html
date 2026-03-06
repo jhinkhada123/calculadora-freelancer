@@ -106,6 +106,7 @@
         --token-spacing-lg: 1rem;
         --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
         --font-serif: "Playfair Display", Georgia, serif;
+        --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
       }
       input[type="number"]::-webkit-outer-spin-button,
       input[type="number"]::-webkit-inner-spin-button {
@@ -144,8 +145,32 @@
       .wizard-container.micro-interactions-on[data-wizard-enabled="true"] { position: relative; }
       .wizard-bottom-bar { padding-bottom: env(safe-area-inset-bottom, 0); }
       body.wizard-bar-visible main { padding-bottom: 5.5rem; }
-      /* Fase 3: Tipografia técnica x proposta */
+      /* Fase 3: Tipografia — títulos serif, valores monetários mono */
       .font-result-title { font-family: var(--font-serif); }
+      .font-result-value {
+        font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace !important;
+        font-variant-numeric: tabular-nums lining-nums;
+        font-feature-settings: "tnum" 1, "lnum" 1;
+        letter-spacing: -0.01em;
+      }
+.font-result-value * { font-family: inherit !important; }
+      .money-symbol,
+      .money-amount { font-family: inherit !important; }
+      #hourlyRate,
+      #projectPrice,
+      #revenueTarget,
+      #resultProposalTotal {
+        font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace !important;
+        font-variant-numeric: tabular-nums lining-nums;
+        font-feature-settings: "tnum" 1, "lnum" 1;
+        letter-spacing: -0.01em;
+      }
+      #hourlyRate *,
+      #projectPrice *,
+      #revenueTarget *,
+      #resultProposalTotal * {
+        font-family: inherit !important;
+      }
       /* Fase 3: Cards macro vs internos */
       .card-macro { box-shadow: var(--token-shadow-macro); }
       .card-inner { border: var(--token-border-inner); background: var(--token-bg-inner); }
@@ -683,7 +708,7 @@
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
                   <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
-                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums font-result-title micro-result-value">—</p>
+                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums font-result-value micro-result-value">—</p>
                   <p id="projectHint" class="mt-1 text-xs text-slate-400">Preencha as horas para estimar.</p>
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
@@ -989,7 +1014,7 @@
 
                 <div class="preview-block mt-5 rounded-2xl border border-white/10 bg-ink-900/40 p-4 card-inner" data-order="1">
                   <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-title micro-result-value">—</p>
+                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-value micro-result-value">—</p>
                   <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
                 </div>
 
@@ -1006,7 +1031,7 @@
 
                 <div class="preview-block rounded-2xl border border-white/10 bg-white/5 p-4 card-inner" data-order="3">
                   <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
-                  <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums font-result-title micro-result-value">—</p>
+                  <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums font-result-value micro-result-value">—</p>
                   <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
                 </div>
 
@@ -1026,7 +1051,7 @@
                 </div>
                 <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="3">
                   <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Investimento Total do Projeto</p>
-                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums font-result-title micro-result-value">—</p>
+                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums font-result-value micro-result-value">—</p>
                 </div>
                 <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="2">
                   <p class="text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
@@ -2050,17 +2075,59 @@
         if (els.custoPessoalMensal) els.custoPessoalMensal.value = s.custoPessoalMensal ?? 0;
       }
 
-      function safeText(node, text) {
+      function updateResultNode(node, renderFn) {
         if (!node) return;
         if (FEATURE_FLAGS.ui_micro_interactions_enabled && node.classList && node.classList.contains("micro-result-value")) {
           node.classList.add("micro-value-updating");
-          node.textContent = text;
+          renderFn();
           requestAnimationFrame(() => requestAnimationFrame(() => node.classList.remove("micro-value-updating")));
         } else {
-          node.textContent = text;
+          renderFn();
         }
       }
 
+      function safeText(node, text) {
+        if (!node) return;
+        updateResultNode(node, () => {
+          node.textContent = text;
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function splitMoneyParts(text) {
+        const value = String(text ?? "").trim();
+        if (!value || value === "—") return null;
+        const lead = value.match(/^([^\d+\-]+)\s*([\d.,\s\-]+)$/u);
+        if (lead) return { symbol: lead[1].trim(), amount: lead[2].trim(), trailing: false };
+        const trail = value.match(/^([\d.,\s\-]+)\s*([^\d+\-]+)$/u);
+        if (trail) return { symbol: trail[2].trim(), amount: trail[1].trim(), trailing: true };
+        return null;
+      }
+
+      function safeMoney(node, text) {
+        if (!node) return;
+        const parts = splitMoneyParts(text);
+        updateResultNode(node, () => {
+          if (!parts) {
+            node.textContent = text;
+            return;
+          }
+          const symbolClass = parts.trailing ? "money-symbol trailing" : "money-symbol";
+          if (parts.trailing) {
+            node.innerHTML = `<span class="money-amount">${escapeHtml(parts.amount)}</span><span class="${symbolClass}">${escapeHtml(parts.symbol)}</span>`;
+          } else {
+            node.innerHTML = `<span class="${symbolClass}">${escapeHtml(parts.symbol)}</span><span class="money-amount">${escapeHtml(parts.amount)}</span>`;
+          }
+        });
+      }
       function loadJsonStorage(key, fallback) {
         try {
           const raw = localStorage.getItem(key);
@@ -3154,7 +3221,7 @@
         }
 
         const hourlyOk = r.ok && r.hourly != null;
-        safeText(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+        safeMoney(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
         safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
         safeText(els.hourlyNote, s.advancedMode ? "Baseada na estratégia premium (patrimônio, risco, escassez e exaustão)." : "Baseada na sua capacidade faturável.");
         if (els.dailyLabel) {
@@ -3165,7 +3232,7 @@
           r.billableHours != null ? `${fmtNumber(r.billableHours, 1)} h` : "—"
         );
 
-        safeText(els.revenueTarget, r.ok && r.revenueTarget != null ? fmtMoney(r.revenueTarget, curr) : "—");
+        safeMoney(els.revenueTarget, r.ok && r.revenueTarget != null ? fmtMoney(r.revenueTarget, curr) : "—");
         safeText(
           els.revenueBreakdown,
           `Base: ${fmtMoney(r.baseNeed, curr)} • Total: ${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(
@@ -3202,7 +3269,7 @@
 
         // Projeto
         const projectOk = hourlyOk && s.projectHours > 0 && r.ok && r.projectNet != null;
-        safeText(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
+        safeMoney(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
         if (els.projectHint) {
           if (s.proposalMode) {
             safeText(els.projectHint, "");
@@ -3297,7 +3364,7 @@
         }
         if (s.proposalMode && els.resultProposalTotal && els.resultProposalPrazo) {
           const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
-          safeText(els.resultProposalTotal, projectOk ? fmtMoney(r.projectNet, s.currency) : "—");
+          safeMoney(els.resultProposalTotal, projectOk ? fmtMoney(r.projectNet, s.currency) : "—");
           const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
           safeText(els.resultProposalPrazo, projectOk ? `~${fmtNumber(prazoDias, 0)} dias úteis` : "—");
         }

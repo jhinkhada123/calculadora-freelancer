@@ -1,5 +1,5 @@
-const CACHE_VERSION = "freela-app-v4";
-const RUNTIME_CACHE = "freela-runtime-v3";
+const CACHE_VERSION = "freela-app-v5";
+const RUNTIME_CACHE = "freela-runtime-v4";
 
 const APP_SHELL = [
   "/",
