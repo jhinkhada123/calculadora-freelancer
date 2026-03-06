@@ -438,7 +438,7 @@
     </header>
 
     <main class="relative">
-      <div id="mainGrid" class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-14 lg:grid-cols-12">
+      <div id="mainGrid" class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-14 lg:grid-cols-12 lg:items-start">
         <!-- Inputs -->
         <section class="lg:col-span-7">
           <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
@@ -993,7 +993,7 @@
 
         <!-- Outputs -->
         <aside class="lg:col-span-5">
-          <div class="sticky top-6 space-y-7">
+          <div class="space-y-7 lg:sticky lg:top-6 lg:self-start">
             <div id="previewAnchorCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <div id="resultError" class="hidden rounded-xl border border-white/10 bg-ink-800/80 px-4 py-3 text-sm text-slate-300" role="alert"></div>
               <div id="resultCardsInternal" class="preview-anchor preview-anchor-grid" data-anchor-enabled="false">
@@ -1503,6 +1503,7 @@
       let auditDebounceTimer = null;
       let deferredInstallPrompt = null;
       let riskTelemetryState = null;
+      let proposalJustificationPinned = false;
 
       const $ = (id) => document.getElementById(id);
 
@@ -2608,7 +2609,7 @@
         });
       }
 
-      function wireHelpToggles() {
+            function wireHelpToggles() {
         const helpButtons = Array.from(document.querySelectorAll("[data-help-target]"));
         helpButtons.forEach((btn) => {
           btn.addEventListener("click", () => {
@@ -2619,6 +2620,14 @@
             panel.classList.toggle("hidden");
           });
         });
+      }
+
+      function syncProposalJustificationButton() {
+        if (!els.btnInsertProposalJustification) return;
+        const isPinned = !!proposalJustificationPinned;
+        const label = isPinned ? "Remover justificativa da proposta" : "Inserir justificativa na proposta";
+        els.btnInsertProposalJustification.textContent = label;
+        els.btnInsertProposalJustification.setAttribute("aria-pressed", String(isPinned));
       }
 
       const TAB_PANELS = ["panel-essential", "panel-strategist", "panel-scenario", "panel-governance"];
@@ -3288,15 +3297,27 @@
           }
         }
 
+        let proposalBaseText = "—";
         if (projectOk) {
           const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
           const roiLine = negotiationCtx.roi.enabled ? ` ${negotiationCtx.roi.text}` : "";
           const anti = getAntiDiscountPhrases(s, negotiationCtx)[0] || "";
-          const texto = `Proposta comercial para execução do projeto conforme escopo e premissas acordadas. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.${roiLine} ${anti} ${negotiationCtx.roi.caveat}`;
-          safeText(els.proposalText, texto);
-        } else {
-          safeText(els.proposalText, "—");
+          proposalBaseText = `Proposta comercial para execução do projeto conforme escopo e premissas acordadas. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis.${roiLine} ${anti} ${negotiationCtx.roi.caveat}`;
         }
+        let proposalFinalText = proposalBaseText;
+        if (proposalJustificationPinned && proposalBaseText !== "—") {
+          const payload = String(buildJustificationClipboardText(s, negotiationCtx) || "").trim();
+          if (payload) {
+            proposalFinalText = [proposalBaseText, payload].filter(Boolean).join("\n\n");
+            if (els.proposalText) els.proposalText.dataset.justificationInjected = payload;
+          } else if (els.proposalText) {
+            delete els.proposalText.dataset.justificationInjected;
+          }
+        } else if (els.proposalText) {
+          delete els.proposalText.dataset.justificationInjected;
+        }
+        safeText(els.proposalText, proposalFinalText);
+        if (els.proposalText) els.proposalText.dataset.proposalBaseText = proposalBaseText;
 
         renderComposition(s, r, pricingCtx);
         renderAlerts(s, r);
@@ -3486,10 +3507,20 @@
           els.btnCopyJustification.disabled = !termsOk;
           els.btnCopyJustification.title = termsOk ? "" : "Aceite os termos no início da página para copiar.";
         }
-        if (els.btnInsertProposalJustification) {
+                if (els.btnInsertProposalJustification) {
+          const isPinned = !!proposalJustificationPinned;
           els.btnInsertProposalJustification.disabled = !termsOk;
-          els.btnInsertProposalJustification.title = termsOk ? "" : "Aceite os termos no início da página para inserir justificativa.";
+          els.btnInsertProposalJustification.title = termsOk
+            ? (isPinned ? "Remove os blocos de justificativa do texto da proposta." : "Insere os blocos de justificativa no texto da proposta e mantém atualização automática.")
+            : "Aceite os termos no início da página para inserir justificativa.";
+          els.btnInsertProposalJustification.setAttribute(
+            "aria-label",
+            termsOk
+              ? (isPinned ? "Remover justificativa da proposta" : "Inserir justificativa na proposta")
+              : "Aceite os termos no início da página para inserir justificativa."
+          );
         }
+        syncProposalJustificationButton();
       }
 
       function persistState(s) {
@@ -4315,36 +4346,25 @@
           if (!text) return showToast("Nada para copiar.");
           copyToClipboard(text, "Justificativa copiada.");
         });
-                if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
+                        if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
             showToast("Para usar esta função, aceite os termos no início da página.");
             return;
           }
-          if (!els.proposalText) return;
           const s = getStateFromInputs();
           const r = buildPricingContext(s).effective;
-          const n = buildNegotiationContext(s, r);
-          const payload = String(buildJustificationClipboardText(s, n) || "").trim();
-          if (!payload) {
-            showToast("Nada para inserir.");
+          const canComposeProposal = !!(r.ok && s.projectHours > 0 && r.projectNet != null);
+          if (!canComposeProposal) {
+            showToast("Preencha as horas do projeto para montar a proposta.");
             return;
           }
-
-          const proposalNode = els.proposalText;
-          const currentText = (proposalNode.textContent && proposalNode.textContent !== "—")
-            ? String(proposalNode.textContent).trim()
-            : "";
-          const previousPayload = String(proposalNode.dataset.justificationInjected || "").trim();
-
-          let baseText = currentText;
-          if (previousPayload && currentText.endsWith(previousPayload)) {
-            baseText = currentText.slice(0, currentText.length - previousPayload.length).trim();
-          }
-
-          const merged = [baseText, payload].filter(Boolean).join("\n\n");
-          proposalNode.textContent = merged || "—";
-          proposalNode.dataset.justificationInjected = payload;
-          showToast("Justificativa inserida no texto da proposta.");
+          proposalJustificationPinned = !proposalJustificationPinned;
+          updateUI();
+          showToast(
+            proposalJustificationPinned
+              ? "Justificativa inserida e vinculada à proposta."
+              : "Justificativa removida da proposta."
+          );
         });
         if (els.btnShare) els.btnShare.addEventListener("click", () => {
           if (!hasAcceptedTerms()) {
