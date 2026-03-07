@@ -54,3 +54,24 @@ describe("Fase 2.1 - proposalMetrics wiring", () => {
     expect(tiers).toHaveProperty("premium");
   });
 });
+
+describe("Fase 2.1 - wireEvents runtime guards", () => {
+  test("wireEvents handlers for scenario and governance are defined", () => {
+    const content = readFileSync(appPath, "utf-8");
+    const requiredFns = [
+      "saveScenario",
+      "loadScenario",
+      "clearScenarios",
+      "exportCsv",
+      "copyTsvRow",
+      "sendToEndpoint",
+      "openIntegrationSettingsModal",
+      "closeIntegrationSettingsModal",
+      "saveIntegrationSettingsFromModal",
+      "renderScenariosComparison",
+    ];
+    for (const fn of requiredFns) {
+      expect(content).toMatch(new RegExp(`\\bfunction ${fn}\\b`));
+    }
+  });
+});
