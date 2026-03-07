@@ -1468,6 +1468,10 @@ function tuneHeroSignalSpacing() {
 
     function updateUI() {
       const s = getStateFromInputs();
+      if (s.proposalMode && (!Number.isFinite(s.projectHours) || s.projectHours <= 0)) {
+        s.projectHours = 30;
+        if (els.projectHours) els.projectHours.value = 30;
+      }
       const pricingCtx = buildPricingContext(s);
       const r = pricingCtx.effective;
       const negotiationCtx = buildNegotiationContext(s, r);
