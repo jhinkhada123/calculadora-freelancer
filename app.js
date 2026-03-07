@@ -2456,7 +2456,7 @@ function tuneHeroSignalSpacing() {
       const termsModal = document.getElementById("termsModal");
       if (!appContainer || !clientViewContainer) return;
       if (termsModal) termsModal.style.display = "none";
-      appContainer.classList.add("hidden");
+      appContainer.remove();
       clientViewContainer.classList.remove("hidden");
 
       const p = new URL(window.location.href).searchParams;

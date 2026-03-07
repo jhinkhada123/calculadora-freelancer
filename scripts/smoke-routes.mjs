@@ -27,6 +27,7 @@ function passType(contentType, type) {
 }
 
 const CLIENT_VIEW_MARKERS = ["clientViewContainer", "clientViewTotal"];
+const CLIENT_VIEW_BLOCKED_TERMS = [/batna/i, /ALTO/i, /M.DIO/i, /BAIXO/i];
 
 const rows = [];
 for (const check of checks) {
@@ -36,9 +37,11 @@ for (const check of checks) {
     const res = await fetch(url, { method });
     const ct = res.headers.get("content-type") || "";
     let pass = res.status === 200 && passType(ct, check.type);
-    if (pass && check.clientView) {
+if (pass && check.clientView) {
       const html = await res.text();
-      pass = CLIENT_VIEW_MARKERS.every((m) => html.includes(m));
+      const hasMarkers = CLIENT_VIEW_MARKERS.every((m) => html.includes(m));
+      const hasLeakTerm = CLIENT_VIEW_BLOCKED_TERMS.some((rx) => rx.test(html));
+      pass = hasMarkers && !hasLeakTerm;
     }
     if (pass && check.xssCheck) {
       const html = await res.text();
