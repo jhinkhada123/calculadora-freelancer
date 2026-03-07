@@ -5,6 +5,9 @@ describe("feature-flags", () => {
     const fl = resolveFeatureFlags();
     expect(fl.agency_enabled).toBe(false);
     expect(fl.pdf_v2_enabled).toBe(true);
+    expect(fl.pdf_lean_badge_enabled).toBe(false);
+    expect(fl.pdf_urgency_enabled).toBe(false);
+    expect(fl.pdf_tiers_enabled).toBe(false);
   });
 
   test("resolveFeatureFlags merge seguro com overrides", () => {

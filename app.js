@@ -5,6 +5,8 @@ import { readLocal, writeLocal, removeLocal, readSession, writeSession, STORAGE_
 import { resolveFeatureFlags } from "./feature-flags.js";
 import { buildProposalMetrics } from "./proposal-metrics.js";
 import { computeTierPricing } from "./proposal-tiers.js";
+import { buildClientPdfSignals } from "./pdf-client-signals.js";
+import { renderClientLeanBadgeBlock, renderClientTiersBlock, renderClientUrgencyBlock } from "./pdf-client-renderers.js";
 
 let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
 let computeAdvancedPricing, deriveHistoricalVarianceSamples, computeAgencyEquivalent;
@@ -2035,10 +2037,35 @@ function tuneHeroSignalSpacing() {
         showToast("Para gerar o PDF, aceite os termos no início da página.");
         return;
       }
-      const r = buildPricingContext(s).effective;
+      const flags = resolveFeatureFlags(FEATURE_FLAGS);
+      const pricingCtx = buildPricingContext(s);
+      const r = pricingCtx.effective;
       const curr = s.currency;
       const proposalMode = !!s.proposalMode;
       const negotiationCtx = buildNegotiationContext(s, r);
+      const outputs = {
+        essential: r,
+        agency: computeAgencyEquivalent
+          ? computeAgencyEquivalent({ projectHours: s.projectHours, hourly: r?.hourly, projectNet: r?.projectNet })
+          : null,
+        inacao: (flags.inacao_enabled && s.modoEstrategista && s.projectHours > 0 && r?.projectNet != null && computeStrategistMetrics)
+          ? computeStrategistMetrics({
+              precoBase: r.projectNet,
+              valorGanhoEstimado12m: s.valorGanhoEstimado12m,
+              custoOportunidadeMensal: s.custoOportunidadeMensal,
+            })
+          : null,
+        batna: (flags.batna_enabled && negotiationCtx?.runway)
+          ? { batnaLevel: negotiationCtx.runway.batnaLevel, batnaMessage: negotiationCtx.runway.batnaMessage }
+          : null,
+        tiers: (flags.tiers_enabled && r?.projectNet != null)
+          ? computeTierPricing(r.projectNet)
+          : null,
+      };
+      const proposalMetrics = buildProposalMetrics(s, outputs, flags);
+      const clientPdfSignals = proposalMode
+        ? buildClientPdfSignals(proposalMetrics.clientSafe, flags, curr)
+        : null;
       const justificationText = buildJustificationClipboardText(s, negotiationCtx);
       const antiDiscountPhrases = getAntiDiscountPhrases(s, negotiationCtx);
 
@@ -2066,19 +2093,19 @@ function tuneHeroSignalSpacing() {
         return;
       }
 
-      const useExecutiveBuilder = !!FEATURE_FLAGS.pdf_executive_proposal_enabled && proposalMode;
+      const useExecutiveBuilder = !!flags.pdf_executive_proposal_enabled && proposalMode;
 
       loadJsPdf().then(async function (jspdfMod) {
         try {
           if (useExecutiveBuilder) {
-            const execFormat = (!!FEATURE_FLAGS.pdf_internal_compact_enabled && s.pdfInternalFormat === "compact") ? "compact" : "complete";
+            const execFormat = (!!flags.pdf_internal_compact_enabled && s.pdfInternalFormat === "compact") ? "compact" : "complete";
             const mod = await import("./pdf-executive-entry.js");
             const fontResult = await mod.generatePdfExecutive({
               state: sPdf,
               jsPdf: jspdfMod,
               logoDataUrl,
               format: execFormat,
-              flags: FEATURE_FLAGS,
+              flags,
               deps: {
                 buildPricingContext,
                 buildNegotiationContext,
@@ -2095,12 +2122,12 @@ function tuneHeroSignalSpacing() {
                 LEGAL_DISCLAIMER,
                 BRAND_NAME,
                 trackEvent,
-                playfairFontUrl: FEATURE_FLAGS.pdf_playfair_font_url || null,
-                playfairFontBase64: FEATURE_FLAGS.pdf_playfair_font_base64 || null,
+                playfairFontUrl: flags.pdf_playfair_font_url || null,
+                playfairFontBase64: flags.pdf_playfair_font_base64 || null,
               },
             });
             const modeCtx = buildPricingContext(s);
-            trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode: true, pdfV2: !!FEATURE_FLAGS.pdf_v2_enabled, internalFormat: execFormat, executiveBuilder: true, fontMode: fontResult?.fontMode ?? "fallback", format: execFormat });
+            trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode: true, pdfV2: !!flags.pdf_v2_enabled, internalFormat: execFormat, executiveBuilder: true, fontMode: fontResult?.fontMode ?? "fallback", format: execFormat });
             showToast("PDF gerado.");
             return;
           }
@@ -2118,7 +2145,7 @@ function tuneHeroSignalSpacing() {
           const pageWidth = doc.internal.pageSize.getWidth();
           const pageHeight = doc.internal.pageSize.getHeight();
           let y = margin;
-          const pdfV2 = !!FEATURE_FLAGS.pdf_v2_enabled;
+          const pdfV2 = !!flags.pdf_v2_enabled;
           const ensureSpace = (needed = 84) => {
             const guard = ensurePdfYSpaceModel
               ? ensurePdfYSpaceModel(y, needed, pageHeight, margin, 72)
@@ -2191,12 +2218,12 @@ function tuneHeroSignalSpacing() {
             const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
             doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
             advanceY(12);
-            const stratPdf = !!FEATURE_FLAGS.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
+            const stratPdf = !!flags.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
               precoBase: s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null,
               valorGanhoEstimado12m: s.valorGanhoEstimado12m,
               custoOportunidadeMensal: s.custoOportunidadeMensal,
             }) : null;
-            const showImpactCliente = !!FEATURE_FLAGS.pdf_impact_block_enabled && stratPdf && stratPdf.ok;
+            const showImpactCliente = !!flags.pdf_impact_block_enabled && stratPdf && stratPdf.ok;
             if (showImpactCliente) {
               const cdoVal = stratPdf.cdo != null ? fmtMoneyPdf(stratPdf.cdo, curr) : "—";
               writeWrappedSummary(`Cronograma: estimativa consultiva; não constitui promessa de prazo. CDO (custo diário de oportunidade): ${cdoVal}.`, { lineHeight: 11, spacingAfter: 8, minRoom: 44 });
@@ -2216,6 +2243,17 @@ function tuneHeroSignalSpacing() {
               doc.text(lines, margin, y);
               advanceY(lines.length * 14 + 24);
             }
+
+            const clientPdfLayout = {
+              margin,
+              pageWidth,
+              ensureSpace,
+              advanceY,
+              getY: () => y,
+            };
+            renderClientLeanBadgeBlock({ doc, signal: clientPdfSignals?.leanBadge, layout: clientPdfLayout });
+            renderClientTiersBlock({ doc, signal: clientPdfSignals?.tiers, layout: clientPdfLayout });
+
             if (showImpactCliente) {
               ensureSpace(80);
               doc.setFont("helvetica", "bold");
@@ -2239,7 +2277,8 @@ function tuneHeroSignalSpacing() {
             const validadeTexto = sPdf.validityDate
               ? `Proposta v\u00E1lida at\u00E9 ${sPdf.validityDate}.`
               : "Proposta v\u00E1lida por 7 dias.";
-            const approvalLine = `${validadeTexto} Para aprovar, responda esta proposta com 'APROVADO'.`;
+            const urgencyValidityHint = clientPdfSignals?.urgency ? " Janela de decisao curta reduz custo de inacao estimado para o cliente." : "";
+            const approvalLine = `${validadeTexto}${urgencyValidityHint} Para aprovar, responda esta proposta com 'APROVADO'.`;
             const investmentBlockHeight = projectOk ? 58 : 46;
             ensureSpace(investmentBlockHeight + 40);
 
@@ -2261,13 +2300,14 @@ function tuneHeroSignalSpacing() {
             }
 
             advanceY(projectOk ? 26 : 18);
+            renderClientUrgencyBlock({ doc, signal: clientPdfSignals?.urgency, layout: clientPdfLayout });
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
             writeWrappedSummary(LEGAL_DISCLAIMER, { lineHeight: 10, spacingAfter: 6, minRoom: 28 });
             doc.setFontSize(9);
             writeWrappedSummary(approvalLine, { lineHeight: 10, spacingAfter: 0, minRoom: 24 });
           } else {
-            const useCompact = !!FEATURE_FLAGS.pdf_internal_compact_enabled && s.pdfInternalFormat === "compact";
+            const useCompact = !!flags.pdf_internal_compact_enabled && s.pdfInternalFormat === "compact";
             if (useCompact) {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(14);
@@ -2409,7 +2449,7 @@ function tuneHeroSignalSpacing() {
                 y += 16;
                 doc.text(`Preço sugerido do projeto: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
               }
-              const stratInterno = !!FEATURE_FLAGS.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
+              const stratInterno = !!flags.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
                 precoBase: s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null,
                 valorGanhoEstimado12m: s.valorGanhoEstimado12m,
                 custoOportunidadeMensal: s.custoOportunidadeMensal,
