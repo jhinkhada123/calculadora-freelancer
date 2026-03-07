@@ -40,8 +40,6 @@ function tuneHeroSignalSpacing() {
 }
 (async function bootstrap() {
     tuneHeroSignalSpacing();
-    ensureMotionFoundationStyles();
-    ensureRiskThermometer();
     try {
       const calcMod = await import("./calculadora.js");
       compute = calcMod.compute;
@@ -187,6 +185,7 @@ function tuneHeroSignalSpacing() {
     const STORAGE_SCHEMA_VERSION = 2;
     const AUDIT_DEBOUNCE_MS = 800;
     const FEATURE_FLAGS = resolveFeatureFlags();
+    ensureMotionFoundationStyles();
     let currentUiMode = "essencial";
     let logoDataUrl = null;
     let calcCardStash = null;
