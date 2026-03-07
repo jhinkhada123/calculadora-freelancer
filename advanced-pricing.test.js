@@ -1,6 +1,8 @@
 import { compute } from "./calculadora.js";
 import {
   computeAdvancedPricing,
+  computeAgencyEquivalent,
+  AGENCY_EQUIVALENT_DEFAULTS,
   getScarcityFactor,
   getExhaustionFactor,
   seededMonteCarloScopeFactor,
@@ -80,5 +82,47 @@ describe("advanced-pricing formulas", () => {
     expect(a.p50).toBeCloseTo(b.p50, 8);
     expect(a.p80).toBeCloseTo(b.p80, 8);
     expect(a.p95).toBeCloseTo(b.p95, 8);
+  });
+});
+
+describe("computeAgencyEquivalent", () => {
+  test("retorna null quando horas ou rate inválidos", () => {
+    expect(computeAgencyEquivalent({ projectHours: 0, hourly: 100 }).economiaValor).toBeNull();
+    expect(computeAgencyEquivalent({ projectHours: 30, hourly: 0, projectNet: 0 }).economiaValor).toBeNull();
+    expect(computeAgencyEquivalent({ projectHours: -1 }).economiaValor).toBeNull();
+  });
+
+  test("economiaValor = max(0, agencyCost - proposalCost)", () => {
+    const r = computeAgencyEquivalent({ projectHours: 30, hourly: 100, projectNet: 3000 });
+    expect(r.agencyCost).toBeGreaterThan(0);
+    expect(r.proposalCost).toBe(3000);
+    expect(r.economiaValor).toBeGreaterThanOrEqual(0);
+    expect(r.economiaValor).toBeCloseTo(Math.max(0, r.agencyCost - 3000), 2);
+  });
+
+  test("economiaPercentual clampado 0..100 e proteção divisor zero", () => {
+    const r = computeAgencyEquivalent({ projectHours: 30, hourly: 100, projectNet: 3000 });
+    expect(r.economiaPercentual).toBeGreaterThanOrEqual(0);
+    expect(r.economiaPercentual).toBeLessThanOrEqual(100);
+  });
+
+  test("fallback proposalCost = hourly * hours quando projectNet ausente", () => {
+    const r = computeAgencyEquivalent({ projectHours: 20, hourly: 150 });
+    expect(r.proposalCost).toBe(3000);
+  });
+
+  test("cenários conservative/base/aggressive configuráveis", () => {
+    const base = { projectHours: 30, hourly: 100, projectNet: 3000 };
+    const cons = computeAgencyEquivalent(base, { scenario: "conservative" });
+    const agg = computeAgencyEquivalent(base, { scenario: "aggressive" });
+    expect(cons.agencyCost).toBeLessThan(agg.agencyCost);
+  });
+
+  test("taxaContaPM override sem regressão", () => {
+    const base = { projectHours: 20, hourly: 100, projectNet: 2000 };
+    const defaultResult = computeAgencyEquivalent(base);
+    const overrideResult = computeAgencyEquivalent(base, { taxaContaPM: 250 });
+    expect(overrideResult.agencyCost).not.toBe(defaultResult.agencyCost);
+    expect(overrideResult.agencyCost).toBeGreaterThan(0);
   });
 });

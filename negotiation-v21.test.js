@@ -5,6 +5,9 @@ import {
   computeRunwaySummary,
   computeScopeShielding,
   generateJustificationBlocks,
+  RUNWAY_HIGH_MONTHS,
+  RUNWAY_MED_MONTHS,
+  BATNA_CLASSIFICATION_BASIS,
 } from "./negotiation-v21.js";
 
 function baseState(overrides = {}) {
@@ -87,6 +90,40 @@ describe("negotiation-v21", () => {
     expect(runway.runwayMesesAtual).toBeCloseTo(3, 1);
     expect(runway.runwayMesesPosProjeto).toBeCloseTo(5, 1);
     expect(runway.projetosNecessarios).toBe(2);
+  });
+
+  test("BATNA ALTO quando runway >= RUNWAY_HIGH_MONTHS", () => {
+    const runway = computeRunwaySummary({
+      reservaAtual: 50000,
+      custoPessoalMensal: 8000,
+      projectNet: 0,
+    });
+    expect(runway.runwayMesesAtual).toBeGreaterThanOrEqual(RUNWAY_HIGH_MONTHS);
+    expect(runway.batnaLevel).toBe("ALTO");
+  });
+
+  test("BATNA MEDIO quando runway >= RUNWAY_MED_MONTHS e < HIGH", () => {
+    const runway = computeRunwaySummary({
+      reservaAtual: 10000,
+      custoPessoalMensal: 4000,
+      projectNet: 0,
+    });
+    expect(runway.runwayMesesAtual).toBeGreaterThanOrEqual(RUNWAY_MED_MONTHS);
+    expect(runway.runwayMesesAtual).toBeLessThan(RUNWAY_HIGH_MONTHS);
+    expect(runway.batnaLevel).toBe("MEDIO");
+  });
+
+  test("BATNA BAIXO quando runway < RUNWAY_MED_MONTHS", () => {
+    const runway = computeRunwaySummary({
+      reservaAtual: 1000,
+      custoPessoalMensal: 4000,
+      projectNet: 0,
+    });
+    expect(runway.batnaLevel).toBe("BAIXO");
+  });
+
+  test("BATNA_CLASSIFICATION_BASIS é current por padrão", () => {
+    expect(BATNA_CLASSIFICATION_BASIS).toBe("current");
   });
 
   test("paridade do modo essencial permanece em ±0.01", () => {

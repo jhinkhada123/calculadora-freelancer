@@ -97,6 +97,21 @@ export function computeRoiAnchor(input = {}) {
   };
 }
 
+/** Thresholds testáveis para classificação BATNA. INTERNAL ONLY. */
+export const RUNWAY_HIGH_MONTHS = 6;
+export const RUNWAY_MED_MONTHS = 2;
+
+/**
+ * Base da classificação BATNA: "current" = runway atual (recomendado);
+ * "postProject" = runway após fechar o projeto.
+ * Padrão "current" evita otimismo e reflete poder de barganha real no momento.
+ */
+export const BATNA_CLASSIFICATION_BASIS = "current";
+
+/**
+ * Este motor retorna valores brutos; buildProposalMetrics normaliza (quando aplicável).
+ * BATNA (classificação + frase) fica em internalOnly; nunca em clientSafe, URL, export, ?view=client.
+ */
 export function computeRunwaySummary(input = {}) {
   const reservaAtual = Math.max(0, num(input.reservaAtual, 0));
   const reservaMetaMeses = clamp(num(input.reservaMetaMeses, 6), 1, 60);
@@ -111,6 +126,18 @@ export function computeRunwaySummary(input = {}) {
   const faltante = Math.max(0, metaReserva - reservaAtual);
   const projetosNecessarios = projetoLiquido > 0 ? Math.ceil(faltante / projetoLiquido) : null;
 
+  const runwayParaBatna = BATNA_CLASSIFICATION_BASIS === "postProject" ? runwayMesesPosProjeto : runwayMesesAtual;
+
+  let batnaLevel = "BAIXO";
+  let batnaMessage = "Seu fôlego financeiro está curto (menos de 2 meses). Negocie escopo em vez de preço e priorize fluxo de caixa real.";
+  if (runwayParaBatna >= RUNWAY_HIGH_MONTHS) {
+    batnaLevel = "ALTO";
+    batnaMessage = "Poder de barganha ALTO (Walk-away power). Você tem >6 meses de caixa. Não aceite descontos abusivos, você tem poder para dizer NÃO.";
+  } else if (runwayParaBatna >= RUNWAY_MED_MONTHS) {
+    batnaLevel = "MEDIO";
+    batnaMessage = "Poder de barganha MÉDIO. Defenda seu preço, mas seja tático na flexibilização de escopo e prazos.";
+  }
+
   return {
     reservaMetaMeses,
     custoPessoalMensal: round2(custoMensal),
@@ -121,6 +148,8 @@ export function computeRunwaySummary(input = {}) {
     runwayMesesPosProjeto: round1(runwayMesesPosProjeto),
     runwayDiasPosProjeto: Math.round(runwayMesesPosProjeto * 30),
     projetosNecessarios,
+    batnaLevel,
+    batnaMessage,
     caveat: NEGOTIATION_CAVEAT,
   };
 }

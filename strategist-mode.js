@@ -1,6 +1,8 @@
 /**
- * Modo Estrategista: precificação por valor com VCE, ROIx e CDO.
+ * Modo Estrategista: precificação por valor com VCE, ROIx, CDO e custo de inação.
  * Não altera compute/projectNet. Usa precoBase = projectNet quando projectHours > 0.
+ *
+ * Este motor retorna valores brutos; buildProposalMetrics normaliza arredondamento dos outputs exibíveis.
  */
 
 export function computeStrategistMetrics(params) {
@@ -9,14 +11,39 @@ export function computeStrategistMetrics(params) {
   const ganho = Number(valorGanhoEstimado12m);
   const custo = Math.max(0, Number(custoOportunidadeMensal) || 0);
 
-  const invalid = { vce: null, roix: null, cdo: null, vceLabel: null, viabilidadeAlerta: false, ok: false };
+  const invalid = {
+    vce: null,
+    roix: null,
+    cdo: null,
+    vceLabel: null,
+    viabilidadeAlerta: false,
+    ok: false,
+    valorGanhoEstimado12m: null,
+    vcePct: null,
+    custoInacaoSemanal: null,
+    custoInacaoMensal: null,
+  };
   if (!Number.isFinite(pb) || pb <= 0) return invalid;
 
   let vce = null;
   let roix = null;
+  let vcePct = null;
+  let custoInacaoSemanal = null;
+  let custoInacaoMensal = null;
+  let valorGanhoOut = null;
+
   if (Number.isFinite(ganho) && ganho > 0) {
+    valorGanhoOut = ganho;
     vce = (pb / ganho) * 100;
+    vcePct = vce;
     roix = ganho / pb;
+    custoInacaoSemanal = ganho / 52;
+    custoInacaoMensal = ganho / 12;
+  } else {
+    valorGanhoOut = null;
+    vcePct = null;
+    custoInacaoSemanal = null;
+    custoInacaoMensal = null;
   }
 
   const cdo = Number.isFinite(custo) ? custo / 30 : null;
@@ -33,6 +60,10 @@ export function computeStrategistMetrics(params) {
     vce,
     roix,
     cdo,
+    custoInacaoSemanal,
+    custoInacaoMensal,
+    valorGanhoEstimado12m: valorGanhoOut,
+    vcePct,
     vceLabel,
     viabilidadeAlerta,
     ok: true,

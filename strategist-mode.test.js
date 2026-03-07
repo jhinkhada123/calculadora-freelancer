@@ -70,6 +70,24 @@ describe("strategist-mode", () => {
       expect(r.vce).toBeNull();
       expect(r.roix).toBeNull();
       expect(r.cdo).toBe(0);
+      expect(r.custoInacaoSemanal).toBeNull();
+      expect(r.custoInacaoMensal).toBeNull();
+      expect(r.vcePct).toBeNull();
+    });
+
+    it("custoInacaoSemanal e custoInacaoMensal quando valorGanhoEstimado12m > 0", () => {
+      const r = computeStrategistMetrics({ precoBase: 10000, valorGanhoEstimado12m: 52000 });
+      expect(r.custoInacaoSemanal).toBeCloseTo(1000, 2);
+      expect(r.custoInacaoMensal).toBeCloseTo(4333.33, 2);
+      expect(r.vcePct).toBeCloseTo(19.23, 1);
+    });
+
+    it("bordas retornam null (ganho ausente/zero/NaN)", () => {
+      const r1 = computeStrategistMetrics({ precoBase: 10000 });
+      expect(r1.custoInacaoSemanal).toBeNull();
+      expect(r1.custoInacaoMensal).toBeNull();
+      const r2 = computeStrategistMetrics({ precoBase: 10000, valorGanhoEstimado12m: NaN });
+      expect(r2.custoInacaoSemanal).toBeNull();
     });
 
     it("edge case: divisão por zero não ocorre", () => {

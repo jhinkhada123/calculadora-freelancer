@@ -284,3 +284,77 @@ export function computeAdvancedPricing(params) {
     output: adjusted,
   };
 }
+
+/**
+ * Cenários configuráveis para Agency Equivalent.
+ * Defaults baseados em benchmarks de mercado (agências cobram ~1.5x execução + overhead PM).
+ *
+ * taxaContaPM: R$/h (taxa horária da conta de project management).
+ * Default heurístico: taxaHoraFreela * 1.8 (PM tipicamente cobra mais; justificado por mercado).
+ * Override: config.taxaContaPM (número em R$/h).
+ */
+export const AGENCY_EQUIVALENT_DEFAULTS = {
+  multiplierFreela: 1.5,
+  overheadPct: 0.35,
+  taxaContaPMMultiplier: 1.8,
+  conservative: { multiplierFreela: 1.4, overheadPct: 0.30, taxaContaPMMultiplier: 1.6 },
+  base: { multiplierFreela: 1.5, overheadPct: 0.35, taxaContaPMMultiplier: 1.8 },
+  aggressive: { multiplierFreela: 1.7, overheadPct: 0.40, taxaContaPMMultiplier: 2.0 },
+};
+
+/**
+ * Este motor retorna valores brutos; buildProposalMetrics normaliza arredondamento dos outputs exibíveis.
+ *
+ * Fórmula: agencyCost = horas * (taxaHoraFreela * multiplierFreela) + (horas * overheadPct * taxaContaPM)
+ * economiaValor = max(0, agencyCost - proposalCost)
+ * economiaPercentual = clampPct((economiaValor / agencyCost) * 100), com proteção divisor zero
+ *
+ * @param {Object} projectState - { projectHours, projectNet?, hourly? }
+ * @param {Object} [config] - Cenário (conservative|base|aggressive) ou overrides
+ */
+export function computeAgencyEquivalent(projectState, config = {}) {
+  const scenario = ["conservative", "base", "aggressive"].includes(config.scenario) ? config.scenario : "base";
+  const cfg = { ...AGENCY_EQUIVALENT_DEFAULTS[scenario], ...config };
+  const multiplierFreela = Math.max(0, num(cfg.multiplierFreela, 1.5));
+  const overheadPct = Math.max(0, Math.min(1, num(cfg.overheadPct, 0.35)));
+  const taxaHoraFreela = Math.max(0, num(projectState?.hourly, 0));
+  const horas = Math.max(0, num(projectState?.projectHours, 0));
+  const projectNet = num(projectState?.projectNet, null);
+  const hourly = num(projectState?.hourly, 0);
+
+  if (horas <= 0 || !Number.isFinite(horas)) {
+    return { agencyCost: null, proposalCost: null, economiaValor: null, economiaPercentual: null };
+  }
+  if (taxaHoraFreela <= 0 && (projectNet == null || projectNet <= 0)) {
+    return { agencyCost: null, proposalCost: null, economiaValor: null, economiaPercentual: null };
+  }
+
+  const taxaContaPM = Number.isFinite(cfg.taxaContaPM) ? cfg.taxaContaPM : (cfg.taxaContaPMMultiplier * taxaHoraFreela) || taxaHoraFreela * 1.8;
+  const agencyCost = horas * (taxaHoraFreela * multiplierFreela) + horas * overheadPct * taxaContaPM;
+  if (!Number.isFinite(agencyCost) || agencyCost <= 0) {
+    return { agencyCost: null, proposalCost: null, economiaValor: null, economiaPercentual: null };
+  }
+
+  let proposalCost = null;
+  if (projectNet != null && Number.isFinite(projectNet) && projectNet > 0) {
+    proposalCost = projectNet;
+  } else if (hourly > 0 && Number.isFinite(hourly)) {
+    proposalCost = horas * hourly;
+  }
+  if (proposalCost == null || !Number.isFinite(proposalCost) || proposalCost < 0) {
+    return { agencyCost, proposalCost: null, economiaValor: null, economiaPercentual: null };
+  }
+
+  const economiaValor = Math.max(0, agencyCost - proposalCost);
+  const economiaPercentualRaw = agencyCost > 0 ? (economiaValor / agencyCost) * 100 : 0;
+  const economiaPercentual = Number.isFinite(economiaPercentualRaw)
+    ? Math.min(100, Math.max(0, economiaPercentualRaw))
+    : null;
+
+  return {
+    agencyCost,
+    proposalCost,
+    economiaValor,
+    economiaPercentual,
+  };
+}
