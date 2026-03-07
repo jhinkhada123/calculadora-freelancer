@@ -1,0 +1,15 @@
+﻿# Governance-sensitive ownership
+* @jhinkhada123
+
+/calculadora.js @jhinkhada123
+/proposal-metrics.js @jhinkhada123
+/advanced-pricing.js @jhinkhada123
+/strategist-mode.js @jhinkhada123
+/negotiation-v21.js @jhinkhada123
+/proposal-tiers.js @jhinkhada123
+/utils/sanitize-state.js @jhinkhada123
+/utils/storage.js @jhinkhada123
+
+/docs/governance/** @jhinkhada123
+/.github/workflows/governance*.yml @jhinkhada123
+/.github/pull_request_template.md @jhinkhada123
