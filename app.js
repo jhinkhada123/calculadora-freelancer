@@ -41,7 +41,6 @@ function tuneHeroSignalSpacing() {
 (async function bootstrap() {
     tuneHeroSignalSpacing();
     ensureMotionFoundationStyles();
-    ensureRiskThermometer();
     try {
       const calcMod = await import("./calculadora.js");
       compute = calcMod.compute;
