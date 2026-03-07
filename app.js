@@ -112,14 +112,14 @@ function tuneHeroSignalSpacing() {
         runwayMesesPosProjeto: 0,
         runwayDiasPosProjeto: 0,
         projetosNecessarios: null,
-        caveat: "Estimativa sujeita ÃƒÂ  execuÃƒÂ§ÃƒÂ£o e variÃƒÂ¡veis operacionais.",
+        caveat: "Estimativa sujeita à execução e variáveis operacionais.",
       });
-      computeRoiAnchor = () => ({ enabled: false, text: "", caveat: "Estimativa sujeita ÃƒÂ  execuÃƒÂ§ÃƒÂ£o e variÃƒÂ¡veis operacionais." });
+      computeRoiAnchor = () => ({ enabled: false, text: "", caveat: "Estimativa sujeita à execução e variáveis operacionais." });
       generateJustificationBlocks = () => ({
         resumoExecutivo: "",
         justificativaTecnica: "",
         justificativaPrioridadeRisco: "",
-        caveat: "Estimativa sujeita ÃƒÂ  execuÃƒÂ§ÃƒÂ£o e variÃƒÂ¡veis operacionais.",
+        caveat: "Estimativa sujeita à execução e variáveis operacionais.",
       });
     }
     try {
@@ -129,7 +129,7 @@ function tuneHeroSignalSpacing() {
       STRATEGIST_CAVEAT = strategistMod.STRATEGIST_CAVEAT;
     } catch (_) {
       computeStrategistMetrics = () => ({ ok: false, vce: null, roix: null, cdo: null, vceLabel: null, viabilidadeAlerta: false });
-      formatStrategistValue = () => "Ã¢â‚¬â€";
+      formatStrategistValue = () => "—";
       STRATEGIST_CAVEAT = "Estimativa baseada nas premissas informadas; sem garantias.";
     }
     try {
@@ -149,7 +149,7 @@ function tuneHeroSignalSpacing() {
         const costs = Math.max(0, Number(s?.monthlyCosts) || 0);
         const core = Math.max(0, Number(r.revenueTarget) - income - costs);
         const base = [
-          { key: "income", label: "Renda lÃƒÂ­quida desejada", value: income, color: "#34d399" },
+          { key: "income", label: "Renda líquida desejada", value: income, color: "#34d399" },
           { key: "costs", label: "Custos fixos", value: costs, color: "#60a5fa" },
           { key: "core", label: "Encargos e margem essenciais", value: core, color: "#a78bfa" },
         ];
@@ -166,20 +166,20 @@ function tuneHeroSignalSpacing() {
       };
     }
 
-    const BRAND_NAME = "Calculadora de PrecificaÃƒÂ§ÃƒÂ£o para Freelancers";
-    const BRAND_SUBTITLE = "Calculadora de PrecificaÃƒÂ§ÃƒÂ£o para Freelancers";
-    const BRAND_TAGLINE = "PrecificaÃƒÂ§ÃƒÂ£o profissional em minutos";
-    const BRAND_HERO_HEADLINE = "PrecificaÃƒÂ§ÃƒÂ£o estratÃƒÂ©gica para quem entrega valor, nÃƒÂ£o horas.";
-    const BRAND_SUBHEADLINE = "Calcule taxas sustentÃƒÂ¡veis, justifique propostas com respaldo tÃƒÂ©cnico e negocie com clareza em uma ÃƒÂºnica ferramenta.";
+    const BRAND_NAME = "Calculadora de Precificação para Freelancers";
+    const BRAND_SUBTITLE = "Calculadora de Precificação para Freelancers";
+    const BRAND_TAGLINE = "Precificação profissional em minutos";
+    const BRAND_HERO_HEADLINE = "Precificação estratégica para quem entrega valor, não horas.";
+    const BRAND_SUBHEADLINE = "Calcule taxas sustentáveis, justifique propostas com respaldo técnico e negocie com clareza em uma única ferramenta.";
     const NEGOTIATION_PHRASES = [
-      "Este investimento considera escopo, prazo e nÃƒÂ­vel de responsabilidade acordados.",
-      "A proposta jÃƒÂ¡ contempla margem tÃƒÂ©cnica para gestÃƒÂ£o de expectativa e execuÃƒÂ§ÃƒÂ£o consistente.",
+      "Este investimento considera escopo, prazo e nível de responsabilidade acordados.",
+      "A proposta já contempla margem técnica para gestão de expectativa e execução consistente.",
       "A reserva de agenda foi considerada para viabilizar o prazo combinado.",
-      "O valor estÃƒÂ¡ alinhado ÃƒÂ s premissas operacionais apresentadas neste documento.",
-      "ReduÃƒÂ§ÃƒÂ£o de preÃƒÂ§o implica revisÃƒÂ£o proporcional de escopo, prazo ou formato de entrega.",
-      "A composiÃƒÂ§ÃƒÂ£o apresentada prioriza previsibilidade de entrega e qualidade tÃƒÂ©cnica.",
-      "As condiÃƒÂ§ÃƒÂµes propostas preservam a sustentabilidade da operaÃƒÂ§ÃƒÂ£o durante o projeto.",
-      "A decisÃƒÂ£o de investimento deve considerar impacto esperado, risco e premissas explÃƒÂ­citas.",
+      "O valor está alinhado às premissas operacionais apresentadas neste documento.",
+      "Redução de preço implica revisão proporcional de escopo, prazo ou formato de entrega.",
+      "A composição apresentada prioriza previsibilidade de entrega e qualidade técnica.",
+      "As condições propostas preservam a sustentabilidade da operação durante o projeto.",
+      "A decisão de investimento deve considerar impacto esperado, risco e premissas explícitas.",
     ];
 
     const { STORAGE_KEY, LEGACY_STORAGE_KEY, SCENARIOS_KEY, INTEGRATIONS_KEY, DISMISSED_ALERTS_KEY } = STORAGE_KEYS;
@@ -419,7 +419,7 @@ function tuneHeroSignalSpacing() {
           body: JSON.stringify(dados),
         });
         const data = await res.json().catch(() => res.text());
-        console.log("Webhook calculadora Ã¢â‚¬â€œ resposta:", data);
+        console.log("Webhook calculadora – resposta:", data);
         return data;
       } catch (err) {
         console.error("Erro ao enviar para webhook calculadora:", err);
@@ -429,7 +429,7 @@ function tuneHeroSignalSpacing() {
 
     function exportConfig() {
       if (!hasAcceptedTerms()) {
-        showToast("Para exportar, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+        showToast("Para exportar, aceite os termos no início da página.");
         return;
       }
       const s = getStateFromInputs();
@@ -445,7 +445,7 @@ function tuneHeroSignalSpacing() {
         logoDataUrl: logoDataUrl || null
       };
       downloadJson("configuracoes_calculadora_backup.txt", payload);
-      showToast("ConfiguraÃƒÂ§ÃƒÂµes exportadas.");
+      showToast("Configurações exportadas.");
     }
 
     function importConfig() {
@@ -495,9 +495,9 @@ function tuneHeroSignalSpacing() {
             }
 
             updateUI();
-            showToast(logoIgnored ? "ConfiguraÃƒÂ§ÃƒÂµes importadas. Logo ignorada (tamanho ou formato)." : "ConfiguraÃƒÂ§ÃƒÂµes importadas.");
+            showToast(logoIgnored ? "Configurações importadas. Logo ignorada (tamanho ou formato)." : "Configurações importadas.");
           } catch (e) {
-            showToast("Arquivo invÃƒÂ¡lido.");
+            showToast("Arquivo inválido.");
           }
         };
         reader.readAsText(file);
@@ -507,7 +507,7 @@ function tuneHeroSignalSpacing() {
 
     function getProposalTextForPdf() {
       const raw = els.proposalText && els.proposalText.textContent ? String(els.proposalText.textContent).trim() : "";
-      if (raw === "" || raw === "Ã¢â‚¬â€") return "";
+      if (raw === "" || raw === "—") return "";
       const sanitized = raw.replace(/\brisco\b/gi, "").replace(/\brisk\b/gi, "").trim();
       return sanitized || raw;
     }
@@ -681,7 +681,7 @@ function tuneHeroSignalSpacing() {
     function animateMoneyCounter(node, targetValue, currency) {
       if (!node) return;
       if (!FEATURE_FLAGS.ui_counter_up_enabled || !Number.isFinite(targetValue)) {
-        safeMoney(node, Number.isFinite(targetValue) ? fmtMoney(targetValue, currency) : "Ã¢â‚¬â€");
+        safeMoney(node, Number.isFinite(targetValue) ? fmtMoney(targetValue, currency) : "—");
         counterAnimationState.delete(node);
         return;
       }
@@ -723,7 +723,7 @@ function tuneHeroSignalSpacing() {
       wrap.className = "mt-3 space-y-1";
       wrap.innerHTML = `
           <div class="flex items-center justify-between text-[11px] text-slate-300">
-            <span>TermÃƒÂ´metro de risco</span>
+            <span>Termômetro de risco</span>
             <span id="riskThermometerLabel" class="risk-thermo-label text-emerald-300">Baixo (0/5)</span>
           </div>
           <div class="risk-thermo-track">
@@ -752,7 +752,7 @@ function tuneHeroSignalSpacing() {
       const ratio = count / checks.length;
       const hue = 120 - Math.round(120 * ratio);
       const width = Math.max(8, Math.round(ratio * 100));
-      const levels = ["Baixo", "Leve", "Moderado", "Alto", "CrÃƒÂ­tico", "CrÃƒÂ­tico"];
+      const levels = ["Baixo", "Leve", "Moderado", "Alto", "Crítico", "Crítico"];
       const level = levels[Math.min(levels.length - 1, count)] || "Baixo";
       riskThermometerRefs.fill.style.width = `${width}%`;
       riskThermometerRefs.fill.style.backgroundColor = `hsl(${hue} 82% 48%)`;
@@ -761,9 +761,9 @@ function tuneHeroSignalSpacing() {
     }
 
     function normalizeCopyToastMessage(okMsg) {
-      if (!okMsg) return "Copiado para a ÃƒÂ¡rea de transferÃƒÂªncia! Ã°Å¸Å½â€°";
+      if (!okMsg) return "Copiado para a área de transferência! 🎉";
       return /copiad|copiar/i.test(okMsg)
-        ? "Copiado para a ÃƒÂ¡rea de transferÃƒÂªncia! Ã°Å¸Å½â€°"
+        ? "Copiado para a área de transferência! 🎉"
         : okMsg;
     }
 
@@ -903,7 +903,7 @@ function tuneHeroSignalSpacing() {
 
     function formatScopeLevel(level) {
       if (level === "high") return "alto";
-      if (level === "medium") return "mÃƒÂ©dio";
+      if (level === "medium") return "médio";
       return "baixo";
     }
 
@@ -981,7 +981,7 @@ function tuneHeroSignalSpacing() {
 
     function splitMoneyParts(text) {
       const value = String(text ?? "").trim();
-      if (!value || value === "Ã¢â‚¬â€") return null;
+      if (!value || value === "—") return null;
       const lead = value.match(/^([^\d+\-]+)\s*([\d.,\s\-]+)$/u);
       if (lead) return { symbol: lead[1].trim(), amount: lead[2].trim(), trailing: false };
       const trail = value.match(/^([\d.,\s\-]+)\s*([^\d+\-]+)$/u);
@@ -1040,7 +1040,7 @@ function tuneHeroSignalSpacing() {
       if (!container) return;
       container.textContent = "";
       if (!payload || !payload.outputs) {
-        container.appendChild(createEl("p", "text-xs text-slate-400", "Ainda nÃƒÂ£o salvo."));
+        container.appendChild(createEl("p", "text-xs text-slate-400", "Ainda não salvo."));
         return;
       }
       const out = payload.outputs;
@@ -1049,11 +1049,11 @@ function tuneHeroSignalSpacing() {
         ["Taxa/hora", out.hourly, true],
         ["Taxa/dia", out.daily, true],
         ["Faturamento alvo", out.revenueTarget, true],
-        ["Horas faturÃƒÂ¡veis", out.billableHours, false],
-        ["PreÃƒÂ§o projeto", out.projectNet, true],
+        ["Horas faturáveis", out.billableHours, false],
+        ["Preço projeto", out.projectNet, true],
       ];
       for (const [label, value, money] of rows) {
-        const text = value == null ? "Ã¢â‚¬â€" : (money ? fmtMoney(value, curr) : `${fmtNumber(value, 1)} h`);
+        const text = value == null ? "—" : (money ? fmtMoney(value, curr) : `${fmtNumber(value, 1)} h`);
         const div = createEl("div", "flex items-center justify-between");
         div.appendChild(createEl("span", "text-slate-400", label));
         div.appendChild(createEl("span", "text-slate-100", text));
@@ -1072,7 +1072,7 @@ function tuneHeroSignalSpacing() {
       if (!parts.length) {
         els.compositionChart.style.background = "linear-gradient(135deg, #1f2937, #0f172a)";
         els.compositionLegend.textContent = "";
-        els.compositionLegend.appendChild(createEl("p", "text-xs text-slate-400", "Preencha os dados vÃƒÂ¡lidos para visualizar."));
+        els.compositionLegend.appendChild(createEl("p", "text-xs text-slate-400", "Preencha os dados válidos para visualizar."));
         return;
       }
       let start = 0;
@@ -1102,9 +1102,9 @@ function tuneHeroSignalSpacing() {
 
     function endpointValidationMessage(res, label) {
       if (res && res.reason === "HTTP_EXTERNAL_BLOCKED") {
-        return `URL de ${label} invÃƒÂ¡lida: use HTTPS para hosts externos. HTTP ÃƒÂ© permitido apenas em localhost/127.0.0.1.`;
+        return `URL de ${label} inválida: use HTTPS para hosts externos. HTTP é permitido apenas em localhost/127.0.0.1.`;
       }
-      return `URL de ${label} invÃƒÂ¡lida.`;
+      return `URL de ${label} inválida.`;
     }
 
     function isValidHttpUrl(value) {
@@ -1212,7 +1212,7 @@ function tuneHeroSignalSpacing() {
     function createDeltaSpan(a, b, key, money, curr) {
       const av = a?.outputs?.[key];
       const bv = b?.outputs?.[key];
-      if (av == null || bv == null) return createEl("span", "text-slate-400", `${key}: Ã¢â‚¬â€`);
+      if (av == null || bv == null) return createEl("span", "text-slate-400", `${key}: —`);
       const delta = bv - av;
       const sign = delta > 0 ? "+" : "";
       const base = money ? fmtMoney(Math.abs(delta), curr) : `${fmtNumber(Math.abs(delta), 1)} h`;
@@ -1244,7 +1244,7 @@ function tuneHeroSignalSpacing() {
       const visibleAlerts = allAlerts.filter((a) => !dismissed[a.id]);
       els.alertsList.textContent = "";
       if (!visibleAlerts.length) {
-        els.alertsList.appendChild(createEl("p", "text-xs text-slate-400", "Sem alertas no momento. Boa configuraÃƒÂ§ÃƒÂ£o."));
+        els.alertsList.appendChild(createEl("p", "text-xs text-slate-400", "Sem alertas no momento. Boa configuração."));
         return;
       }
       for (const a of visibleAlerts) {
@@ -1254,7 +1254,7 @@ function tuneHeroSignalSpacing() {
         left.appendChild(createEl("p", "text-xs font-semibold uppercase tracking-wide", a.severity));
         left.appendChild(createEl("p", "text-sm font-medium", a.title));
         left.appendChild(createEl("p", "mt-1 text-xs opacity-90", a.message));
-        left.appendChild(createEl("p", "mt-1 text-xs opacity-90", `SugestÃƒÂ£o: ${a.recommendation}`));
+        left.appendChild(createEl("p", "mt-1 text-xs opacity-90", `Sugestão: ${a.recommendation}`));
         const btn = createEl("button", "rounded-lg border border-white/20 bg-black/20 px-2 py-1 text-[11px] hover:bg-black/30", "Dispensar");
         btn.setAttribute("type", "button");
         btn.setAttribute("data-dismiss-alert", a.id);
@@ -1338,11 +1338,11 @@ function tuneHeroSignalSpacing() {
       const exFactor = ctx.advanced.data.exhaustionFactor || 1;
       const exImpact = ctx.advanced.data.contributions.exaustao || 0;
       if (exFactor > 1.0) {
-        els.exhaustionBadgeLabel.textContent = "Taxa de preservaÃƒÂ§ÃƒÂ£o de saÃƒÂºde aplicada";
+        els.exhaustionBadgeLabel.textContent = "Taxa de preservação de saúde aplicada";
         const pct = ((exFactor - 1) * 100);
         els.exhaustionBadgeImpact.textContent = `${fmtMoney(Math.abs(exImpact), s.currency)} | ${fmtNumber(pct, 1)}%`;
       } else {
-        els.exhaustionBadgeLabel.textContent = "Sem ajuste de exaustÃƒÂ£o";
+        els.exhaustionBadgeLabel.textContent = "Sem ajuste de exaustão";
         els.exhaustionBadgeImpact.textContent = "Impacto: 0";
       }
       const telemetryDecision = shouldTrackRiskScoreView
@@ -1367,12 +1367,12 @@ function tuneHeroSignalSpacing() {
     function renderNegotiationOutputs(s, r, n) {
       if (!els.justificationExecutive || !els.justificationTechnical || !els.scopeShieldSummary || !els.scarcitySummary || !els.runwaySummary) return;
       const curr = sanitizeCurrency(s.currency);
-      safeText(els.justificationExecutive, n.justification.resumoExecutivo || "Ã¢â‚¬â€");
-      safeText(els.justificationTechnical, n.justification.justificativaTecnica || "Ã¢â‚¬â€");
+      safeText(els.justificationExecutive, n.justification.resumoExecutivo || "—");
+      safeText(els.justificationTechnical, n.justification.justificativaTecnica || "—");
       if (els.justificationPriorityWrap && els.justificationPriority) {
         const hasPriority = !!n.justification.justificativaPrioridadeRisco;
         els.justificationPriorityWrap.classList.toggle("hidden", !hasPriority);
-        safeText(els.justificationPriority, hasPriority ? n.justification.justificativaPrioridadeRisco : "Ã¢â‚¬â€");
+        safeText(els.justificationPriority, hasPriority ? n.justification.justificativaPrioridadeRisco : "—");
       }
       if (els.roiAnchorLine) {
         const text = n.roi.enabled ? `${n.roi.text} ${n.roi.caveat}` : "";
@@ -1381,22 +1381,22 @@ function tuneHeroSignalSpacing() {
       }
       safeText(
         els.scopeShieldSummary,
-        `Taxa de GestÃƒÂ£o de Expectativa: ${fmtNumber(n.scopeShield.markupPct, 1)}% (${formatScopeLevel(n.scopeShield.level)}). Impacto estimado: ${fmtMoney(Math.max(0, n.shieldImpact), curr)}.`
+        `Taxa de Gestão de Expectativa: ${fmtNumber(n.scopeShield.markupPct, 1)}% (${formatScopeLevel(n.scopeShield.level)}). Impacto estimado: ${fmtMoney(Math.max(0, n.shieldImpact), curr)}.`
       );
       safeText(
         els.scarcitySummary,
-        `PrÃƒÂªmio de conveniÃƒÂªncia aplicado: ${fmtNumber(n.scarcity.markupPct, 1)}% (ocupaÃƒÂ§ÃƒÂ£o ${fmtNumber(s.ocupacaoAgenda, 0)}%). Impacto estimado: ${fmtMoney(Math.max(0, n.scarcityImpact), curr)}.`
+        `Prêmio de conveniência aplicado: ${fmtNumber(n.scarcity.markupPct, 1)}% (ocupação ${fmtNumber(s.ocupacaoAgenda, 0)}%). Impacto estimado: ${fmtMoney(Math.max(0, n.scarcityImpact), curr)}.`
       );
       const fonte = n.runway.custoFonte === "explicito"
-        ? `Custo pessoal mensal explÃƒÂ­cito: ${fmtMoney(n.runway.custoPessoalMensal, curr)}.`
+        ? `Custo pessoal mensal explícito: ${fmtMoney(n.runway.custoPessoalMensal, curr)}.`
         : `Custo pessoal mensal derivado (renda + custos): ${fmtMoney(n.runway.custoPessoalMensal, curr)}.`;
       const projetosTexto = n.runway.projetosNecessarios == null
-        ? "Projetos necessÃƒÂ¡rios para meta: informe um projeto com valor lÃƒÂ­quido positivo."
-        : `Projetos necessÃƒÂ¡rios para meta de reserva: ${fmtNumber(n.runway.projetosNecessarios, 0)}.`;
+        ? "Projetos necessários para meta: informe um projeto com valor líquido positivo."
+        : `Projetos necessários para meta de reserva: ${fmtNumber(n.runway.projetosNecessarios, 0)}.`;
       safeText(
         els.runwaySummary,
-        `FÃƒÂ´lego financeiro atual: ${fmtNumber(n.runway.runwayMesesAtual, 1)} meses (${fmtNumber(n.runway.runwayDiasAtual, 0)} dias). ` +
-          `FÃƒÂ´lego financeiro pÃƒÂ³s-projeto: ${fmtNumber(n.runway.runwayMesesPosProjeto, 1)} meses (${fmtNumber(n.runway.runwayDiasPosProjeto, 0)} dias). ` +
+        `Fôlego financeiro atual: ${fmtNumber(n.runway.runwayMesesAtual, 1)} meses (${fmtNumber(n.runway.runwayDiasAtual, 0)} dias). ` +
+          `Fôlego financeiro pós-projeto: ${fmtNumber(n.runway.runwayMesesPosProjeto, 1)} meses (${fmtNumber(n.runway.runwayDiasPosProjeto, 0)} dias). ` +
           `${projetosTexto} ${fonte} ${n.runway.caveat}`
       );
       if (els.antiDiscountList) {
@@ -1522,33 +1522,33 @@ function tuneHeroSignalSpacing() {
       }
 
       const hourlyOk = r.ok && r.hourly != null;
-      safeMoney(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "Ã¢â‚¬â€");
-      safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "Ã¢â‚¬â€");
-      safeText(els.hourlyNote, s.advancedMode ? "Baseada na estratÃƒÂ©gia premium." : "Baseada na sua capacidade faturÃƒÂ¡vel.");
+      safeMoney(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+      safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
+      safeText(els.hourlyNote, s.advancedMode ? "Baseada na estratégia premium." : "Baseada na sua capacidade faturável.");
       if (els.dailyLabel) safeText(els.dailyLabel, `Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h)`);
-      safeText(els.billableHours, r.billableHours != null ? `${fmtNumber(r.billableHours, 1)} h` : "Ã¢â‚¬â€");
-      safeMoney(els.revenueTarget, r.ok && r.revenueTarget != null ? fmtMoney(r.revenueTarget, curr) : "Ã¢â‚¬â€");
+      safeText(els.billableHours, r.billableHours != null ? `${fmtNumber(r.billableHours, 1)} h` : "—");
+      safeMoney(els.revenueTarget, r.ok && r.revenueTarget != null ? fmtMoney(r.revenueTarget, curr) : "—");
       safeText(els.revenueBreakdown, `Base: ${fmtMoney(r.baseNeed, curr)} | Total: ${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(s.profitMargin, 1)}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`);
       safeText(els.stepCost, `${fmtMoney(s.targetIncome, curr)} + ${fmtMoney(s.monthlyCosts, curr)} = ${fmtMoney(r.baseNeed, curr)}`);
       safeText(els.stepTax, `${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(s.profitMargin, 1)}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`);
       if (!r.ok && r.error) safeText(els.stepProfit, r.error.message);
-      else if (r.ok && r.revenueTarget != null) safeText(els.stepProfit, `${fmtMoney(r.baseNeed, curr)} ÃƒÂ· (1 Ã¢Ë†â€™ ${fmtNumber(r.totalPercent, 1)}%) = ${fmtMoney(r.revenueTarget, curr)}`);
-      else safeText(els.stepProfit, "Ã¢â‚¬â€");
+      else if (r.ok && r.revenueTarget != null) safeText(els.stepProfit, `${fmtMoney(r.baseNeed, curr)} ÷ (1 − ${fmtNumber(r.totalPercent, 1)}%) = ${fmtMoney(r.revenueTarget, curr)}`);
+      else safeText(els.stepProfit, "—");
       safeText(els.stepHours, `Semanas uteis/ano: ${fmtNumber(r.workingWeeks, 1)} | Horas/mes: ${fmtNumber(r.hoursPerMonth, 1)} | Faturaveis: ${fmtNumber(r.billableHours, 1)}`);
 
       const projectOk = hourlyOk && s.projectHours > 0 && r.ok && r.projectNet != null;
-      safeMoney(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "Ã¢â‚¬â€");
+      safeMoney(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "—");
       if (els.projectHint) {
         if (s.proposalMode) {
           safeText(els.projectHint, "");
           els.projectHint.classList.add("hidden");
         } else {
           els.projectHint.classList.remove("hidden");
-          safeText(els.projectHint, projectOk ? `(${fmtNumber(s.projectHours, 0)}h Ãƒâ€” taxa/hora) com +${fmtNumber(s.scopeRisk, 1)}% margem e Ã¢Ë†â€™${fmtNumber(s.discount, 1)}% desconto.` : "Preencha as horas para estimar.");
+          safeText(els.projectHint, projectOk ? `(${fmtNumber(s.projectHours, 0)}h × taxa/hora) com +${fmtNumber(s.scopeRisk, 1)}% margem e −${fmtNumber(s.discount, 1)}% desconto.` : "Preencha as horas para estimar.");
         }
       }
 
-      let proposalBaseText = "Ã¢â‚¬â€";
+      let proposalBaseText = "—";
       if (projectOk) {
         const prazoDiasUteis = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / s.utilization));
         const anti = (() => {
@@ -1558,10 +1558,10 @@ function tuneHeroSignalSpacing() {
           }
           return phrases.slice(0, 8)[0] || "";
         })();
-        proposalBaseText = `Proposta comercial para execuÃƒÂ§ÃƒÂ£o do projeto. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias ÃƒÂºteis. ${anti}`;
+        proposalBaseText = `Proposta comercial para execução do projeto. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis. ${anti}`;
       }
       let proposalFinalText = proposalBaseText;
-      if (proposalJustificationPinned && proposalBaseText !== "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â") {
+      if (proposalJustificationPinned && proposalBaseText !== "—") {
         const payload = String(buildJustificationClipboardText(s, negotiationCtx) || "").trim();
         if (payload) proposalFinalText = payload;
       }
@@ -1590,10 +1590,10 @@ function tuneHeroSignalSpacing() {
           custoOportunidadeMensal: s.custoOportunidadeMensal,
         });
         const noPreco = precoBase == null || precoBase <= 0;
-        safeText(els.strategistVce, noPreco ? "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" : formatStrategistValue(strat.vce, "percent"));
-        safeText(els.strategistVceLabel, noPreco ? "Preencha horas do projeto." : (strat.vceLabel || "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"));
-        safeText(els.strategistRoix, noPreco ? "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" : (strat.roix != null ? `${fmtNumber(strat.roix, 1)}x` : "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"));
-        safeText(els.strategistCdo, noPreco ? "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" : (strat.cdo != null ? fmtMoney(strat.cdo, curr) : "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"));
+        safeText(els.strategistVce, noPreco ? "—" : formatStrategistValue(strat.vce, "percent"));
+        safeText(els.strategistVceLabel, noPreco ? "Preencha horas do projeto." : (strat.vceLabel || "—"));
+        safeText(els.strategistRoix, noPreco ? "—" : (strat.roix != null ? `${fmtNumber(strat.roix, 1)}x` : "—"));
+        safeText(els.strategistCdo, noPreco ? "—" : (strat.cdo != null ? fmtMoney(strat.cdo, curr) : "—"));
         if (els.strategistViabilidadeAlerta) {
           els.strategistViabilidadeAlerta.classList.toggle("hidden", !strat.viabilidadeAlerta);
         }
@@ -1607,8 +1607,8 @@ function tuneHeroSignalSpacing() {
 
       if (els.batnaMeterBlock && proposalMetrics.internalOnly && (proposalMetrics.internalOnly.batnaLevel || proposalMetrics.internalOnly.batnaMessage)) {
         els.batnaMeterBlock.classList.remove("hidden");
-        if (els.batnaLevelBadge) safeText(els.batnaLevelBadge, proposalMetrics.internalOnly.batnaLevel ?? "Ã¢â‚¬â€");
-        if (els.batnaMessage) safeText(els.batnaMessage, proposalMetrics.internalOnly.batnaMessage ?? "Ã¢â‚¬â€");
+        if (els.batnaLevelBadge) safeText(els.batnaLevelBadge, proposalMetrics.internalOnly.batnaLevel ?? "—");
+        if (els.batnaMessage) safeText(els.batnaMessage, proposalMetrics.internalOnly.batnaMessage ?? "—");
       } else if (els.batnaMeterBlock) els.batnaMeterBlock.classList.add("hidden");
       persistState(s);
 
@@ -1676,7 +1676,7 @@ function tuneHeroSignalSpacing() {
         if (FEATURE_FLAGS.ui_preview_anchor_enabled) {
           const hasValorGanho = !!s.modoEstrategista && s.valorGanhoEstimado12m > 0;
           els.proposalValorGanhoBlock.classList.remove("hidden");
-          safeText(els.resultProposalValorGanho, hasValorGanho ? fmtMoney(s.valorGanhoEstimado12m, s.currency) : "Preencha dados estratÃƒÂ©gicos para estimar.");
+          safeText(els.resultProposalValorGanho, hasValorGanho ? fmtMoney(s.valorGanhoEstimado12m, s.currency) : "Preencha dados estratégicos para estimar.");
         } else {
           els.proposalValorGanhoBlock.classList.add("hidden");
         }
@@ -1720,7 +1720,7 @@ function tuneHeroSignalSpacing() {
         document.body.classList.toggle("wizard-bar-visible", showBar);
         if (showBar) {
           const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
-          const val = projectOk ? fmtMoney(r.projectNet, s.currency) : (r.ok && r.hourly != null ? fmtMoney(r.hourly, s.currency) : "Ã¢â‚¬â€");
+          const val = projectOk ? fmtMoney(r.projectNet, s.currency) : (r.ok && r.hourly != null ? fmtMoney(r.hourly, s.currency) : "—");
           safeText(els.wizardBottomBarValue, val);
           els.btnWizardBottomPdf.disabled = !pdfOk || !hasAcceptedTerms();
         }
@@ -1732,7 +1732,7 @@ function tuneHeroSignalSpacing() {
         document.body.classList.toggle("mobile-a11y-bar-visible", showBar);
         if (showBar) {
           const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
-          const val = projectOk ? fmtMoney(r.projectNet, s.currency) : (r.ok && r.hourly != null ? fmtMoney(r.hourly, s.currency) : "Ã¢â‚¬â€");
+          const val = projectOk ? fmtMoney(r.projectNet, s.currency) : (r.ok && r.hourly != null ? fmtMoney(r.hourly, s.currency) : "—");
           safeText(els.mobileA11yBarValue, val);
           els.btnMobileA11yPdf.disabled = !pdfOk || !hasAcceptedTerms();
         }
@@ -1770,34 +1770,34 @@ function tuneHeroSignalSpacing() {
       if (els.btnCopyProposal) els.btnCopyProposal.disabled = els.btnCopyProposal.disabled || !termsOk;
       if (els.btnShare) {
         els.btnShare.disabled = !termsOk;
-        els.btnShare.title = termsOk ? "Copiar link interno (uso interno; para cliente envie o PDF)" : "Aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina para copiar o link.";
+        els.btnShare.title = termsOk ? "Copiar link interno (uso interno; para cliente envie o PDF)" : "Aceite os termos no início da página para copiar o link.";
       }
       if (els.btnExportConfig) {
         els.btnExportConfig.disabled = !termsOk;
-        els.btnExportConfig.title = termsOk ? "" : "Aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina para exportar.";
+        els.btnExportConfig.title = termsOk ? "" : "Aceite os termos no início da página para exportar.";
       }
       if (els.toolsExport) {
         els.toolsExport.disabled = !termsOk;
-        els.toolsExport.title = termsOk ? "" : "Aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina para exportar.";
+        els.toolsExport.title = termsOk ? "" : "Aceite os termos no início da página para exportar.";
       }
       if (els.toolsImport) {
         els.toolsImport.disabled = !termsOk;
-        els.toolsImport.title = termsOk ? "" : "Aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina para importar.";
+        els.toolsImport.title = termsOk ? "" : "Aceite os termos no início da página para importar.";
       }
       if (els.btnCopyJustification) {
         els.btnCopyJustification.disabled = !termsOk;
-        els.btnCopyJustification.title = termsOk ? "" : "Aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina para copiar.";
+        els.btnCopyJustification.title = termsOk ? "" : "Aceite os termos no início da página para copiar.";
       } if (els.btnInsertProposalJustification) {
         const isPinned = !!proposalJustificationPinned;
         els.btnInsertProposalJustification.disabled = !termsOk;
         els.btnInsertProposalJustification.title = termsOk
-          ? (isPinned ? "Usando a versÃƒÂ£o com justificativa. Clique para voltar ao texto curto." : "Substitui o texto rÃƒÂ¡pido pela versÃƒÂ£o com justificativa tÃƒÂ©cnica.")
-          : "Aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina para alternar o texto da proposta.";
+          ? (isPinned ? "Usando a versão com justificativa. Clique para voltar ao texto curto." : "Substitui o texto rápido pela versão com justificativa técnica.")
+          : "Aceite os termos no início da página para alternar o texto da proposta.";
         els.btnInsertProposalJustification.setAttribute(
           "aria-label",
           termsOk
             ? (isPinned ? "Usar texto curto da proposta" : "Usar texto com justificativa")
-            : "Aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina para alternar o texto da proposta."
+            : "Aceite os termos no início da página para alternar o texto da proposta."
         );
       }
       syncProposalJustificationButton();
@@ -1847,7 +1847,7 @@ function tuneHeroSignalSpacing() {
       navigator.clipboard
         .writeText(text)
         .then(() => showToast(normalizeCopyToastMessage(okMsg)))
-        .catch(() => showToast("NÃƒÂ£o foi possÃƒÂ­vel copiar."));
+        .catch(() => showToast("Não foi possível copiar."));
     }
 
     const QUERY_PARAM_KEYS = [
@@ -2020,7 +2020,7 @@ function tuneHeroSignalSpacing() {
         s.async = true;
         s.onload = function () {
           if (window.jspdf && window.jspdf.jsPDF) resolve(window.jspdf);
-          else reject(new Error("jsPDF nÃƒÂ£o disponÃƒÂ­vel"));
+          else reject(new Error("jsPDF não disponível"));
         };
         s.onerror = function () { reject(new Error("Falha ao carregar jsPDF")); };
         document.head.appendChild(s);
@@ -2029,10 +2029,10 @@ function tuneHeroSignalSpacing() {
 
     function generatePdf() {
       const s = getStateFromInputs();
-      sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora Ã¢â‚¬â€œ erro:", err));
+      sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora – erro:", err));
 
       if (!hasAcceptedTerms()) {
-        showToast("Para gerar o PDF, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+        showToast("Para gerar o PDF, aceite os termos no início da página.");
         return;
       }
       const r = buildPricingContext(s).effective;
@@ -2106,7 +2106,7 @@ function tuneHeroSignalSpacing() {
           }
         } catch (execErr) {
           if (useExecutiveBuilder) {
-            showToast("Erro ao gerar PDF executivo. Usando versÃƒÂ£o anterior.");
+            showToast("Erro ao gerar PDF executivo. Usando versão anterior.");
           }
           if (execErr && !useExecutiveBuilder) throw execErr;
         }
@@ -2159,8 +2159,8 @@ function tuneHeroSignalSpacing() {
             doc.setFontSize(11);
             doc.text(BRAND_NAME, margin, y);
             advanceY(16);
-            const profLabel = sPdf.professionalName || "Profissional ResponsÃƒÂ¡vel";
-            doc.text(`ResponsÃƒÂ¡vel: ${profLabel}`, margin, y);
+            const profLabel = sPdf.professionalName || "Profissional Responsável";
+            doc.text(`Responsável: ${profLabel}`, margin, y);
             y += 18;
             if (sPdf.clientName) {
               doc.text(`Cliente / Projeto: ${sPdf.clientName}`, margin, y);
@@ -2177,19 +2177,19 @@ function tuneHeroSignalSpacing() {
               y += 22;
               doc.setFont("helvetica", "normal");
               doc.setFontSize(11);
-              doc.text("Este documento apresenta estimativas robustas para apoiar decisÃƒÂ£o comercial.", margin, y);
+              doc.text("Este documento apresenta estimativas robustas para apoiar decisão comercial.", margin, y);
               advanceY(20);
             }
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
-            doc.text(pdfV2 ? "LÃƒÂ³gica de PrecificaÃƒÂ§ÃƒÂ£o" : "Escopo da SoluÃƒÂ§ÃƒÂ£o", margin, y);
+            doc.text(pdfV2 ? "Lógica de Precificação" : "Escopo da Solução", margin, y);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(11);
             advanceY(18);
-            doc.text("Escopo definido conforme objetivos e entregÃƒÂ¡veis acordados.", margin, y);
+            doc.text("Escopo definido conforme objetivos e entregáveis acordados.", margin, y);
             advanceY(16);
             const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
-            doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias ÃƒÂºteis`, margin, y);
+            doc.text(`Prazo estimado: ${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
             advanceY(12);
             const stratPdf = !!FEATURE_FLAGS.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
               precoBase: s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null,
@@ -2198,8 +2198,8 @@ function tuneHeroSignalSpacing() {
             }) : null;
             const showImpactCliente = !!FEATURE_FLAGS.pdf_impact_block_enabled && stratPdf && stratPdf.ok;
             if (showImpactCliente) {
-              const cdoVal = stratPdf.cdo != null ? fmtMoneyPdf(stratPdf.cdo, curr) : "Ã¢â‚¬â€";
-              writeWrappedSummary(`Cronograma: estimativa consultiva; nÃƒÂ£o constitui promessa de prazo. CDO (custo diÃƒÂ¡rio de oportunidade): ${cdoVal}.`, { lineHeight: 11, spacingAfter: 8, minRoom: 44 });
+              const cdoVal = stratPdf.cdo != null ? fmtMoneyPdf(stratPdf.cdo, curr) : "—";
+              writeWrappedSummary(`Cronograma: estimativa consultiva; não constitui promessa de prazo. CDO (custo diário de oportunidade): ${cdoVal}.`, { lineHeight: 11, spacingAfter: 8, minRoom: 44 });
             }
             advanceY(16);
             const proposta = propostaNorm();
@@ -2207,7 +2207,7 @@ function tuneHeroSignalSpacing() {
               ensureSpace(140);
               doc.setFont("helvetica", "bold");
               doc.setFontSize(12);
-              doc.text(pdfV2 ? "RecomendaÃƒÂ§ÃƒÂ£o Final" : "Proposta", margin, y);
+              doc.text(pdfV2 ? "Recomendação Final" : "Proposta", margin, y);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(11);
               advanceY(18);
@@ -2220,13 +2220,13 @@ function tuneHeroSignalSpacing() {
               ensureSpace(80);
               doc.setFont("helvetica", "bold");
               doc.setFontSize(11);
-              doc.text("Impacto EconÃƒÂ´mico Estimado", margin, y);
+              doc.text("Impacto Econômico Estimado", margin, y);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(10);
               advanceY(14);
-              const vceStr = stratPdf.vce != null ? formatStrategistValue(stratPdf.vce, "percent") : "Ã¢â‚¬â€";
-              const roixStr = stratPdf.roix != null ? `${fmtNumber(stratPdf.roix, 1)}x` : "Ã¢â‚¬â€";
-              const cdoStr = stratPdf.cdo != null ? fmtMoneyPdf(stratPdf.cdo, curr) : "Ã¢â‚¬â€";
+              const vceStr = stratPdf.vce != null ? formatStrategistValue(stratPdf.vce, "percent") : "—";
+              const roixStr = stratPdf.roix != null ? `${fmtNumber(stratPdf.roix, 1)}x` : "—";
+              const cdoStr = stratPdf.cdo != null ? fmtMoneyPdf(stratPdf.cdo, curr) : "—";
               doc.text(`VCE: ${vceStr} | ROIx: ${roixStr} | CDO: ${cdoStr}`, margin, y);
               advanceY(12);
               if (STRATEGIST_CAVEAT) {
@@ -2285,16 +2285,16 @@ function tuneHeroSignalSpacing() {
               doc.setFont("helvetica", "normal");
               doc.setFontSize(9);
               y += 14;
-              doc.text(`Faturamento alvo/mÃƒÂªs: ${fmtMoneyPdf(r.revenueTarget, curr)}`, margin, y);
+              doc.text(`Faturamento alvo/mês: ${fmtMoneyPdf(r.revenueTarget, curr)}`, margin, y);
               y += 11;
               doc.text(`Taxa/hora: ${fmtMoneyPdf(r.hourly, curr)} | Taxa/dia: ${fmtMoneyPdf(r.daily, curr)}`, margin, y);
               y += 11;
               const projectOk = r.ok && r.projectNet != null && s.projectHours > 0;
               if (projectOk) {
-                doc.text(`PreÃƒÂ§o projeto (${fmtNumber(s.projectHours, 0)}h): ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
+                doc.text(`Preço projeto (${fmtNumber(s.projectHours, 0)}h): ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
                 y += 14;
                 const prazoDias = Math.ceil((s.projectHours / Math.max(1, s.hoursPerDay)) * (100 / Math.max(1, s.utilization)));
-                doc.text(`Prazo estimado: ~${fmtNumber(prazoDias, 0)} dias ÃƒÂºteis`, margin, y);
+                doc.text(`Prazo estimado: ~${fmtNumber(prazoDias, 0)} dias úteis`, margin, y);
                 y += 18;
               } else {
                 y += 8;
@@ -2303,7 +2303,7 @@ function tuneHeroSignalSpacing() {
               if (propostaCompact) {
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
-                doc.text("RecomendaÃƒÂ§ÃƒÂ£o", margin, y);
+                doc.text("Recomendação", margin, y);
                 doc.setFont("helvetica", "normal");
                 y += 12;
                 const maxWidth = pageWidth - 2 * margin;
@@ -2315,7 +2315,7 @@ function tuneHeroSignalSpacing() {
                 y += showLines.length * 10;
                 if (truncated) {
                   doc.setFontSize(8);
-                  doc.text("Ã¢â‚¬Â¦", margin, y);
+                  doc.text("…", margin, y);
                   y += 10;
                 }
                 y += 12;
@@ -2326,8 +2326,8 @@ function tuneHeroSignalSpacing() {
               doc.text(disclaimerLines, margin, footerY);
               doc.setFontSize(8);
               const validadeTexto = sPdf.validityDate
-                ? `Proposta vÃƒÂ¡lida atÃƒÂ© ${sPdf.validityDate}.`
-                : "Proposta vÃƒÂ¡lida por 7 dias.";
+                ? `Proposta válida até ${sPdf.validityDate}.`
+                : "Proposta válida por 7 dias.";
               doc.text(validadeTexto, margin, footerY + disclaimerLines.length * 7 + 4);
             } else {
               if (logoDataUrl) {
@@ -2339,8 +2339,8 @@ function tuneHeroSignalSpacing() {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(18);
               const reportTitle = pdfV2
-                ? `${BRAND_NAME} - RelatÃƒÂ³rio Consultivo de PrecificaÃƒÂ§ÃƒÂ£o`
-                : `${BRAND_NAME} - Proposta de PrestaÃƒÂ§ÃƒÂ£o de ServiÃƒÂ§os`;
+                ? `${BRAND_NAME} - Relatório Consultivo de Precificação`
+                : `${BRAND_NAME} - Proposta de Prestação de Serviços`;
               const titleMaxWidth = pageWidth - (2 * margin) - (logoDataUrl ? 136 : 0);
               const titleLines = doc.splitTextToSize(reportTitle, Math.max(240, titleMaxWidth));
               doc.text(titleLines, margin, y);
@@ -2361,9 +2361,9 @@ function tuneHeroSignalSpacing() {
               doc.text(pdfV2 ? "Resumo Executivo" : "Resumo de custos e metas", margin, y);
               doc.setFont("helvetica", "normal");
               y += 18;
-              doc.text(`Renda lÃƒÂ­quida desejada/mÃƒÂªs: ${fmtMoneyPdf(s.targetIncome, curr)}`, margin, y);
+              doc.text(`Renda líquida desejada/mês: ${fmtMoneyPdf(s.targetIncome, curr)}`, margin, y);
               y += 16;
-              doc.text(`Custos fixos do negÃƒÂ³cio/mÃƒÂªs: ${fmtMoneyPdf(s.monthlyCosts, curr)}`, margin, y);
+              doc.text(`Custos fixos do negócio/mês: ${fmtMoneyPdf(s.monthlyCosts, curr)}`, margin, y);
               y += 16;
               doc.text(`Impostos sobre faturamento: ${fmtNumber(s.taxRate, 1)}%`, margin, y);
               y += 16;
@@ -2372,10 +2372,10 @@ function tuneHeroSignalSpacing() {
               doc.text(`Buffer (atrasos/imprevistos): ${fmtNumber(s.buffer, 1)}%`, margin, y);
               y += 24;
               doc.setFont("helvetica", "bold");
-              doc.text(pdfV2 ? "LÃƒÂ³gica de PrecificaÃƒÂ§ÃƒÂ£o" : "Capacidade de trabalho", margin, y);
+              doc.text(pdfV2 ? "Lógica de Precificação" : "Capacidade de trabalho", margin, y);
               doc.setFont("helvetica", "normal");
               y += 18;
-              doc.text(`Taxa de horas faturÃƒÂ¡veis: ${fmtNumber(s.utilization, 1)}%`, margin, y);
+              doc.text(`Taxa de horas faturáveis: ${fmtNumber(s.utilization, 1)}%`, margin, y);
               y += 16;
               doc.text(`Horas/dia: ${fmtNumber(s.hoursPerDay, 1)}h`, margin, y);
               y += 16;
@@ -2383,13 +2383,13 @@ function tuneHeroSignalSpacing() {
               y += 16;
               doc.text(`Semanas de folga/ano: ${fmtNumber(s.vacationWeeks, 1)}`, margin, y);
               y += 16;
-              doc.text(`Horas faturÃƒÂ¡veis estimadas/mÃƒÂªs: ${fmtNumber(r.billableHours, 1)}h`, margin, y);
+              doc.text(`Horas faturáveis estimadas/mês: ${fmtNumber(r.billableHours, 1)}h`, margin, y);
               y += 24;
               doc.setFont("helvetica", "bold");
               doc.text("Resumo financeiro", margin, y);
               doc.setFont("helvetica", "normal");
               y += 18;
-              doc.text(`Faturamento alvo/mÃƒÂªs: ${fmtMoneyPdf(r.revenueTarget, curr)}`, margin, y);
+              doc.text(`Faturamento alvo/mês: ${fmtMoneyPdf(r.revenueTarget, curr)}`, margin, y);
               y += 16;
               doc.text(`Taxa/hora sugerida: ${fmtMoneyPdf(r.hourly, curr)}`, margin, y);
               y += 16;
@@ -2407,7 +2407,7 @@ function tuneHeroSignalSpacing() {
                 y += 16;
                 doc.text(`Desconto aplicado: ${fmtNumber(s.discount, 1)}%`, margin, y);
                 y += 16;
-                doc.text(`PreÃƒÂ§o sugerido do projeto: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
+                doc.text(`Preço sugerido do projeto: ${fmtMoneyPdf(r.projectNet, curr)}`, margin, y);
               }
               const stratInterno = !!FEATURE_FLAGS.strategist_mode_enabled && !!s.modoEstrategista && computeStrategistMetrics ? computeStrategistMetrics({
                 precoBase: s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null,
@@ -2419,23 +2419,23 @@ function tuneHeroSignalSpacing() {
                 ensureSpace(100);
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(12);
-                doc.text("Impacto EconÃƒÂ´mico Estimado", margin, y);
+                doc.text("Impacto Econômico Estimado", margin, y);
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(10);
                 advanceY(16);
-                const premLines = doc.splitTextToSize("Premissas: preÃƒÂ§o base = valor do projeto; VCE = (preÃƒÂ§o ÃƒÂ· ganho 12m) Ãƒâ€” 100; ROIx = ganho ÃƒÂ· preÃƒÂ§o; CDO = custo oportunidade mensal ÃƒÂ· 30.", pageWidth - 2 * margin);
+                const premLines = doc.splitTextToSize("Premissas: preço base = valor do projeto; VCE = (preço ÷ ganho 12m) × 100; ROIx = ganho ÷ preço; CDO = custo oportunidade mensal ÷ 30.", pageWidth - 2 * margin);
                 doc.text(premLines, margin, y);
                 advanceY(premLines.length * 10 + 8);
-                const vceStr = stratInterno.vce != null ? formatStrategistValue(stratInterno.vce, "percent") : "Ã¢â‚¬â€";
-                const roixStr = stratInterno.roix != null ? `${fmtNumber(stratInterno.roix, 1)}x` : "Ã¢â‚¬â€";
-                const cdoStr = stratInterno.cdo != null ? fmtMoneyPdf(stratInterno.cdo, curr) : "Ã¢â‚¬â€";
+                const vceStr = stratInterno.vce != null ? formatStrategistValue(stratInterno.vce, "percent") : "—";
+                const roixStr = stratInterno.roix != null ? `${fmtNumber(stratInterno.roix, 1)}x` : "—";
+                const cdoStr = stratInterno.cdo != null ? fmtMoneyPdf(stratInterno.cdo, curr) : "—";
                 doc.text(`VCE: ${vceStr} | ROIx: ${roixStr} | CDO: ${cdoStr}`, margin, y);
                 advanceY(12);
-                if (stratInterno.vceLabel) doc.text(`InterpretaÃƒÂ§ÃƒÂ£o VCE: ${stratInterno.vceLabel}`, margin, y);
+                if (stratInterno.vceLabel) doc.text(`Interpretação VCE: ${stratInterno.vceLabel}`, margin, y);
                 advanceY(stratInterno.vceLabel ? 12 : 0);
                 if (stratInterno.viabilidadeAlerta) {
                   advanceY(4);
-                  doc.text("Alerta: viabilidade questionÃƒÂ¡vel (ganho estimado menor que o preÃƒÂ§o).", margin, y);
+                  doc.text("Alerta: viabilidade questionável (ganho estimado menor que o preço).", margin, y);
                   advanceY(12);
                 }
                 if (STRATEGIST_CAVEAT) {
@@ -2444,9 +2444,9 @@ function tuneHeroSignalSpacing() {
                   doc.text(caveatLines, margin, y);
                   advanceY(caveatLines.length * 10 + 8);
                 }
-                const cdoVal = stratInterno.cdo != null ? fmtMoneyPdf(stratInterno.cdo, curr) : "Ã¢â‚¬â€";
+                const cdoVal = stratInterno.cdo != null ? fmtMoneyPdf(stratInterno.cdo, curr) : "—";
                 advanceY(4);
-                doc.text(`Cronograma: estimativa consultiva; nÃƒÂ£o constitui promessa de prazo. CDO: ${cdoVal}.`, margin, y);
+                doc.text(`Cronograma: estimativa consultiva; não constitui promessa de prazo. CDO: ${cdoVal}.`, margin, y);
                 advanceY(16);
               }
               y += 36;
@@ -2454,7 +2454,7 @@ function tuneHeroSignalSpacing() {
               if (propostaRel) {
                 ensureSpace(140);
                 doc.setFont("helvetica", "bold");
-                doc.text(pdfV2 ? "RecomendaÃƒÂ§ÃƒÂ£o Final" : "Texto de proposta sugerido", margin, y);
+                doc.text(pdfV2 ? "Recomendação Final" : "Texto de proposta sugerido", margin, y);
                 doc.setFont("helvetica", "normal");
                 y += 18;
                 const maxWidth = 500;
@@ -2465,7 +2465,7 @@ function tuneHeroSignalSpacing() {
               ensureSpace(140);
               doc.setFont("helvetica", "bold");
               doc.setFontSize(12);
-              doc.text("Justificativas de negociaÃƒÂ§ÃƒÂ£o", margin, y);
+              doc.text("Justificativas de negociação", margin, y);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(10);
               y += 16;
@@ -2481,14 +2481,14 @@ function tuneHeroSignalSpacing() {
               ensureSpace(72);
               doc.setFontSize(10);
               doc.text(
-                `ProteÃƒÂ§ÃƒÂ£o de Escopo: ${fmtNumber(negotiationCtx.scopeShield.markupPct, 1)}% (${formatScopeLevel(negotiationCtx.scopeShield.level)}). ` +
-                `PrÃƒÂªmio de conveniÃƒÂªncia: ${fmtNumber(negotiationCtx.scarcity.markupPct, 1)}%.`,
+                `Proteção de Escopo: ${fmtNumber(negotiationCtx.scopeShield.markupPct, 1)}% (${formatScopeLevel(negotiationCtx.scopeShield.level)}). ` +
+                `Prêmio de conveniência: ${fmtNumber(negotiationCtx.scarcity.markupPct, 1)}%.`,
                 margin,
                 y
               );
               y += 14;
               doc.text(
-                `FÃƒÂ´lego financeiro atual: ${fmtNumber(negotiationCtx.runway.runwayMesesAtual, 1)} meses | pÃƒÂ³s-projeto: ${fmtNumber(negotiationCtx.runway.runwayMesesPosProjeto, 1)} meses.`,
+                `Fôlego financeiro atual: ${fmtNumber(negotiationCtx.runway.runwayMesesAtual, 1)} meses | pós-projeto: ${fmtNumber(negotiationCtx.runway.runwayMesesPosProjeto, 1)} meses.`,
                 margin,
                 y
               );
@@ -2496,7 +2496,7 @@ function tuneHeroSignalSpacing() {
               ensureSpace(140);
               doc.setFont("helvetica", "bold");
               doc.setFontSize(11);
-              doc.text("Frases de negociaÃƒÂ§ÃƒÂ£o sugeridas", margin, y);
+              doc.text("Frases de negociação sugeridas", margin, y);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(10);
               y += 14;
@@ -2514,8 +2514,8 @@ function tuneHeroSignalSpacing() {
               footerYRel += disclaimerLinesRel.length * 10 + 4;
               doc.setFontSize(9);
               const validadeTextoRelatorio = sPdf.validityDate
-                ? `Proposta vÃƒÂ¡lida atÃƒÂ© ${sPdf.validityDate}.`
-                : "Proposta vÃƒÂ¡lida por 7 dias.";
+                ? `Proposta válida até ${sPdf.validityDate}.`
+                : "Proposta válida por 7 dias.";
               doc.text(`${validadeTextoRelatorio} Para aprovar, responda esta proposta com 'APROVADO'.`, margin, footerYRel);
             }
           }
@@ -2526,10 +2526,10 @@ function tuneHeroSignalSpacing() {
           trackEvent("pdf_generated", { mode: modeCtx.mode || "essential", proposalMode, pdfV2, internalFormat, executiveBuilder: useExecutiveBuilder });
           showToast("PDF gerado.");
         } catch {
-          showToast("NÃƒÂ£o foi possÃƒÂ­vel gerar o PDF.");
+          showToast("Não foi possível gerar o PDF.");
         }
       }).catch(function (err) {
-        showToast(err && err.message ? err.message : "Biblioteca jsPDF nÃƒÂ£o foi carregada. Verifique sua conexÃƒÂ£o.");
+        showToast(err && err.message ? err.message : "Biblioteca jsPDF não foi carregada. Verifique sua conexão.");
       });
     }
 
@@ -2993,7 +2993,7 @@ function tuneHeroSignalSpacing() {
 
       if (els.btnCopyHourly) els.btnCopyHourly.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
-          showToast("Para usar esta funÃƒÂ§ÃƒÂ£o, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+          showToast("Para usar esta função, aceite os termos no início da página.");
           return;
         }
         const s = getStateFromInputs();
@@ -3003,7 +3003,7 @@ function tuneHeroSignalSpacing() {
       });
       if (els.btnCopyProject) els.btnCopyProject.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
-          showToast("Para usar esta funÃƒÂ§ÃƒÂ£o, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+          showToast("Para usar esta função, aceite os termos no início da página.");
           return;
         }
         const s = getStateFromInputs();
@@ -3013,16 +3013,16 @@ function tuneHeroSignalSpacing() {
       });
       if (els.btnCopyProposal) els.btnCopyProposal.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
-          showToast("Para usar esta funÃƒÂ§ÃƒÂ£o, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+          showToast("Para usar esta função, aceite os termos no início da página.");
           return;
         }
         const text = els.proposalText ? els.proposalText.textContent : "";
-        if (!text || text === "Ã¢â‚¬â€") return showToast("Nada para copiar.");
+        if (!text || text === "—") return showToast("Nada para copiar.");
         copyToClipboard(text, "Texto copiado.");
       });
       if (els.btnCopyJustification) els.btnCopyJustification.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
-          showToast("Para usar esta funÃƒÂ§ÃƒÂ£o, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+          showToast("Para usar esta função, aceite os termos no início da página.");
           return;
         }
         const s = getStateFromInputs();
@@ -3034,7 +3034,7 @@ function tuneHeroSignalSpacing() {
       });
       if (els.btnInsertProposalJustification) els.btnInsertProposalJustification.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
-          showToast("Para usar esta funÃƒÂ§ÃƒÂ£o, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+          showToast("Para usar esta função, aceite os termos no início da página.");
           return;
         }
         const s = getStateFromInputs();
@@ -3050,13 +3050,13 @@ function tuneHeroSignalSpacing() {
         requestAnimationFrame(() => window.scrollTo(0, prevY));
         showToast(
           proposalJustificationPinned
-            ? "Texto da proposta alterado para a versÃƒÂ£o com justificativa."
-            : "Texto da proposta voltou para a versÃƒÂ£o curta."
+            ? "Texto da proposta alterado para a versão com justificativa."
+            : "Texto da proposta voltou para a versão curta."
         );
       });
       if (els.btnShare) els.btnShare.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
-          showToast("Para usar esta funÃƒÂ§ÃƒÂ£o, aceite os termos no inÃƒÂ­cio da pÃƒÂ¡gina.");
+          showToast("Para usar esta função, aceite os termos no início da página.");
           return;
         }
         const s = getStateFromInputs();
@@ -3139,24 +3139,24 @@ function tuneHeroSignalSpacing() {
       if (els.toolsImport) els.toolsImport.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); importConfig(); });
       if (els.toolsReset) els.toolsReset.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); resetAll(); });
       if (els.toolsInstall) els.toolsInstall.addEventListener("click", () => { closeToolsDropdown({ keepFocus: true }); triggerAppInstall(); });
-      // Event delegation: garante que sendCalculadoraToWebhook seja chamado ao clicar em qualquer botÃƒÂ£o "Gerar proposta"
+      // Event delegation: garante que sendCalculadoraToWebhook seja chamado ao clicar em qualquer botão "Gerar proposta"
       const pdfButtonIds = ["btnPrimaryPdfHeader", "btnPrimaryPdfHeaderWrap", "btnPdf", "btnPdfProposal", "btnPdfFromPreview", "btnWizardBottomPdf", "btnMobileA11yPdf"];
       document.addEventListener("click", (e) => {
         const clicked = e.target.closest(pdfButtonIds.map((id) => "#" + id).join(", "));
         if (clicked) {
           const s = getStateFromInputs();
-          sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora Ã¢â‚¬â€œ erro:", err));
-          console.log("Webhook calculadora Ã¢â‚¬â€œ dados enviados (pergunta):", s);
+          sendCalculadoraToWebhook(s).catch((err) => console.error("Webhook calculadora – erro:", err));
+          console.log("Webhook calculadora – dados enviados (pergunta):", s);
         }
       }, true);
 
       if (els.btnPrimaryPdfHeader) els.btnPrimaryPdfHeader.addEventListener("click", generatePdf);
-      // LigaÃƒÂ§ÃƒÂ£o explÃƒÂ­cita do clique para envio ao n8n (garante disparo do webhook)
+      // Ligação explícita do clique para envio ao n8n (garante disparo do webhook)
       const btnGerarProposta = document.getElementById("btnPrimaryPdfHeader");
       if (btnGerarProposta) {
         btnGerarProposta.addEventListener("click", function () {
           const dados = getStateFromInputs();
-          sendCalculadoraToWebhook(dados).catch((err) => console.error("Webhook calculadora Ã¢â‚¬â€œ erro:", err));
+          sendCalculadoraToWebhook(dados).catch((err) => console.error("Webhook calculadora – erro:", err));
         });
       }
       if (els.btnPrimaryPdfHeaderWrap) {
@@ -3442,22 +3442,22 @@ function tuneHeroSignalSpacing() {
 
       const setEl = (id, text) => {
         const el = document.getElementById(id);
-        if (el) el.textContent = text || "Ã¢â‚¬â€";
+        if (el) el.textContent = text || "—";
       };
-      setEl("clientViewTotal", projectNet > 0 ? fmtMoney(projectNet, currency) : "Ã¢â‚¬â€");
-      let prazoText = "Ã¢â‚¬â€";
+      setEl("clientViewTotal", projectNet > 0 ? fmtMoney(projectNet, currency) : "—");
+      let prazoText = "—";
       if (projectHours > 0) {
         if (hoursPerDay > 0 && utilization > 0) {
           const diasUteis = Math.ceil((projectHours / hoursPerDay) * (100 / utilization));
-          prazoText = `${projectHours}h (~${diasUteis} dias ÃƒÂºteis)`;
+          prazoText = `${projectHours}h (~${diasUteis} dias úteis)`;
         } else {
           prazoText = `${projectHours}h`;
         }
       }
       setEl("clientViewPrazo", prazoText);
-      setEl("clientViewValidade", validityDate || "Ã¢â‚¬â€");
+      setEl("clientViewValidade", validityDate || "—");
       setEl("clientViewMoeda", currency);
-      setEl("clientViewProfissional", professionalName || "Ã¢â‚¬â€");
+      setEl("clientViewProfissional", professionalName || "—");
     }
 
     try {
@@ -3489,6 +3489,6 @@ function tuneHeroSignalSpacing() {
         updateUI();
       })();
     } catch (bootErr) {
-      showBootError(bootErr, "Erro na inicializaÃƒÂ§ÃƒÂ£o");
+      showBootError(bootErr, "Erro na inicialização");
     }
   })().catch((e) => showBootError(e, "Bootstrap"));
