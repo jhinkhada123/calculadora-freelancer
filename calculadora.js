@@ -126,3 +126,5 @@ export function compute(s = {}) {
     projectNet: round2(projectNetRaw),
   };
 }
+
+// governance-validation: high-pass noop
