@@ -12,6 +12,7 @@ let computeRiskScore, riskNarrative, trackEvent;
 let computeStrategistMetrics, formatStrategistValue, STRATEGIST_CAVEAT;
 let computeScopeShielding, computeDynamicScarcityMarkup, computeRunwaySummary, computeRoiAnchor, generateJustificationBlocks;
 let validateEndpointUrl, shouldTrackRiskScoreView, buildCompositionPartsModel, ensurePdfYSpaceModel, advancePdfYModel, advancePdfYByLinesModel;
+const FEATURE_FLAGS = resolveFeatureFlags();
 
 function showBootError(err, context) {
   const ctx = context ? context + ": " : "";
@@ -184,8 +185,7 @@ function tuneHeroSignalSpacing() {
 
     const { STORAGE_KEY, LEGACY_STORAGE_KEY, SCENARIOS_KEY, INTEGRATIONS_KEY, DISMISSED_ALERTS_KEY } = STORAGE_KEYS;
     const STORAGE_SCHEMA_VERSION = 2;
-    const AUDIT_DEBOUNCE_MS = 800;
-    const FEATURE_FLAGS = resolveFeatureFlags();
+    const AUDIT_DEBOUNCE_MS = 800;
     let logoDataUrl = null;
     let calcCardStash = null;
     let lastAuditSnapshotStr = "";
