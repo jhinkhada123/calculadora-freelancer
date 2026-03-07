@@ -1093,7 +1093,7 @@ function tuneHeroSignalSpacing() {
         const labelSpan = createEl("span", "", p.label);
         left.appendChild(dot);
         left.appendChild(labelSpan);
-        const right = createEl("span", "text-slate-200", `${fmtMoney(p.value, curr)} Ã‚Â· ${fmtNumber(p.percent, 1)}%`);
+        const right = createEl("span", "text-slate-200", `${fmtMoney(p.value, curr)} | ${fmtNumber(p.percent, 1)}%`);
         div.appendChild(left);
         div.appendChild(right);
         els.compositionLegend.appendChild(div);
@@ -1290,12 +1290,12 @@ function tuneHeroSignalSpacing() {
         const signal = value >= 0 ? "+" : "-";
         const div = createEl("div", "rounded-lg border border-white/10 bg-black/20 px-3 py-2");
         div.appendChild(createEl("p", "font-medium", label));
-        div.appendChild(createEl("p", "text-indigo-100", `${signal}${fmtMoney(Math.abs(value), curr)} Ã‚Â· ${fmtNumber(pct, 1)}%`));
+        div.appendChild(createEl("p", "text-indigo-100", `${signal}${fmtMoney(Math.abs(value), curr)} | ${fmtNumber(pct, 1)}%`));
         div.appendChild(createEl("p", "text-slate-300", text));
         els.explainabilityList.appendChild(div);
       }
       if (a.mode === "montecarlo" && a.stochastic) {
-        els.advancedModelLabel.textContent = `Modelo: Monte Carlo (P50 ${fmtNumber(a.stochastic.p50, 2)}x Ã‚Â· P80 ${fmtNumber(a.stochastic.p80, 2)}x Ã‚Â· P95 ${fmtNumber(a.stochastic.p95, 2)}x)`;
+        els.advancedModelLabel.textContent = `Modelo: Monte Carlo (P50 ${fmtNumber(a.stochastic.p50, 2)}x | P80 ${fmtNumber(a.stochastic.p80, 2)}x | P95 ${fmtNumber(a.stochastic.p95, 2)}x)`;
         if (els.premiumModeTag) els.premiumModeTag.textContent = "Premium + Monte Carlo";
       } else {
         els.advancedModelLabel.textContent = "Modelo: estimativa por faixa (deterministico)";
@@ -1333,14 +1333,14 @@ function tuneHeroSignalSpacing() {
       els.riskScoreValue.textContent = `${fmtNumber(risk.score, 1)} / 100`;
       els.riskScoreNarrative.textContent = riskNarrative(risk);
       els.riskScoreBreakdown.textContent =
-        `Escopo ${fmtNumber(risk.subscores.riscoEscopo, 1)} Ã‚Â· OcupaÃƒÂ§ÃƒÂ£o ${fmtNumber(risk.subscores.ocupacaoPressao, 1)} Ã‚Â· ExaustÃƒÂ£o ${fmtNumber(risk.subscores.exaustaoPressao, 1)} Ã‚Â· Margem ${fmtNumber(risk.subscores.margemFragilidade, 1)}`;
+        `Escopo ${fmtNumber(risk.subscores.riscoEscopo, 1)} | Ocupacao ${fmtNumber(risk.subscores.ocupacaoPressao, 1)} | Exaustao ${fmtNumber(risk.subscores.exaustaoPressao, 1)} | Margem ${fmtNumber(risk.subscores.margemFragilidade, 1)}`;
 
       const exFactor = ctx.advanced.data.exhaustionFactor || 1;
       const exImpact = ctx.advanced.data.contributions.exaustao || 0;
       if (exFactor > 1.0) {
         els.exhaustionBadgeLabel.textContent = "Taxa de preservaÃƒÂ§ÃƒÂ£o de saÃƒÂºde aplicada";
         const pct = ((exFactor - 1) * 100);
-        els.exhaustionBadgeImpact.textContent = `${fmtMoney(Math.abs(exImpact), s.currency)} Ã‚Â· ${fmtNumber(pct, 1)}%`;
+        els.exhaustionBadgeImpact.textContent = `${fmtMoney(Math.abs(exImpact), s.currency)} | ${fmtNumber(pct, 1)}%`;
       } else {
         els.exhaustionBadgeLabel.textContent = "Sem ajuste de exaustÃƒÂ£o";
         els.exhaustionBadgeImpact.textContent = "Impacto: 0";
@@ -1528,13 +1528,13 @@ function tuneHeroSignalSpacing() {
       if (els.dailyLabel) safeText(els.dailyLabel, `Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h)`);
       safeText(els.billableHours, r.billableHours != null ? `${fmtNumber(r.billableHours, 1)} h` : "Ã¢â‚¬â€");
       safeMoney(els.revenueTarget, r.ok && r.revenueTarget != null ? fmtMoney(r.revenueTarget, curr) : "Ã¢â‚¬â€");
-      safeText(els.revenueBreakdown, `Base: ${fmtMoney(r.baseNeed, curr)} Ã¢â‚¬Â¢ Total: ${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(s.profitMargin, 1)}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`);
+      safeText(els.revenueBreakdown, `Base: ${fmtMoney(r.baseNeed, curr)} | Total: ${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(s.profitMargin, 1)}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`);
       safeText(els.stepCost, `${fmtMoney(s.targetIncome, curr)} + ${fmtMoney(s.monthlyCosts, curr)} = ${fmtMoney(r.baseNeed, curr)}`);
       safeText(els.stepTax, `${fmtNumber(s.taxRate, 1)}% + ${fmtNumber(s.profitMargin, 1)}% + ${fmtNumber(s.buffer, 1)}% = ${fmtNumber(r.totalPercent, 1)}%`);
       if (!r.ok && r.error) safeText(els.stepProfit, r.error.message);
       else if (r.ok && r.revenueTarget != null) safeText(els.stepProfit, `${fmtMoney(r.baseNeed, curr)} ÃƒÂ· (1 Ã¢Ë†â€™ ${fmtNumber(r.totalPercent, 1)}%) = ${fmtMoney(r.revenueTarget, curr)}`);
       else safeText(els.stepProfit, "Ã¢â‚¬â€");
-      safeText(els.stepHours, `Semanas ÃƒÂºteis/ano: ${fmtNumber(r.workingWeeks, 1)} Ã¢â‚¬Â¢ Horas/mÃƒÂªs: ${fmtNumber(r.hoursPerMonth, 1)} Ã¢â‚¬Â¢ FaturÃƒÂ¡veis: ${fmtNumber(r.billableHours, 1)}`);
+      safeText(els.stepHours, `Semanas uteis/ano: ${fmtNumber(r.workingWeeks, 1)} | Horas/mes: ${fmtNumber(r.hoursPerMonth, 1)} | Faturaveis: ${fmtNumber(r.billableHours, 1)}`);
 
       const projectOk = hourlyOk && s.projectHours > 0 && r.ok && r.projectNet != null;
       safeMoney(els.projectPrice, projectOk ? fmtMoney(r.projectNet, curr) : "Ã¢â‚¬â€");
