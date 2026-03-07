@@ -1960,6 +1960,395 @@ function tuneHeroSignalSpacing() {
       });
     }
 
+    const SCENARIOS_EMPTY = { A: null, B: null };
+
+    function loadScenarios() {
+      const data = readLocal(SCENARIOS_KEY, SCENARIOS_EMPTY);
+      if (!data || typeof data !== "object") return { ...SCENARIOS_EMPTY };
+      return { A: data.A || null, B: data.B || null };
+    }
+
+    function saveScenarios(data) {
+      const next = (data && typeof data === "object") ? { A: data.A || null, B: data.B || null } : { ...SCENARIOS_EMPTY };
+      writeLocal(SCENARIOS_KEY, next);
+    }
+
+    function loadIntegrationSettings() {
+      const data = readLocal(INTEGRATIONS_KEY, {});
+      if (!data || typeof data !== "object") return { sheetsEndpoint: "", notionEndpoint: "" };
+      return {
+        sheetsEndpoint: String(data.sheetsEndpoint || "").trim(),
+        notionEndpoint: String(data.notionEndpoint || "").trim(),
+      };
+    }
+
+    function saveIntegrationSettings(next) {
+      const payload = {
+        sheetsEndpoint: String(next?.sheetsEndpoint || "").trim(),
+        notionEndpoint: String(next?.notionEndpoint || "").trim(),
+      };
+      writeLocal(INTEGRATIONS_KEY, payload);
+      return payload;
+    }
+
+    function renderScenariosComparison() {
+      if (!els.scenarioAContent || !els.scenarioBContent || !els.scenarioDelta) return;
+      const scenarios = loadScenarios();
+      const fmt = (n, curr) => (Number.isFinite(n) ? fmtMoney(n, curr || "BRL") : "-");
+      const renderCard = (node, data, slot) => {
+        if (!node) return;
+        if (!data || !data.outputs) {
+          node.textContent = `Cenario ${slot} vazio.`;
+          return;
+        }
+        const curr = data.inputs?.currency || "BRL";
+        const hourly = fmt(data.outputs.hourly, curr);
+        const project = fmt(data.outputs.projectNet, curr);
+        node.textContent = `Taxa/h: ${hourly} | Projeto: ${project}`;
+      };
+      renderCard(els.scenarioAContent, scenarios.A, "A");
+      renderCard(els.scenarioBContent, scenarios.B, "B");
+      if (!scenarios.A || !scenarios.B || !scenarios.A.outputs || !scenarios.B.outputs) {
+        els.scenarioDelta.textContent = "Salve os cenarios A e B para comparar.";
+        return;
+      }
+      const curr = scenarios.B.inputs?.currency || scenarios.A.inputs?.currency || "BRL";
+      const deltaProject = Number(scenarios.B.outputs.projectNet || 0) - Number(scenarios.A.outputs.projectNet || 0);
+      const deltaHourly = Number(scenarios.B.outputs.hourly || 0) - Number(scenarios.A.outputs.hourly || 0);
+      els.scenarioDelta.textContent = `Delta projeto: ${fmt(deltaProject, curr)} | Delta taxa/h: ${fmt(deltaHourly, curr)}`;
+    }
+
+    function captureScenarioPayload() {
+      const s = getStateFromInputs();
+      const ctx = buildPricingContext(s);
+      const r = ctx?.effective;
+      if (!(r && r.ok)) return null;
+      return {
+        savedAt: new Date().toISOString(),
+        mode: ctx.mode || "essential",
+        inputs: { ...s },
+        outputs: {
+          hourly: Number.isFinite(r.hourly) ? r.hourly : null,
+          daily: Number.isFinite(r.daily) ? r.daily : null,
+          revenueTarget: Number.isFinite(r.revenueTarget) ? r.revenueTarget : null,
+          projectNet: Number.isFinite(r.projectNet) ? r.projectNet : null,
+        },
+      };
+    }
+
+    function saveScenario(slot) {
+      const payload = captureScenarioPayload();
+      if (!payload) {
+        showToast("Nao foi possivel salvar o cenario: ajuste os dados.");
+        return;
+      }
+      const scenarios = loadScenarios();
+      scenarios[slot] = payload;
+      saveScenarios(scenarios);
+      renderScenariosComparison();
+      trackEvent("scenario_saved", { slot, mode: payload.mode || "essential" });
+      showToast(`Cenario ${slot} salvo.`);
+    }
+
+    function loadScenario(slot) {
+      const scenarios = loadScenarios();
+      const selected = scenarios[slot];
+      if (!(selected && selected.inputs)) {
+        showToast(`Cenario ${slot} ainda nao foi salvo.`);
+        return;
+      }
+      setInputsFromState({ ...defaultState(), ...selected.inputs });
+      updateUI();
+      showToast(`Cenario ${slot} carregado.`);
+    }
+
+    function clearScenarios() {
+      saveScenarios({ ...SCENARIOS_EMPTY });
+      renderScenariosComparison();
+      showToast("Comparacao limpa.");
+    }
+
+    function csvEscape(v) {
+      const str = String(v ?? "");
+      if (/[",\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
+      return str;
+    }
+
+    function buildExportPayload() {
+      const inputs = getStateFromInputs();
+      const ctx = buildPricingContext(inputs);
+      const outputs = ctx?.effective || {};
+      const negotiation = buildNegotiationContext(inputs, outputs);
+      return {
+        timestamp: new Date().toISOString(),
+        app: "calculadora-freelancer",
+        mode: ctx?.mode || "essential",
+        inputs,
+        outputs,
+        negotiation,
+      };
+    }
+
+    function exportCsv() {
+      if (!hasAcceptedTerms()) {
+        showToast("Aceite os termos para exportar.");
+        return;
+      }
+      const payload = buildExportPayload();
+      const rows = [
+        ["timestamp", payload.timestamp],
+        ["mode", payload.mode],
+        ["currency", payload.inputs.currency || "BRL"],
+        ["hourly", payload.outputs.hourly ?? ""],
+        ["daily", payload.outputs.daily ?? ""],
+        ["projectNet", payload.outputs.projectNet ?? ""],
+      ];
+      const csv = ["chave,valor", ...rows.map((r) => `${csvEscape(r[0])},${csvEscape(r[1])}`)].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "calculadora-export.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("CSV exportado.");
+    }
+
+    function copyTsvRow() {
+      const payload = buildExportPayload();
+      const row = [
+        payload.timestamp,
+        payload.mode,
+        payload.inputs.currency || "BRL",
+        payload.outputs.hourly ?? "",
+        payload.outputs.daily ?? "",
+        payload.outputs.projectNet ?? "",
+      ].join("\t");
+      navigator.clipboard.writeText(row).then(
+        () => showToast("Linha TSV copiada."),
+        () => showToast("Nao foi possivel copiar TSV.")
+      );
+    }
+
+    function openIntegrationSettingsModal() {
+      if (!els.integrationSettingsModal) return;
+      const settings = loadIntegrationSettings();
+      if (els.sheetsEndpointInput) els.sheetsEndpointInput.value = settings.sheetsEndpoint || "";
+      if (els.notionEndpointInput) els.notionEndpointInput.value = settings.notionEndpoint || "";
+      els.integrationSettingsModal.classList.remove("hidden");
+      els.integrationSettingsModal.classList.add("flex");
+    }
+
+    function closeIntegrationSettingsModal() {
+      if (!els.integrationSettingsModal) return;
+      els.integrationSettingsModal.classList.add("hidden");
+      els.integrationSettingsModal.classList.remove("flex");
+    }
+
+    function saveIntegrationSettingsFromModal() {
+      const next = {
+        sheetsEndpoint: els.sheetsEndpointInput ? els.sheetsEndpointInput.value : "",
+        notionEndpoint: els.notionEndpointInput ? els.notionEndpointInput.value : "",
+      };
+      if (next.sheetsEndpoint) {
+        const checkSheets = validateEndpointUrl(next.sheetsEndpoint);
+        if (!checkSheets.ok) {
+          showToast("URL do Sheets invalida.");
+          return;
+        }
+      }
+      if (next.notionEndpoint) {
+        const checkNotion = validateEndpointUrl(next.notionEndpoint);
+        if (!checkNotion.ok) {
+          showToast("URL do Notion invalida.");
+          return;
+        }
+      }
+      saveIntegrationSettings(next);
+      closeIntegrationSettingsModal();
+      showToast("Integracoes salvas.");
+    }
+
+    async function sendToEndpoint(kind) {
+      const settings = loadIntegrationSettings();
+      const endpoint = kind === "notion" ? settings.notionEndpoint : settings.sheetsEndpoint;
+      if (!endpoint) {
+        showToast("Configure o endpoint antes de enviar.");
+        return;
+      }
+      const check = validateEndpointUrl(endpoint);
+      if (!check.ok) {
+        showToast("Endpoint invalido.");
+        return;
+      }
+      const payload = buildExportPayload();
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        showToast(`Enviado para ${kind}.`);
+      } catch (_) {
+        showToast(`Falha ao enviar para ${kind}.`);
+      }
+    }
+
+    function setupInstallPrompt() {
+      window.addEventListener("beforeinstallprompt", (evt) => {
+        evt.preventDefault();
+        deferredInstallPrompt = evt;
+        if (els.btnInstallApp) els.btnInstallApp.disabled = false;
+      });
+      if (els.btnInstallApp) els.btnInstallApp.disabled = !deferredInstallPrompt;
+    }
+
+    async function triggerAppInstall() {
+      if (!deferredInstallPrompt) {
+        showToast("Instalacao nao disponivel neste navegador.");
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      try {
+        await deferredInstallPrompt.userChoice;
+      } catch (_) {
+        // ignore
+      }
+      deferredInstallPrompt = null;
+      if (els.btnInstallApp) els.btnInstallApp.disabled = true;
+    }
+
+    function registerServiceWorker() {
+      if (!("serviceWorker" in navigator)) return;
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => null);
+      });
+    }
+
+    function applyBranding() {
+      const title = document.getElementById("brandTitle");
+      if (title && BRAND_NAME) title.textContent = BRAND_NAME;
+      if (typeof document !== "undefined" && BRAND_NAME) document.title = BRAND_NAME;
+    }
+
+    function applyButtonHelp() {
+      const helpMap = {
+        btnCopyHourly: "Copia a taxa por hora.",
+        btnCopyProject: "Copia o valor total do projeto.",
+        btnCopyProposal: "Copia o texto da proposta.",
+        btnCopyJustification: "Copia justificativas de negociacao.",
+      };
+      Object.entries(helpMap).forEach(([id, text]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.title = text;
+        el.setAttribute("aria-label", text);
+      });
+    }
+
+    function wireHelpToggles() {
+      const helpButtons = Array.from(document.querySelectorAll("[data-help-target]"));
+      helpButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const targetId = btn.getAttribute("data-help-target");
+          if (!targetId) return;
+          const panel = document.getElementById(targetId);
+          if (!panel) return;
+          panel.classList.toggle("hidden");
+        });
+      });
+    }
+
+    function setupTabs() {
+      const tabs = Array.from(document.querySelectorAll('[role="tablist"] [role="tab"]'));
+      if (!tabs.length) return;
+      const activate = (idx) => {
+        tabs.forEach((tab, i) => {
+          const selected = i === idx;
+          tab.setAttribute("aria-selected", selected ? "true" : "false");
+          tab.tabIndex = selected ? 0 : -1;
+          const panelId = tab.getAttribute("aria-controls");
+          if (!panelId) return;
+          const panel = document.getElementById(panelId);
+          if (!panel) return;
+          panel.classList.toggle("hidden", !selected);
+          panel.setAttribute("aria-hidden", selected ? "false" : "true");
+        });
+      };
+      tabs.forEach((tab, i) => {
+        tab.addEventListener("click", () => activate(i));
+        tab.addEventListener("keydown", (e) => {
+          if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+          e.preventDefault();
+          const next = e.key === "ArrowRight" ? (i + 1) % tabs.length : (i - 1 + tabs.length) % tabs.length;
+          activate(next);
+          tabs[next].focus();
+        });
+      });
+      const selectedIdx = Math.max(0, tabs.findIndex((t) => t.getAttribute("aria-selected") === "true"));
+      activate(selectedIdx);
+    }
+
+    function setupWizard() {
+      if (!FEATURE_FLAGS.ui_wizard_enabled && els.wizardContainer) {
+        els.wizardContainer.classList.add("hidden");
+      }
+    }
+
+    function setupPreviewAnchor() {
+      if (!FEATURE_FLAGS.ui_preview_anchor_enabled) return;
+      const anchor = document.getElementById("previewAnchor");
+      const card = document.getElementById("resultCardsInternal");
+      if (!anchor || !card) return;
+      anchor.addEventListener("click", () => card.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
+
+    function setupTrustBadges() {
+      if (!els.trustBadgesBlock) return;
+      els.trustBadgesBlock.classList.toggle("hidden", !FEATURE_FLAGS.ui_trust_badges_enabled);
+    }
+
+    function setupMicroInteractions() {
+      if (!FEATURE_FLAGS.ui_micro_interactions_enabled) return;
+      document.documentElement.classList.add("ui-micro-interactions-on");
+    }
+
+    function setupMobileA11y() {
+      if (!FEATURE_FLAGS.ui_mobile_a11y_enabled) return;
+      if (els.mobileA11yBar) els.mobileA11yBar.classList.remove("hidden");
+    }
+
+    function buildJustificationClipboardText(s, n) {
+      const parts = [];
+      if (n?.blocks?.resumoExecutivo) parts.push(n.blocks.resumoExecutivo);
+      if (n?.blocks?.justificativaTecnica) parts.push(n.blocks.justificativaTecnica);
+      if (n?.blocks?.justificativaPrioridadeRisco) parts.push(n.blocks.justificativaPrioridadeRisco);
+      if (n?.roi?.enabled && n.roi.text) parts.push(n.roi.text);
+      if (!parts.length) {
+        parts.push("A proposta considera escopo, prazo e responsabilidade acordados.");
+      }
+      return parts.join("\n\n").trim();
+    }
+
+    function getAntiDiscountPhrases(s, n) {
+      const phrases = [];
+      if (Array.isArray(n?.blocks?.frasesNegociacao)) {
+        n.blocks.frasesNegociacao.forEach((item) => {
+          const text = String(item || "").trim();
+          if (text) phrases.push(text);
+        });
+      }
+      if (!phrases.length) {
+        NEGOTIATION_PHRASES.forEach((item) => {
+          const text = String(item || "").trim();
+          if (text) phrases.push(text);
+        });
+      }
+      return Array.from(new Set(phrases)).slice(0, 8);
+    }
     function resetAll() {
       try {
         removeLocal(STORAGE_KEY);
