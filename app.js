@@ -955,6 +955,517 @@ function tuneHeroSignalSpacing() {
       }, AUDIT_DEBOUNCE_MS);
     }
 
+    function updateResultNode(node, renderFn) {
+      if (!node) return;
+      if (FEATURE_FLAGS.ui_micro_interactions_enabled && node.classList && node.classList.contains("micro-result-value")) {
+        node.classList.add("micro-value-updating");
+        renderFn();
+        requestAnimationFrame(() => requestAnimationFrame(() => node.classList.remove("micro-value-updating")));
+      } else {
+        renderFn();
+      }
+    }
+
+    function setText(el, value) {
+      if (!el) return;
+      el.textContent = value ?? "";
+    }
+
+    function createEl(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text != null) el.textContent = text;
+      return el;
+    }
+
+    function splitMoneyParts(text) {
+      const value = String(text ?? "").trim();
+      if (!value || value === "—") return null;
+      const lead = value.match(/^([^\d+\-]+)\s*([\d.,\s\-]+)$/u);
+      if (lead) return { symbol: lead[1].trim(), amount: lead[2].trim(), trailing: false };
+      const trail = value.match(/^([\d.,\s\-]+)\s*([^\d+\-]+)$/u);
+      if (trail) return { symbol: trail[2].trim(), amount: trail[1].trim(), trailing: true };
+      return null;
+    }
+
+    function saveJsonStorage(key, value) {
+      try {
+        writeLocal(key, JSON.stringify(value));
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function loadJsonStorage(key, fallback) {
+      try {
+        const raw = readLocal(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" ? parsed : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function severityClasses(sev) {
+      if (sev === "critical") return "border-red-400/40 bg-red-500/10 text-red-100";
+      if (sev === "warning") return "border-amber-400/40 bg-amber-500/10 text-amber-100";
+      return "border-sky-400/40 bg-sky-500/10 text-sky-100";
+    }
+
+    function dismissAlertForSession(id) {
+      const current = getDismissedAlerts();
+      current[id] = true;
+      try {
+        writeSession(DISMISSED_ALERTS_KEY, JSON.stringify(current));
+      } catch {
+        // ignore
+      }
+    }
+
+    function getDismissedAlerts() {
+      try {
+        const raw = readSession(DISMISSED_ALERTS_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function renderMetricListDom(container, payload) {
+      if (!container) return;
+      container.textContent = "";
+      if (!payload || !payload.outputs) {
+        container.appendChild(createEl("p", "text-xs text-slate-400", "Ainda não salvo."));
+        return;
+      }
+      const out = payload.outputs;
+      const curr = sanitizeCurrency(payload.inputs?.currency || "BRL");
+      const rows = [
+        ["Taxa/hora", out.hourly, true],
+        ["Taxa/dia", out.daily, true],
+        ["Faturamento alvo", out.revenueTarget, true],
+        ["Horas faturáveis", out.billableHours, false],
+        ["Preço projeto", out.projectNet, true],
+      ];
+      for (const [label, value, money] of rows) {
+        const text = value == null ? "—" : (money ? fmtMoney(value, curr) : `${fmtNumber(value, 1)} h`);
+        const div = createEl("div", "flex items-center justify-between");
+        div.appendChild(createEl("span", "text-slate-400", label));
+        div.appendChild(createEl("span", "text-slate-100", text));
+        container.appendChild(div);
+      }
+    }
+
+    function computeCompositionParts(s, r, ctx) {
+      const parts = buildCompositionPartsModel ? buildCompositionPartsModel(s, r, ctx) : [];
+      return Array.isArray(parts) ? parts : [];
+    }
+
+    function renderComposition(s, r, ctx) {
+      if (!els.compositionChart || !els.compositionLegend) return;
+      const parts = computeCompositionParts(s, r, ctx);
+      if (!parts.length) {
+        els.compositionChart.style.background = "linear-gradient(135deg, #1f2937, #0f172a)";
+        els.compositionLegend.textContent = "";
+        els.compositionLegend.appendChild(createEl("p", "text-xs text-slate-400", "Preencha os dados válidos para visualizar."));
+        return;
+      }
+      let start = 0;
+      const gradients = parts.map((p) => {
+        const end = start + p.percent;
+        const segment = `${p.color} ${start.toFixed(2)}% ${end.toFixed(2)}%`;
+        start = end;
+        return segment;
+      });
+      els.compositionChart.style.background = `conic-gradient(${gradients.join(", ")})`;
+      const curr = sanitizeCurrency(s.currency);
+      els.compositionLegend.textContent = "";
+      for (const p of parts) {
+        const div = createEl("div", "flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-2 py-1");
+        const left = createEl("span", "inline-flex items-center gap-2");
+        const dot = createEl("span", "h-2.5 w-2.5 rounded-full");
+        dot.style.background = p.color;
+        const labelSpan = createEl("span", "", p.label);
+        left.appendChild(dot);
+        left.appendChild(labelSpan);
+        const right = createEl("span", "text-slate-200", `${fmtMoney(p.value, curr)} · ${fmtNumber(p.percent, 1)}%`);
+        div.appendChild(left);
+        div.appendChild(right);
+        els.compositionLegend.appendChild(div);
+      }
+    }
+
+    function endpointValidationMessage(res, label) {
+      if (res && res.reason === "HTTP_EXTERNAL_BLOCKED") {
+        return `URL de ${label} inválida: use HTTPS para hosts externos. HTTP é permitido apenas em localhost/127.0.0.1.`;
+      }
+      return `URL de ${label} inválida.`;
+    }
+
+    function isValidHttpUrl(value) {
+      return validateEndpointUrl ? validateEndpointUrl(value) : { ok: false, reason: "INVALID_URL" };
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+        reader.onerror = () => reject(new Error("FileReader failed"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function resizeImageFromObjectUrl(objectUrl, maxWidth, usePng) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            let w = img.naturalWidth || img.width;
+            let h = img.naturalHeight || img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+              URL.revokeObjectURL(objectUrl);
+              resolve(null);
+              return;
+            }
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = usePng
+              ? canvas.toDataURL("image/png")
+              : canvas.toDataURL("image/jpeg", 0.85);
+            URL.revokeObjectURL(objectUrl);
+            resolve({ dataUrl, resized: true });
+          } catch (e) {
+            URL.revokeObjectURL(objectUrl);
+            reject(e);
+          }
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error("Image load failed"));
+        };
+        img.src = objectUrl;
+      });
+    }
+
+    function logoUsePng(file) {
+      const t = (file.type || "").toLowerCase();
+      return t.includes("png") || t.includes("webp");
+    }
+
+    async function prepareLogoDataUrl(file) {
+      try {
+        if (file.size <= LOGO_MAX_KB * 1024) {
+          const dataUrl = await readFileAsDataUrl(file);
+          if (!dataUrl || !dataUrl.startsWith("data:image/")) return null;
+          return { dataUrl, resized: false };
+        }
+        const objectUrl = URL.createObjectURL(file);
+        const usePng = logoUsePng(file);
+        return await resizeImageFromObjectUrl(objectUrl, LOGO_MAX_WIDTH_PX, usePng);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function normalizeLogoDataUrl(dataUrl) {
+      if (!dataUrl || typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
+        return Promise.resolve(null);
+      }
+      if (dataUrl.startsWith("data:image/png") || dataUrl.startsWith("data:image/jpeg")) {
+        return Promise.resolve(dataUrl);
+      }
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+              resolve(null);
+              return;
+            }
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/png"));
+          } catch (_) {
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = dataUrl;
+      });
+    }
+
+    function createDeltaSpan(a, b, key, money, curr) {
+      const av = a?.outputs?.[key];
+      const bv = b?.outputs?.[key];
+      if (av == null || bv == null) return createEl("span", "text-slate-400", `${key}: —`);
+      const delta = bv - av;
+      const sign = delta > 0 ? "+" : "";
+      const base = money ? fmtMoney(Math.abs(delta), curr) : `${fmtNumber(Math.abs(delta), 1)} h`;
+      const cls = delta > 0 ? "text-emerald-300" : delta < 0 ? "text-rose-300" : "text-slate-300";
+      const text = `${key}: ${sign}${delta < 0 ? "-" : ""}${base}`;
+      return createEl("span", cls, text);
+    }
+
+    function getAdvancedWarningsBundle(s, essential, advanced) {
+      const warnings = [];
+      if (!advanced || !advanced.ok) return warnings;
+      const patrimonialHourly = (advanced.data.depreciationMonthly + advanced.data.opportunityCostMonthly) / Math.max(essential.billableHours || 1, 1);
+      if ((advanced.output.hourly || 0) <= patrimonialHourly) {
+        warnings.push("Erosao patrimonial: o preco/hora nao cobre o peso de depreciacao e oportunidade.");
+      }
+      if ((advanced.data.exhaustionFactor || 1) > 1.1) {
+        warnings.push("Risco de burnout: fator de exaustao acima do nivel recomendado.");
+      }
+      if ((advanced.data.scarcityFactor || 1) > 1.08) {
+        warnings.push("Escassez favoravel: ocupacao atual justifica markup premium.");
+      }
+      return warnings;
+    }
+
+    function renderAlerts(s, r) {
+      if (!els.alertsList) return;
+      const allAlerts = evaluateBenchmarkAlerts ? evaluateBenchmarkAlerts(s, r) : [];
+      const dismissed = getDismissedAlerts();
+      const visibleAlerts = allAlerts.filter((a) => !dismissed[a.id]);
+      els.alertsList.textContent = "";
+      if (!visibleAlerts.length) {
+        els.alertsList.appendChild(createEl("p", "text-xs text-slate-400", "Sem alertas no momento. Boa configuração."));
+        return;
+      }
+      for (const a of visibleAlerts) {
+        const card = createEl("div", `rounded-xl border px-3 py-2 ${severityClasses(a.severity)}`);
+        const inner = createEl("div", "flex items-start justify-between gap-2");
+        const left = createEl("div");
+        left.appendChild(createEl("p", "text-xs font-semibold uppercase tracking-wide", a.severity));
+        left.appendChild(createEl("p", "text-sm font-medium", a.title));
+        left.appendChild(createEl("p", "mt-1 text-xs opacity-90", a.message));
+        left.appendChild(createEl("p", "mt-1 text-xs opacity-90", `Sugestão: ${a.recommendation}`));
+        const btn = createEl("button", "rounded-lg border border-white/20 bg-black/20 px-2 py-1 text-[11px] hover:bg-black/30", "Dispensar");
+        btn.setAttribute("type", "button");
+        btn.setAttribute("data-dismiss-alert", a.id);
+        btn.addEventListener("click", () => {
+          dismissAlertForSession(a.id);
+          renderAlerts(s, r);
+        });
+        inner.appendChild(left);
+        inner.appendChild(btn);
+        card.appendChild(inner);
+        els.alertsList.appendChild(card);
+      }
+    }
+
+    function renderExplainability(s, ctx) {
+      if (!els.explainabilityCard || !els.explainabilityList || !els.advancedWarnings || !els.advancedModelLabel) return;
+      const isAdvanced = s.advancedMode && ctx.mode === "advanced" && ctx.advanced;
+      els.explainabilityCard.classList.toggle("hidden", !isAdvanced);
+      if (!isAdvanced) return;
+      const a = ctx.advanced;
+      const curr = sanitizeCurrency(s.currency);
+      const baseRef = Math.max(a.data.baseHourly, 0.0001);
+      const rows = [
+        ["Patrimonio (depreciacao + oportunidade)", a.data.contributions.patrimonio, "Cobertura do desgaste dos ativos e custo de capital."],
+        ["Risco de escopo", a.data.contributions.risco, "Ajuste de incerteza do escopo (volatilidade)."],
+        ["Escassez de agenda", a.data.contributions.escassez, "Ajuste por ocupacao e capacidade limitada."],
+        ["Exaustao operacional", a.data.contributions.exaustao, "Compensacao por carga semanal elevada."],
+      ];
+      els.explainabilityList.textContent = "";
+      for (const [label, val, text] of rows) {
+        const value = Number(val || 0);
+        const pct = (Math.abs(value) / baseRef) * 100;
+        const signal = value >= 0 ? "+" : "-";
+        const div = createEl("div", "rounded-lg border border-white/10 bg-black/20 px-3 py-2");
+        div.appendChild(createEl("p", "font-medium", label));
+        div.appendChild(createEl("p", "text-indigo-100", `${signal}${fmtMoney(Math.abs(value), curr)} · ${fmtNumber(pct, 1)}%`));
+        div.appendChild(createEl("p", "text-slate-300", text));
+        els.explainabilityList.appendChild(div);
+      }
+      if (a.mode === "montecarlo" && a.stochastic) {
+        els.advancedModelLabel.textContent = `Modelo: Monte Carlo (P50 ${fmtNumber(a.stochastic.p50, 2)}x · P80 ${fmtNumber(a.stochastic.p80, 2)}x · P95 ${fmtNumber(a.stochastic.p95, 2)}x)`;
+        if (els.premiumModeTag) els.premiumModeTag.textContent = "Premium + Monte Carlo";
+      } else {
+        els.advancedModelLabel.textContent = "Modelo: estimativa por faixa (deterministico)";
+        if (els.premiumModeTag) els.premiumModeTag.textContent = "Premium Deterministico";
+      }
+      const warns = getAdvancedWarningsBundle(s, ctx.essential, ctx.advanced);
+      els.advancedWarnings.textContent = "";
+      if (warns.length) {
+        for (const w of warns) {
+          els.advancedWarnings.appendChild(createEl("div", "rounded-lg border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-amber-100", w));
+        }
+      } else {
+        els.advancedWarnings.appendChild(createEl("div", "rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-2 text-emerald-100", "Sem alertas criticos no modo avancado."));
+      }
+    }
+
+    function renderRiskAudit(s, ctx) {
+      if (!FEATURE_FLAGS.risk_score_enabled) {
+        if (els.auditModeCard) els.auditModeCard.classList.add("hidden");
+        return;
+      }
+      if (!els.auditModeCard || !els.riskScoreValue || !els.riskScoreNarrative || !els.riskScoreBreakdown || !els.exhaustionBadgeLabel || !els.exhaustionBadgeImpact) return;
+      const isAdvanced = s.advancedMode && ctx.mode === "advanced" && ctx.advanced;
+      els.auditModeCard.classList.toggle("hidden", !isAdvanced);
+      if (!isAdvanced) {
+        riskTelemetryState = null;
+        return;
+      }
+      const risk = computeRiskScore({
+        scopeFactor: ctx.advanced.data.scopeFactor,
+        occupancyRate: s.occupancyRate,
+        exhaustionFactor: ctx.advanced.data.exhaustionFactor,
+        denominator: ctx.advanced.data.denominator,
+      });
+      els.riskScoreValue.textContent = `${fmtNumber(risk.score, 1)} / 100`;
+      els.riskScoreNarrative.textContent = riskNarrative(risk);
+      els.riskScoreBreakdown.textContent =
+        `Escopo ${fmtNumber(risk.subscores.riscoEscopo, 1)} · Ocupação ${fmtNumber(risk.subscores.ocupacaoPressao, 1)} · Exaustão ${fmtNumber(risk.subscores.exaustaoPressao, 1)} · Margem ${fmtNumber(risk.subscores.margemFragilidade, 1)}`;
+
+      const exFactor = ctx.advanced.data.exhaustionFactor || 1;
+      const exImpact = ctx.advanced.data.contributions.exaustao || 0;
+      if (exFactor > 1.0) {
+        els.exhaustionBadgeLabel.textContent = "Taxa de preservação de saúde aplicada";
+        const pct = ((exFactor - 1) * 100);
+        els.exhaustionBadgeImpact.textContent = `${fmtMoney(Math.abs(exImpact), s.currency)} · ${fmtNumber(pct, 1)}%`;
+      } else {
+        els.exhaustionBadgeLabel.textContent = "Sem ajuste de exaustão";
+        els.exhaustionBadgeImpact.textContent = "Impacto: 0";
+      }
+      const telemetryDecision = shouldTrackRiskScoreView
+        ? shouldTrackRiskScoreView({
+            prev: riskTelemetryState,
+            score: risk.score,
+            mode: ctx.mode || "advanced",
+            model: ctx.advanced.mode || "deterministic",
+            nowMs: Date.now(),
+            threshold: 1.0,
+            cooldownMs: 10_000,
+          })
+        : { shouldTrack: true, next: null };
+      if (telemetryDecision && telemetryDecision.next) {
+        riskTelemetryState = telemetryDecision.next;
+      }
+      if (telemetryDecision && telemetryDecision.shouldTrack) {
+        trackEvent("risk_score_view", { score: risk.score, model: ctx.advanced.mode || "deterministic" });
+      }
+    }
+
+    function renderNegotiationOutputs(s, r, n) {
+      if (!els.justificationExecutive || !els.justificationTechnical || !els.scopeShieldSummary || !els.scarcitySummary || !els.runwaySummary) return;
+      const curr = sanitizeCurrency(s.currency);
+      safeText(els.justificationExecutive, n.justification.resumoExecutivo || "—");
+      safeText(els.justificationTechnical, n.justification.justificativaTecnica || "—");
+      if (els.justificationPriorityWrap && els.justificationPriority) {
+        const hasPriority = !!n.justification.justificativaPrioridadeRisco;
+        els.justificationPriorityWrap.classList.toggle("hidden", !hasPriority);
+        safeText(els.justificationPriority, hasPriority ? n.justification.justificativaPrioridadeRisco : "—");
+      }
+      if (els.roiAnchorLine) {
+        const text = n.roi.enabled ? `${n.roi.text} ${n.roi.caveat}` : "";
+        els.roiAnchorLine.classList.toggle("hidden", !text);
+        safeText(els.roiAnchorLine, text);
+      }
+      safeText(
+        els.scopeShieldSummary,
+        `Taxa de Gestão de Expectativa: ${fmtNumber(n.scopeShield.markupPct, 1)}% (${formatScopeLevel(n.scopeShield.level)}). Impacto estimado: ${fmtMoney(Math.max(0, n.shieldImpact), curr)}.`
+      );
+      safeText(
+        els.scarcitySummary,
+        `Prêmio de conveniência aplicado: ${fmtNumber(n.scarcity.markupPct, 1)}% (ocupação ${fmtNumber(s.ocupacaoAgenda, 0)}%). Impacto estimado: ${fmtMoney(Math.max(0, n.scarcityImpact), curr)}.`
+      );
+      const fonte = n.runway.custoFonte === "explicito"
+        ? `Custo pessoal mensal explícito: ${fmtMoney(n.runway.custoPessoalMensal, curr)}.`
+        : `Custo pessoal mensal derivado (renda + custos): ${fmtMoney(n.runway.custoPessoalMensal, curr)}.`;
+      const projetosTexto = n.runway.projetosNecessarios == null
+        ? "Projetos necessários para meta: informe um projeto com valor líquido positivo."
+        : `Projetos necessários para meta de reserva: ${fmtNumber(n.runway.projetosNecessarios, 0)}.`;
+      safeText(
+        els.runwaySummary,
+        `Fôlego financeiro atual: ${fmtNumber(n.runway.runwayMesesAtual, 1)} meses (${fmtNumber(n.runway.runwayDiasAtual, 0)} dias). ` +
+          `Fôlego financeiro pós-projeto: ${fmtNumber(n.runway.runwayMesesPosProjeto, 1)} meses (${fmtNumber(n.runway.runwayDiasPosProjeto, 0)} dias). ` +
+          `${projetosTexto} ${fonte} ${n.runway.caveat}`
+      );
+      if (els.antiDiscountList) {
+        const anti = getAntiDiscountPhrases(s, n);
+        els.antiDiscountList.textContent = "";
+        for (const p of anti) {
+          const li = createEl("li", "", p);
+          els.antiDiscountList.appendChild(li);
+        }
+      }
+    }
+
+    function setPremiumLockState(locked) {
+      if (!locked) {
+        if (els.premiumPreviewOverlay) els.premiumPreviewOverlay.classList.add("hidden");
+        PREMIUM_INPUT_IDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) { el.disabled = false; el.removeAttribute("aria-disabled"); }
+        });
+      } else {
+        if (els.premiumPreviewOverlay) els.premiumPreviewOverlay.classList.remove("hidden");
+        PREMIUM_INPUT_IDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) { el.disabled = true; el.setAttribute("aria-disabled", "true"); }
+        });
+      }
+    }
+
+    function openPremiumLockModal() {
+      if (els.premiumLockModal) {
+        els.premiumLockModal.style.display = "flex";
+        els.premiumLockModal.classList.remove("hidden");
+        const firstFocusable = els.premiumLockModal.querySelector("button");
+        if (firstFocusable) firstFocusable.focus();
+      }
+    }
+
+    function closePremiumLockModal() {
+      if (els.premiumLockModal) {
+        els.premiumLockModal.style.display = "none";
+        els.premiumLockModal.classList.add("hidden");
+      }
+    }
+
+    const panelPremium = document.getElementById("panel-premium");
+
+    function showPremiumPanel(asPreview) {
+      TAB_PANELS.forEach((id) => {
+        const p = document.getElementById(id);
+        if (p) { p.classList.add("hidden"); p.setAttribute("aria-hidden", "true"); }
+      });
+      if (panelPremium) {
+        panelPremium.classList.remove("hidden");
+        panelPremium.setAttribute("aria-hidden", "false");
+        panelPremium.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setPremiumLockState(!!asPreview);
+    }
+
+    function hidePremiumPanel(restoreTabFn) {
+      if (panelPremium) {
+        panelPremium.classList.add("hidden");
+        panelPremium.setAttribute("aria-hidden", "true");
+      }
+      setPremiumLockState(false);
+      const selectedTab = document.querySelector('[role="tablist"] [aria-selected="true"]');
+      const idx = selectedTab ? TAB_IDS.indexOf(selectedTab.id) : 0;
+      if (typeof restoreTabFn === "function") restoreTabFn(idx >= 0 ? idx : 0);
+    }
+
     function updateUI() {
       const s = getStateFromInputs();
       const pricingCtx = buildPricingContext(s);
@@ -1044,10 +1555,44 @@ function tuneHeroSignalSpacing() {
         })();
         proposalBaseText = `Proposta comercial para execução do projeto. Investimento: ${fmtMoney(r.projectNet, curr)}. Prazo estimado: ~${fmtNumber(prazoDiasUteis, 0)} dias úteis. ${anti}`;
       }
-      safeText(els.proposalText, proposalBaseText);
+      let proposalFinalText = proposalBaseText;
+      if (proposalJustificationPinned && proposalBaseText !== "â€”") {
+        const payload = String(buildJustificationClipboardText(s, negotiationCtx) || "").trim();
+        if (payload) proposalFinalText = payload;
+      }
+      safeText(els.proposalText, proposalFinalText);
 
+      renderComposition(s, r, pricingCtx);
+      renderAlerts(s, r);
+      renderScenariosComparison();
+      renderExplainability(s, pricingCtx);
+      renderRiskAudit(s, pricingCtx);
       updateRiskThermometer(s);
-      persistState(s);
+      renderNegotiationOutputs(s, r, negotiationCtx);
+
+      const strategistEnabled = !!FEATURE_FLAGS.strategist_mode_enabled;
+      const strategistActive = strategistEnabled && !!s.modoEstrategista;
+      const accordionStrategist = document.querySelector(".strategist-accordion-btn");
+      if (accordionStrategist) accordionStrategist.classList.toggle("hidden", !strategistEnabled);
+      if (els.strategistInputsWrap) els.strategistInputsWrap.classList.toggle("hidden", !strategistActive);
+      if (els.strategistInputsWrap) els.strategistInputsWrap.classList.toggle("grid", strategistActive);
+      if (els.strategistResultsCard) els.strategistResultsCard.classList.toggle("hidden", !strategistActive);
+      if (strategistActive && computeStrategistMetrics && formatStrategistValue) {
+        const precoBase = s.projectHours > 0 && r.ok && r.projectNet != null ? r.projectNet : null;
+        const strat = computeStrategistMetrics({
+          precoBase,
+          valorGanhoEstimado12m: s.valorGanhoEstimado12m,
+          custoOportunidadeMensal: s.custoOportunidadeMensal,
+        });
+        const noPreco = precoBase == null || precoBase <= 0;
+        safeText(els.strategistVce, noPreco ? "â€”" : formatStrategistValue(strat.vce, "percent"));
+        safeText(els.strategistVceLabel, noPreco ? "Preencha horas do projeto." : (strat.vceLabel || "â€”"));
+        safeText(els.strategistRoix, noPreco ? "â€”" : (strat.roix != null ? `${fmtNumber(strat.roix, 1)}x` : "â€”"));
+        safeText(els.strategistCdo, noPreco ? "â€”" : (strat.cdo != null ? fmtMoney(strat.cdo, curr) : "â€”"));
+        if (els.strategistViabilidadeAlerta) {
+          els.strategistViabilidadeAlerta.classList.toggle("hidden", !strat.viabilidadeAlerta);
+        }
+      }
 
       if (els.agencyEquivalentBlock && FEATURE_FLAGS.agency_enabled && proposalMetrics.clientSafe.agencyEconomiaValor != null) {
         els.agencyEquivalentBlock.classList.remove("hidden");
@@ -1060,6 +1605,7 @@ function tuneHeroSignalSpacing() {
         if (els.batnaLevelBadge) safeText(els.batnaLevelBadge, proposalMetrics.internalOnly.batnaLevel ?? "—");
         if (els.batnaMessage) safeText(els.batnaMessage, proposalMetrics.internalOnly.batnaMessage ?? "—");
       } else if (els.batnaMeterBlock) els.batnaMeterBlock.classList.add("hidden");
+      persistState(s);
 
       if (els.configWrapper) els.configWrapper.classList.toggle("hidden", !!s.proposalMode);
       if (els.wizardContainer && FEATURE_FLAGS.ui_wizard_enabled) {
