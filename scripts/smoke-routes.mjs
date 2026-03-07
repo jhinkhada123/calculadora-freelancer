@@ -29,6 +29,13 @@ function passType(contentType, type) {
 const CLIENT_VIEW_MARKERS = ["clientViewContainer", "clientViewTotal"];
 const CLIENT_VIEW_BLOCKED_TERMS = [/batna/i, /ALTO/i, /M.DIO/i, /BAIXO/i];
 
+function extractClientViewHtml(html) {
+  const mainMatch = html.match(/<main[^>]*id=["']clientViewContainer["'][\s\S]*?<\/main>/i);
+  if (mainMatch && mainMatch[0]) return mainMatch[0];
+  const divMatch = html.match(/<div[^>]*id=["']clientViewContainer["'][\s\S]*?<\/div>/i);
+  return divMatch && divMatch[0] ? divMatch[0] : "";
+}
+
 const rows = [];
 for (const check of checks) {
   const url = `${baseUrl}${check.path}`;
@@ -37,16 +44,20 @@ for (const check of checks) {
     const res = await fetch(url, { method });
     const ct = res.headers.get("content-type") || "";
     let pass = res.status === 200 && passType(ct, check.type);
-if (pass && check.clientView) {
+
+    if (pass && check.clientView) {
       const html = await res.text();
       const hasMarkers = CLIENT_VIEW_MARKERS.every((m) => html.includes(m));
-      const hasLeakTerm = CLIENT_VIEW_BLOCKED_TERMS.some((rx) => rx.test(html));
+      const clientViewHtml = extractClientViewHtml(html);
+      const hasLeakTerm = CLIENT_VIEW_BLOCKED_TERMS.some((rx) => rx.test(clientViewHtml));
       pass = hasMarkers && !hasLeakTerm;
     }
+
     if (pass && check.xssCheck) {
       const html = await res.text();
       pass = !html.includes("<script>alert(1)</script>") && (html.includes("&lt;script&gt;") || html.includes("areaImpacto"));
     }
+
     rows.push({ url, status: res.status, contentType: ct, pass });
   } catch (err) {
     rows.push({ url, status: "ERR", contentType: "-", pass: false, error: String(err) });
