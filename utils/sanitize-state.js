@@ -24,6 +24,7 @@ const ENUM_WHITELIST = {
   envolvimentoCliente: ["baixo", "medio", "alto"],
   impactoNoNegocio: ["baixo", "medio", "alto", "critico"],
   pdfInternalFormat: ["complete", "compact"],
+  uiMode: ["essencial", "estrategista", "comparacao", "governanca"],
 };
 
 const VALIDITY_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;

@@ -7,6 +7,7 @@ import { buildProposalMetrics } from "./proposal-metrics.js";
 import { computeTierPricing } from "./proposal-tiers.js";
 import { buildClientPdfSignals } from "./pdf-client-signals.js";
 import { renderClientLeanBadgeBlock, renderClientTiersBlock, renderClientUrgencyBlock } from "./pdf-client-renderers.js";
+import { UI_MODE_VALUES, TAB_MODE_LABELS, TAB_CONTEXT_HINTS, TAB_PANELS, TAB_IDS, normalizeUiMode } from "./ui-mode-constants.js";
 
 let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
 let computeAdvancedPricing, deriveHistoricalVarianceSamples, computeAgencyEquivalent;
@@ -197,6 +198,7 @@ function tuneHeroSignalSpacing() {
     let proposalJustificationPinned = false;
     const counterAnimationState = new WeakMap();
     let riskThermometerRefs = null;
+    let currentUiMode = "essencial";
 
     const $ = (id) => document.getElementById(id);
 
@@ -813,6 +815,7 @@ function tuneHeroSignalSpacing() {
         reservaAtual: Math.max(0, toNum(els.reservaAtual && els.reservaAtual.value)),
         custoPessoalMensal: Math.max(0, toNum(els.custoPessoalMensal && els.custoPessoalMensal.value)),
         modoEstrategista: !!(els.modoEstrategista && els.modoEstrategista.checked),
+        uiMode: normalizeUiMode(currentUiMode),
         valorGanhoEstimado12m: Math.max(0, toNum(els.valorGanhoEstimado12m && els.valorGanhoEstimado12m.value)),
         custoOportunidadeMensal: Math.max(0, toNum(els.custoOportunidadeMensal && els.custoOportunidadeMensal.value)),
       };
@@ -864,6 +867,7 @@ function tuneHeroSignalSpacing() {
       if (els.reservaMetaMeses) els.reservaMetaMeses.value = s.reservaMetaMeses ?? 6;
       if (els.reservaAtual) els.reservaAtual.value = s.reservaAtual ?? 0;
       if (els.custoPessoalMensal) els.custoPessoalMensal.value = s.custoPessoalMensal ?? 0;
+      currentUiMode = normalizeUiMode(s.uiMode);
     }
 
     function safeText(node, text) {
@@ -1612,7 +1616,7 @@ function tuneHeroSignalSpacing() {
         if (els.batnaLevelBadge) safeText(els.batnaLevelBadge, proposalMetrics.internalOnly.batnaLevel ?? "—");
         if (els.batnaMessage) safeText(els.batnaMessage, proposalMetrics.internalOnly.batnaMessage ?? "—");
       } else if (els.batnaMeterBlock) els.batnaMeterBlock.classList.add("hidden");
-      persistState(s);
+      persistState({ ...s, uiMode: currentUiMode });
 
       const isProposal = !!s.proposalMode;
       const canComputeProposal = r.ok && s.projectHours > 0 && r.projectNet != null;
@@ -1986,6 +1990,7 @@ function tuneHeroSignalSpacing() {
         proposalMode: false,
         pdfInternalFormat: "complete",
         advancedMode: false,
+        uiMode: "essencial",
         enableMonteCarlo: false,
         assetValue: 0,
         assetUsefulLifeMonths: 48,
@@ -2876,11 +2881,47 @@ function tuneHeroSignalSpacing() {
     }
 
     function setupTabs() {
-      const tabs = Array.from(document.querySelectorAll('[role="tablist"] [role="tab"]'));
+      const tabs = TAB_IDS.map((id) => document.getElementById(id)).filter(Boolean);
       if (!tabs.length) return;
-      const activate = (idx) => {
+
+      const getVisibleIndexes = () => {
+        const visible = [];
+        tabs.forEach((tab, idx) => {
+          if (!tab.classList.contains("hidden")) visible.push(idx);
+        });
+        return visible.length ? visible : [0];
+      };
+
+      const resolveIndexFromMode = (mode) => {
+        const desired = UI_MODE_VALUES.indexOf(normalizeUiMode(mode));
+        const visible = getVisibleIndexes();
+        if (desired >= 0 && visible.includes(desired)) return desired;
+        return visible[0];
+      };
+
+      const applyUiModeText = (idx) => {
+        currentUiMode = UI_MODE_VALUES[idx] ?? "essencial";
+        if (els.activeModeLabel) {
+          const modeLabel = TAB_MODE_LABELS[idx] ?? "Essencial";
+          safeText(els.activeModeLabel, `Modo ativo: ${modeLabel}`);
+        }
+        const hintEl = document.getElementById("tabContextHint");
+        if (hintEl) safeText(hintEl, TAB_CONTEXT_HINTS[currentUiMode] ?? "");
+      };
+
+      const syncPanelByMode = () => {
+        const negotiationCard = document.getElementById("negotiationConfigCard");
+        if (negotiationCard) {
+          negotiationCard.classList.toggle("hidden", currentUiMode !== "governanca");
+        }
+      };
+
+      const activate = (idx, options) => {
+        const opts = options || {};
+        const safeIdx = resolveIndexFromMode(UI_MODE_VALUES[idx] ?? currentUiMode);
+
         tabs.forEach((tab, i) => {
-          const selected = i === idx;
+          const selected = i === safeIdx;
           tab.setAttribute("aria-selected", selected ? "true" : "false");
           tab.tabIndex = selected ? 0 : -1;
           const panelId = tab.getAttribute("aria-controls");
@@ -2890,19 +2931,39 @@ function tuneHeroSignalSpacing() {
           panel.classList.toggle("hidden", !selected);
           panel.setAttribute("aria-hidden", selected ? "false" : "true");
         });
+
+        applyUiModeText(safeIdx);
+        syncPanelByMode();
+
+        if (opts.focus) tabs[safeIdx].focus();
+        if (opts.persist !== false) persistState({ ...getStateFromInputs(), uiMode: currentUiMode });
       };
+
       tabs.forEach((tab, i) => {
-        tab.addEventListener("click", () => activate(i));
+        tab.addEventListener("click", () => activate(i, { persist: true }));
         tab.addEventListener("keydown", (e) => {
-          if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-          e.preventDefault();
-          const next = e.key === "ArrowRight" ? (i + 1) % tabs.length : (i - 1 + tabs.length) % tabs.length;
-          activate(next);
-          tabs[next].focus();
+          const visible = getVisibleIndexes();
+          const currentPos = visible.indexOf(i);
+          if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            e.preventDefault();
+            const delta = e.key === "ArrowRight" ? 1 : -1;
+            const nextPos = (currentPos + delta + visible.length) % visible.length;
+            activate(visible[nextPos], { persist: true, focus: true });
+            return;
+          }
+          if (e.key === "Home") {
+            e.preventDefault();
+            activate(visible[0], { persist: true, focus: true });
+            return;
+          }
+          if (e.key === "End") {
+            e.preventDefault();
+            activate(visible[visible.length - 1], { persist: true, focus: true });
+          }
         });
       });
-      const selectedIdx = Math.max(0, tabs.findIndex((t) => t.getAttribute("aria-selected") === "true"));
-      activate(selectedIdx);
+
+      activate(resolveIndexFromMode(currentUiMode), { persist: false });
     }
 
     function setupWizard() {

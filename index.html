@@ -331,6 +331,7 @@
             </div>
 
             <p id="activeModeLabel" class="mt-3 text-xs font-medium text-slate-400">Modo ativo: Essencial</p>
+            <p id="tabContextHint" class="mt-1 text-[11px] text-slate-500" aria-live="polite">Entradas base: renda, custos, impostos, margem e horas do projeto.</p>
             <div class="mt-2 flex flex-wrap gap-1 rounded-xl border border-white/10 bg-ink-900/50 p-1" role="tablist" aria-label="Seções de configuração">
               <button type="button" id="tab-essential" role="tab" aria-selected="true" aria-controls="panel-essential" tabindex="0" data-tab-panel="panel-essential" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Essencial</button>
               <button type="button" id="tab-strategist" role="tab" aria-selected="false" aria-controls="panel-strategist" tabindex="-1" data-tab-panel="panel-strategist" class="strategist-accordion-btn tab-btn hidden rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Estrategista</button>
@@ -695,7 +696,7 @@
                 </div>
                 <label class="inline-flex items-center gap-2 text-xs text-amber-100">
                   <input id="modoEstrategista" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
-                  Ativar
+                  Usar precificacao por valor (VCE/ROIx/CDO)
                 </label>
               </div>
               <div id="strategistInputsWrap" class="mt-4 hidden grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -714,7 +715,7 @@
             </div>
             </div>
 
-            <div id="negotiationConfigCard" class="mt-6 rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(16,185,129,.10),rgba(15,23,42,.55))] p-4">
+            <div id="negotiationConfigCard" class="mt-6 hidden rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(16,185,129,.10),rgba(15,23,42,.55))] p-4">
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-500/20 px-2 py-1 text-[11px] font-medium text-emerald-100">v2.1</p>
