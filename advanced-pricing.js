@@ -358,3 +358,5 @@ export function computeAgencyEquivalent(projectState, config = {}) {
     economiaPercentual,
   };
 }
+
+// governance-validation: high-fail noop
