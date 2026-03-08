@@ -9,6 +9,7 @@ import { computeTierPricing } from "./proposal-tiers.js";
 
 let compute, hasAcceptedTerms, recordAcceptance, getSessionId, textChecksum, TERMS_VERSION, appendAuditSnapshot, LEGAL_DISCLAIMER, evaluateBenchmarkAlerts, getAuditTrail;
 let computeAdvancedPricing, deriveHistoricalVarianceSamples, computeAgencyEquivalent;
+let computePricingEngineV1;
 let computeRiskScore, riskNarrative, trackEvent;
 let computeStrategistMetrics, formatStrategistValue, STRATEGIST_CAVEAT;
 let computeScopeShielding, computeDynamicScarcityMarkup, computeRunwaySummary, computeRoiAnchor, generateJustificationBlocks;
@@ -76,6 +77,12 @@ function tuneHeroSignalSpacing() {
       computeAdvancedPricing = null;
       deriveHistoricalVarianceSamples = () => [];
       computeAgencyEquivalent = null;
+    }
+    try {
+      const pricingEngineV1Mod = await import("./src/domain/pricing/engine-v1.js");
+      computePricingEngineV1 = pricingEngineV1Mod.computePricingEngineV1;
+    } catch (_) {
+      computePricingEngineV1 = null;
     }
     try {
       const riskMod = await import("./risk-audit.js");
@@ -226,7 +233,18 @@ function tuneHeroSignalSpacing() {
       billableHours: $("billableHours"),
       revenueTarget: $("revenueTarget"),
       revenueBreakdown: $("revenueBreakdown"),
-
+      pricingEngineV1Card: $("pricingEngineV1Card"),
+      pricingEngineV1Status: $("pricingEngineV1Status"),
+      pricingBandPiso: $("pricingBandPiso"),
+      pricingBandSustentavel: $("pricingBandSustentavel"),
+      pricingBandIdeal: $("pricingBandIdeal"),
+      pricingRateHora: $("pricingRateHora"),
+      pricingRateDia: $("pricingRateDia"),
+      pricingEconomicsFaturamentoAlvo: $("pricingEconomicsFaturamentoAlvo"),
+      pricingEconomicsHorasFaturaveisMes: $("pricingEconomicsHorasFaturaveisMes"),
+      pricingEconomicsOcupacaoReal: $("pricingEconomicsOcupacaoReal"),
+      pricingGuardrailsList: $("pricingGuardrailsList"),
+      pricingExplainFactorsList: $("pricingExplainFactorsList"),
       stepCost: $("stepCost"),
       stepTax: $("stepTax"),
       stepProfit: $("stepProfit"),
@@ -884,6 +902,142 @@ function tuneHeroSignalSpacing() {
     function safeMoney(node, text) {
       if (!node) return;
       node.textContent = text ?? "";
+    }
+
+    const PRICING_REASON_LABELS = Object.freeze({
+      LOW_OCCUPANCY: "Baixa ocupacao",
+      HIGH_SCOPE_RISK: "Risco alto de escopo",
+      UNCLEAR_SCOPE: "Escopo pouco claro",
+      URGENT_DEADLINE: "Prazo urgente",
+      HIGH_REVISION_LOAD: "Carga alta de revisoes",
+      LOW_MARGIN: "Margem baixa",
+      DISCOUNT_BELOW_FLOOR: "Desconto abaixo do piso",
+      RETAINER_WITHOUT_VOLUME: "Retainer sem volume minimo",
+    });
+
+    const PRICING_GUARDRAIL_LABELS = Object.freeze({
+      floorBreached: "Desconto abaixo do piso",
+      highRisk: "Risco alto",
+      unclearScope: "Escopo pouco claro",
+      retainerWithoutVolume: "Retainer sem volume minimo",
+    });
+
+    function buildPricingEngineV1InputFromState(s) {
+      return {
+        targetIncome: s.targetIncome,
+        monthlyCosts: s.monthlyCosts,
+        taxRate: s.taxRate,
+        profitMargin: s.profitMargin,
+        buffer: s.buffer,
+        utilization: s.utilization,
+        scopeRisk: s.scopeRisk,
+        discount: s.discount,
+        vacationWeeks: s.vacationWeeks,
+        hoursPerDay: s.hoursPerDay,
+        daysPerWeek: s.daysPerWeek,
+        projectHours: s.projectHours,
+      };
+    }
+
+    function buildPricingUiV1ViewModel(s) {
+      if (typeof computePricingEngineV1 !== "function") {
+        return { status: "error", message: "Motor v1 indisponivel no bootstrap.", result: null };
+      }
+      if (!(Number(s.projectHours) > 0)) {
+        return { status: "empty", message: "Preencha horas do projeto para exibir o pricing band.", result: null };
+      }
+      try {
+        const result = computePricingEngineV1(buildPricingEngineV1InputFromState(s));
+        if (!result || !result.pricingBand || !result.rates || !result.economics) {
+          return { status: "error", message: "Contrato do motor v1 invalido.", result: null };
+        }
+        return { status: "ready", message: "", result };
+      } catch (err) {
+        const msg = err && err.message ? err.message : "Erro ao calcular motor v1.";
+        return { status: "error", message: msg, result: null };
+      }
+    }
+
+    function clearListNode(node) {
+      if (!node) return;
+      while (node.firstChild) node.removeChild(node.firstChild);
+    }
+
+    function appendListRow(node, text, tone = "default") {
+      if (!node) return;
+      const li = document.createElement("li");
+      li.className = "rounded-lg border border-white/10 bg-white/5 px-2 py-1";
+      if (tone === "critical") li.classList.add("text-rose-300", "border-rose-400/30", "bg-rose-500/10");
+      if (tone === "ok") li.classList.add("text-emerald-300", "border-emerald-400/30", "bg-emerald-500/10");
+      li.textContent = text;
+      node.appendChild(li);
+    }
+
+    function renderPricingEngineV1Card(s, vm) {
+      if (!els.pricingEngineV1Card) return;
+
+      const curr = s.currency;
+      const hasData = vm && vm.status === "ready" && vm.result;
+      const placeholder = "-";
+
+      if (els.pricingEngineV1Status) {
+        const statusText = vm.status === "ready"
+          ? `Contrato v${vm.result.contractVersion} carregado.`
+          : (vm.status === "empty" ? vm.message : `Erro: ${vm.message}`);
+        safeText(els.pricingEngineV1Status, statusText);
+      }
+
+      const pricingBand = hasData ? vm.result.pricingBand : null;
+      const rates = hasData ? vm.result.rates : null;
+      const economics = hasData ? vm.result.economics : null;
+
+      safeMoney(els.pricingBandPiso, pricingBand ? fmtMoney(pricingBand.piso, curr) : placeholder);
+      safeMoney(els.pricingBandSustentavel, pricingBand ? fmtMoney(pricingBand.sustentavel, curr) : placeholder);
+      safeMoney(els.pricingBandIdeal, pricingBand ? fmtMoney(pricingBand.ideal, curr) : placeholder);
+      safeMoney(els.pricingRateHora, rates ? fmtMoney(rates.hora, curr) : placeholder);
+      safeMoney(els.pricingRateDia, rates ? fmtMoney(rates.dia, curr) : placeholder);
+      safeMoney(els.pricingEconomicsFaturamentoAlvo, economics ? fmtMoney(economics.faturamentoAlvo, curr) : placeholder);
+      safeText(els.pricingEconomicsHorasFaturaveisMes, economics ? `${fmtNumber(economics.horasFaturaveisMes, 1)} h` : placeholder);
+      safeText(els.pricingEconomicsOcupacaoReal, economics ? `${fmtNumber(economics.ocupacaoReal * 100, 1)}%` : placeholder);
+
+      clearListNode(els.pricingGuardrailsList);
+      if (vm.status === "error") {
+        appendListRow(els.pricingGuardrailsList, vm.message, "critical");
+      } else if (vm.status === "empty") {
+        appendListRow(els.pricingGuardrailsList, vm.message, "default");
+      } else {
+        const guardrails = vm.result.guardrails || {};
+        Object.keys(PRICING_GUARDRAIL_LABELS).forEach((key) => {
+          const isActive = !!guardrails[key];
+          const label = PRICING_GUARDRAIL_LABELS[key];
+          appendListRow(
+            els.pricingGuardrailsList,
+            `${label}: ${isActive ? "ATIVO" : "OK"}`,
+            isActive ? "critical" : "ok"
+          );
+        });
+      }
+
+      clearListNode(els.pricingExplainFactorsList);
+      if (vm.status === "error") {
+        appendListRow(els.pricingExplainFactorsList, "Sem fatores: erro no motor v1.", "critical");
+      } else if (vm.status === "empty") {
+        appendListRow(els.pricingExplainFactorsList, "Sem fatores: preencha horas do projeto.", "default");
+      } else {
+        const factors = Array.isArray(vm.result.explainFactors) ? vm.result.explainFactors.slice(0, 3) : [];
+        if (!factors.length) {
+          appendListRow(els.pricingExplainFactorsList, "Sem fatores adicionais no cenario atual.", "default");
+        } else {
+          factors.forEach((factor) => {
+            const label = PRICING_REASON_LABELS[factor.code] || factor.code;
+            appendListRow(
+              els.pricingExplainFactorsList,
+              `${label}: +${fmtMoney(factor.impactoValor, curr)} (${fmtNumber(factor.impactoPct, 2)}%)`,
+              "default"
+            );
+          });
+        }
+      }
     }
 
     function buildPricingContext(s) {
@@ -2506,7 +2660,8 @@ function tuneHeroSignalSpacing() {
         if (els.custoPessoalMensal) els.custoPessoalMensal.value = s.custoPessoalMensal;
 
         const curr = s.currency;
-
+        const pricingEngineV1Vm = buildPricingUiV1ViewModel(s);
+        renderPricingEngineV1Card(s, pricingEngineV1Vm);
         if (els.resultError) {
           if (pricingCtx.warning) {
             els.resultError.textContent = pricingCtx.warning;
