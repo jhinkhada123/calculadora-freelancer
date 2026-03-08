@@ -227,6 +227,12 @@ function tuneHeroSignalSpacing() {
       projectHours: $("projectHours"),
       scopeRisk: $("scopeRisk"),
       discount: $("discount"),
+      scopeClarity: $("scopeClarity"),
+      urgentDeadline: $("urgentDeadline"),
+      revisionLoad: $("revisionLoad"),
+      engagementModel: $("engagementModel"),
+      monthlyVolumeHours: $("monthlyVolumeHours"),
+      monthlyVolumeHoursWrap: $("monthlyVolumeHoursWrap"),
 
       hourlyRate: $("hourlyRate"),
       dailyRate: $("dailyRate"),
@@ -243,6 +249,9 @@ function tuneHeroSignalSpacing() {
       pricingEconomicsFaturamentoAlvo: $("pricingEconomicsFaturamentoAlvo"),
       pricingEconomicsHorasFaturaveisMes: $("pricingEconomicsHorasFaturaveisMes"),
       pricingEconomicsOcupacaoReal: $("pricingEconomicsOcupacaoReal"),
+      pricingProjectTotal: $("pricingProjectTotal"),
+      pricingProjectHours: $("pricingProjectHours"),
+      pricingProjectDiscountImpact: $("pricingProjectDiscountImpact"),
       pricingGuardrailsList: $("pricingGuardrailsList"),
       pricingExplainFactorsList: $("pricingExplainFactorsList"),
       stepCost: $("stepCost"),
@@ -866,6 +875,11 @@ function tuneHeroSignalSpacing() {
       if (els.projectHours) els.projectHours.value = s.projectHours ?? 30;
       if (els.scopeRisk) els.scopeRisk.value = s.scopeRisk ?? 15;
       if (els.discount) els.discount.value = s.discount ?? 0;
+      if (els.scopeClarity && !["clear", "partial", "unclear"].includes(((els.scopeClarity.value) || "").toLowerCase())) els.scopeClarity.value = "clear";
+      if (els.urgentDeadline) els.urgentDeadline.checked = false;
+      if (els.revisionLoad && !["low", "medium", "high"].includes(((els.revisionLoad.value) || "").toLowerCase())) els.revisionLoad.value = "low";
+      if (els.engagementModel && !["project", "retainer"].includes(((els.engagementModel.value) || "").toLowerCase())) els.engagementModel.value = "project";
+      if (els.monthlyVolumeHours && !(Number(els.monthlyVolumeHours.value) >= 0)) els.monthlyVolumeHours.value = 0;
       if (els.assetValue) els.assetValue.value = s.assetValue ?? 0;
       if (els.assetUsefulLifeMonths) els.assetUsefulLifeMonths.value = s.assetUsefulLifeMonths ?? 48;
       if (els.opportunityRateAnnual) els.opportunityRateAnnual.value = s.opportunityRateAnnual ?? 12;
@@ -922,7 +936,21 @@ function tuneHeroSignalSpacing() {
       retainerWithoutVolume: "Retainer sem volume minimo",
     });
 
+    function getProjectPricingUiInputs() {
+      const scopeClarityRaw = ((els.scopeClarity && els.scopeClarity.value) || "clear").toLowerCase();
+      const revisionLoadRaw = ((els.revisionLoad && els.revisionLoad.value) || "low").toLowerCase();
+      const engagementModelRaw = ((els.engagementModel && els.engagementModel.value) || "project").toLowerCase();
+      return {
+        scopeClarity: ["clear", "partial", "unclear"].includes(scopeClarityRaw) ? scopeClarityRaw : "clear",
+        urgentDeadline: !!(els.urgentDeadline && els.urgentDeadline.checked),
+        revisionLoad: ["low", "medium", "high"].includes(revisionLoadRaw) ? revisionLoadRaw : "low",
+        engagementModel: engagementModelRaw === "retainer" ? "retainer" : "project",
+        monthlyVolumeHours: clamp(toNum(els.monthlyVolumeHours && els.monthlyVolumeHours.value), 0, 100000),
+      };
+    }
+
     function buildPricingEngineV1InputFromState(s) {
+      const projectUi = getProjectPricingUiInputs();
       return {
         targetIncome: s.targetIncome,
         monthlyCosts: s.monthlyCosts,
@@ -936,6 +964,11 @@ function tuneHeroSignalSpacing() {
         hoursPerDay: s.hoursPerDay,
         daysPerWeek: s.daysPerWeek,
         projectHours: s.projectHours,
+        scopeClarity: projectUi.scopeClarity,
+        urgentDeadline: projectUi.urgentDeadline,
+        revisionLoad: projectUi.revisionLoad,
+        engagementModel: projectUi.engagementModel,
+        monthlyVolumeHours: projectUi.engagementModel === "retainer" ? projectUi.monthlyVolumeHours : 0,
       };
     }
 
@@ -979,6 +1012,11 @@ function tuneHeroSignalSpacing() {
       const curr = s.currency;
       const hasData = vm && vm.status === "ready" && vm.result;
       const placeholder = "-";
+      const projectUi = getProjectPricingUiInputs();
+
+      if (els.monthlyVolumeHoursWrap) {
+        els.monthlyVolumeHoursWrap.classList.toggle("hidden", projectUi.engagementModel !== "retainer");
+      }
 
       if (els.pricingEngineV1Status) {
         const statusText = vm.status === "ready"
@@ -990,10 +1028,21 @@ function tuneHeroSignalSpacing() {
       const pricingBand = hasData ? vm.result.pricingBand : null;
       const rates = hasData ? vm.result.rates : null;
       const economics = hasData ? vm.result.economics : null;
+      const projectTotal = pricingBand ? pricingBand.sustentavel : null;
+      const discountPct = clamp(toNum(s.discount), 0, 90);
+      const discountImpact = projectTotal != null && discountPct > 0
+        ? Number((projectTotal * (discountPct / 100)).toFixed(2))
+        : null;
 
       safeMoney(els.pricingBandPiso, pricingBand ? fmtMoney(pricingBand.piso, curr) : placeholder);
       safeMoney(els.pricingBandSustentavel, pricingBand ? fmtMoney(pricingBand.sustentavel, curr) : placeholder);
       safeMoney(els.pricingBandIdeal, pricingBand ? fmtMoney(pricingBand.ideal, curr) : placeholder);
+      safeMoney(els.pricingProjectTotal, projectTotal != null ? fmtMoney(projectTotal, curr) : placeholder);
+      safeText(els.pricingProjectHours, Number(s.projectHours) > 0 ? `${fmtNumber(s.projectHours, 0)} h` : placeholder);
+      safeText(
+        els.pricingProjectDiscountImpact,
+        discountImpact != null ? `-${fmtMoney(discountImpact, curr)} (${fmtNumber(discountPct, 1)}%)` : (hasData ? "Sem desconto" : placeholder)
+      );
       safeMoney(els.pricingRateHora, rates ? fmtMoney(rates.hora, curr) : placeholder);
       safeMoney(els.pricingRateDia, rates ? fmtMoney(rates.dia, curr) : placeholder);
       safeMoney(els.pricingEconomicsFaturamentoAlvo, economics ? fmtMoney(economics.faturamentoAlvo, curr) : placeholder);
@@ -2311,7 +2360,7 @@ function tuneHeroSignalSpacing() {
         root.classList.toggle("micro-interactions-on", enabled);
         if (els.wizardContainer) els.wizardContainer.classList.toggle("micro-interactions-on", enabled);
         if (!enabled) return;
-        const numInputs = ["targetIncome", "monthlyCosts", "taxRate", "profitMargin", "buffer", "utilization", "hoursPerDay", "daysPerWeek", "vacationWeeks", "projectHours", "scopeRisk", "discount"];
+        const numInputs = ["targetIncome", "monthlyCosts", "taxRate", "profitMargin", "buffer", "utilization", "hoursPerDay", "daysPerWeek", "vacationWeeks", "projectHours", "scopeRisk", "discount", "monthlyVolumeHours"];
         numInputs.forEach((id) => {
           const el = document.getElementById(id);
           if (!el) return;
@@ -3731,6 +3780,11 @@ function tuneHeroSignalSpacing() {
         els.projectHours,
         els.scopeRisk,
         els.discount,
+        els.scopeClarity,
+        els.urgentDeadline,
+        els.revisionLoad,
+        els.engagementModel,
+        els.monthlyVolumeHours,
         els.assetValue,
         els.assetUsefulLifeMonths,
         els.opportunityRateAnnual,

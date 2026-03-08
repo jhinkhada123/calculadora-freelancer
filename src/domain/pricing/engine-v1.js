@@ -1,4 +1,4 @@
-﻿import { isPricingReasonCodeV1 } from "./reason-codes-v1.js";
+import { isPricingReasonCodeV1 } from "./reason-codes-v1.js";
 
 export const PRICING_ENGINE_V1_CONTRACT_VERSION = 1;
 
@@ -240,6 +240,7 @@ export function computePricingEngineV1(input = {}, config = {}) {
   const dayRateRaw = sustainableHourlyRaw * state.hoursPerDay;
 
   const projectAfterDiscountRaw = sustainableProjectRaw * (1 - state.discountPct / 100);
+  const projectDiscountImpactRaw = Math.max(0, sustainableProjectRaw - projectAfterDiscountRaw);
 
   const highRiskByScope = state.scopeRiskPct >= cfg.highScopeRiskThreshold;
   const highRiskByBuffer = highRiskByScope && state.buffer < cfg.minBufferForHighRiskPct;
@@ -272,6 +273,14 @@ export function computePricingEngineV1(input = {}, config = {}) {
       faturamentoAlvo: roundMoney(faturamentoAlvoRaw),
       horasFaturaveisMes: roundMoney(billableHoursMonth),
       ocupacaoReal: roundRatio(occupancyReal),
+    },
+    // Project totals are domain-owned so UI can stay display-only.
+    project: {
+      total: roundMoney(sustainableProjectRaw),
+      estimatedHours: roundMoney(state.projectHours),
+      discountPct: roundMoney(state.discountPct),
+      discountImpact: roundMoney(projectDiscountImpactRaw),
+      totalAfterDiscount: roundMoney(projectAfterDiscountRaw),
     },
     guardrails,
     explainFactors: buildExplainFactors(projectFloorRaw, state, premiumComponents, cfg),
