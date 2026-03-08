@@ -54,3 +54,5 @@ After this policy is merged, protect `main` with:
   - `governance-domain`
 
 No direct push to protected branch.
+
+<!-- validation low-risk marker -->
