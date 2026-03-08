@@ -128,14 +128,41 @@ function buildPremiumComponents(state, cfg) {
   };
 }
 
+function sustainableFromPremium(projectFloorPrice, totalPremiumPct) {
+  return projectFloorPrice * (1 + Math.max(0, totalPremiumPct));
+}
+
+function computeExplainImpactDelta(projectFloorPrice, totalPremiumPct, factorPct) {
+  if (!factorPct || factorPct <= 0) {
+    return { impactoValor: 0, impactoPct: 0 };
+  }
+
+  const sustainableFinalRaw = sustainableFromPremium(projectFloorPrice, totalPremiumPct);
+  const counterfactualRaw = sustainableFromPremium(projectFloorPrice, totalPremiumPct - factorPct);
+  const deltaRaw = Math.max(0, sustainableFinalRaw - counterfactualRaw);
+  const impactoValor = roundMoney(deltaRaw);
+  const impactoPct = sustainableFinalRaw > 0
+    ? roundMoney((impactoValor / sustainableFinalRaw) * 100)
+    : 0;
+
+  return { impactoValor, impactoPct };
+}
+
 function buildExplainFactors(projectFloorPrice, state, premiumComponents, cfg) {
   const factors = [];
 
   const register = (code, pct, evidencia, formulaRef) => {
     if (!pct || pct <= 0) return;
     if (!isPricingReasonCodeV1(code)) return;
-    const impactoValor = roundMoney(projectFloorPrice * pct);
-    const impactoPct = roundMoney(pct * 100);
+
+    const { impactoValor, impactoPct } = computeExplainImpactDelta(
+      projectFloorPrice,
+      premiumComponents.totalPremiumPct,
+      pct
+    );
+
+    if (impactoValor <= 0) return;
+
     factors.push({
       code,
       impactoValor,
@@ -250,5 +277,3 @@ export function computePricingEngineV1(input = {}, config = {}) {
     explainFactors: buildExplainFactors(projectFloorRaw, state, premiumComponents, cfg),
   };
 }
-
-
