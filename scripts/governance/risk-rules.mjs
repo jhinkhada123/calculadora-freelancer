@@ -7,6 +7,7 @@ export const HIGH_RISK_RULES = [
   { id: "engine-inacao", pattern: /^strategist-mode\.js$/ },
   { id: "engine-batna", pattern: /^negotiation-v21\.js$/ },
   { id: "engine-tiers", pattern: /^proposal-tiers\.js$/ },
+  { id: "engine-domain-pricing", pattern: /^src\/domain\/pricing\/.*\.js$/ },
   { id: "schema-sanitize", pattern: /^utils\/sanitize-state\.js$/ },
   { id: "schema-storage", pattern: /^utils\/storage\.js$/ },
 ];
@@ -74,3 +75,4 @@ export function formatRiskReasons(classification) {
   );
   return lines.join("\n");
 }
+
