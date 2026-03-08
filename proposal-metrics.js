@@ -272,3 +272,5 @@ export function buildProposalMetrics(state, outputs, flags = {}) {
     debug: fl.debug_enabled ? outputs?.debug : undefined,
   };
 }
+
+// governance-validation: high-risk fail marker
