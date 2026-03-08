@@ -36,7 +36,23 @@ describe("app wiring for uiMode tabs", () => {
     const content = readFileSync(appPath, "utf-8");
     expect(content).toMatch(/let currentUiMode = "essencial"/);
     expect(content).toMatch(/uiMode:\s*normalizeUiMode\(currentUiMode\)/);
-    expect(content).toMatch(/persistState\(\{\s*\.\.\.s,\s*uiMode:\s*currentUiMode\s*\}\)/);
+    expect(content).toMatch(/persistState\(\{\s*\.\.\.(?:s|getStateFromInputs\(\)),\s*uiMode:\s*currentUiMode\s*\}\)/);
+  });
+
+  test("setup and update use canonical ui mode sync", () => {
+    const content = readFileSync(appPath, "utf-8");
+    expect(content).toMatch(/function getCanonicalUiMode\(mode\)/);
+    expect(content).toMatch(/currentUiMode = getCanonicalUiMode\(rawMode\)/);
+    expect(content).toMatch(/const canonicalUiMode = getCanonicalUiMode\(s\.uiMode\)/);
+    expect(content).toMatch(/activateUiModeTab = activate/);
+    expect(content).toMatch(/resolveUiModeTabIndex = resolveIndexFromMode/);
+  });
+
+  test("default state and query hydration preserve uiMode", () => {
+    const content = readFileSync(appPath, "utf-8");
+    expect(content).toMatch(/uiMode:\s*"essencial"/);
+    expect(content).toMatch(/"uiMode"/);
+    expect(content).toMatch(/if \(p\.has\("uiMode"\)\) s\.uiMode = normalizeUiMode\(/);
   });
 
   test("setupTabs updates mode label and context hint", () => {

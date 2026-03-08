@@ -187,6 +187,8 @@ function tuneHeroSignalSpacing() {
     const FEATURE_FLAGS = resolveFeatureFlags();
     ensureMotionFoundationStyles();
     let currentUiMode = "essencial";
+    let activateUiModeTab = null;
+    let resolveUiModeTabIndex = null;
     let logoDataUrl = null;
     let calcCardStash = null;
     let lastAuditSnapshotStr = "";
@@ -818,6 +820,12 @@ function tuneHeroSignalSpacing() {
       };
     }
 
+    function getCanonicalUiMode(mode) {
+      const normalized = normalizeUiMode(mode);
+      if (!FEATURE_FLAGS.strategist_mode_enabled && normalized === "estrategista") return "essencial";
+      return normalized;
+    }
+
     function setInputsFromState(s) {
       if (els.currency) els.currency.value = sanitizeCurrency(s.currency ?? "BRL");
       if (els.targetIncome) els.targetIncome.value = s.targetIncome ?? 9000;
@@ -865,8 +873,7 @@ function tuneHeroSignalSpacing() {
       if (els.reservaAtual) els.reservaAtual.value = s.reservaAtual ?? 0;
       if (els.custoPessoalMensal) els.custoPessoalMensal.value = s.custoPessoalMensal ?? 0;
       const rawMode = s.uiMode != null ? s.uiMode : "essencial";
-      const normalized = normalizeUiMode(rawMode);
-      currentUiMode = (!FEATURE_FLAGS.strategist_mode_enabled && normalized === "estrategista") ? "essencial" : normalized;
+      currentUiMode = getCanonicalUiMode(rawMode);
     }
 
     function safeText(node, text) {
@@ -962,8 +969,17 @@ function tuneHeroSignalSpacing() {
     }
 
     function updateUI() {
-      const s = getStateFromInputs();
-      const pricingCtx = buildPricingContext(s);
+        let s = getStateFromInputs();
+        const canonicalUiMode = getCanonicalUiMode(s.uiMode);
+        if (canonicalUiMode !== currentUiMode) {
+          currentUiMode = canonicalUiMode;
+          s = { ...s, uiMode: currentUiMode };
+        }
+        if (typeof resolveUiModeTabIndex === "function" && typeof activateUiModeTab === "function") {
+          const safeIdx = resolveUiModeTabIndex(currentUiMode);
+          activateUiModeTab(safeIdx, { persist: false });
+        }
+        const pricingCtx = buildPricingContext(s);
       const r = pricingCtx.effective;
       const negotiationCtx = buildNegotiationContext(s, r);
 
@@ -2455,7 +2471,16 @@ function tuneHeroSignalSpacing() {
       }
 
       function updateUI() {
-        const s = getStateFromInputs();
+        let s = getStateFromInputs();
+        const canonicalUiMode = getCanonicalUiMode(s.uiMode);
+        if (canonicalUiMode !== currentUiMode) {
+          currentUiMode = canonicalUiMode;
+          s = { ...s, uiMode: currentUiMode };
+        }
+        if (typeof resolveUiModeTabIndex === "function" && typeof activateUiModeTab === "function") {
+          const safeIdx = resolveUiModeTabIndex(currentUiMode);
+          activateUiModeTab(safeIdx, { persist: false });
+        }
         const pricingCtx = buildPricingContext(s);
         const r = pricingCtx.effective;
         const negotiationCtx = buildNegotiationContext(s, r);
@@ -2837,6 +2862,7 @@ function tuneHeroSignalSpacing() {
 
     const QUERY_PARAM_KEYS = [
       "currency",
+      "uiMode",
       "targetIncome",
       "monthlyCosts",
       "taxRate",
@@ -2905,6 +2931,7 @@ function tuneHeroSignalSpacing() {
       const baseState = { ...defaultState(), ...(loadState() || {}) };
       const s = { ...baseState };
       if (p.has("currency")) s.currency = sanitizeCurrency(p.get("currency") || "BRL");
+      if (p.has("uiMode")) s.uiMode = normalizeUiMode(p.get("uiMode") || "essencial");
       if (p.has("targetIncome")) s.targetIncome = toNum(p.get("targetIncome"));
       if (p.has("monthlyCosts")) s.monthlyCosts = toNum(p.get("monthlyCosts"));
       if (p.has("taxRate")) s.taxRate = toNum(p.get("taxRate"));
@@ -2951,6 +2978,7 @@ function tuneHeroSignalSpacing() {
     function defaultState() {
       return {
         currency: "BRL",
+        uiMode: "essencial",
         targetIncome: 9000,
         monthlyCosts: 1200,
         taxRate: 12,
@@ -4060,7 +4088,7 @@ function tuneHeroSignalSpacing() {
       const strategistTab = document.getElementById("tab-strategist");
       const strategistEnabled = !!FEATURE_FLAGS.strategist_mode_enabled;
       if (strategistTab) strategistTab.classList.toggle("hidden", !strategistEnabled);
-      if (!strategistEnabled && currentUiMode === "estrategista") currentUiMode = "essencial";
+      currentUiMode = getCanonicalUiMode(currentUiMode);
 
       const tabs = TAB_IDS.map((id) => document.getElementById(id)).filter(Boolean);
       if (!tabs.length) return;
@@ -4074,7 +4102,7 @@ function tuneHeroSignalSpacing() {
       };
 
       const resolveIndexFromMode = (mode) => {
-        const desired = UI_MODE_VALUES.indexOf(normalizeUiMode(mode));
+        const desired = UI_MODE_VALUES.indexOf(getCanonicalUiMode(mode));
         const visible = getVisibleIndexes();
         if (desired >= 0 && visible.includes(desired)) return desired;
         return visible[0];
@@ -4120,6 +4148,9 @@ function tuneHeroSignalSpacing() {
         if (opts.focus) tabs[safeIdx].focus();
         if (opts.persist !== false) persistState({ ...getStateFromInputs(), uiMode: currentUiMode });
       };
+
+      activateUiModeTab = activate;
+      resolveUiModeTabIndex = resolveIndexFromMode;
 
       tabs.forEach((tab, i) => {
         tab.addEventListener("click", () => activate(i, { persist: true }));
