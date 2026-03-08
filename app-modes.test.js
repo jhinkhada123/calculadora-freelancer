@@ -36,7 +36,7 @@ describe("app wiring for uiMode tabs", () => {
     const content = readFileSync(appPath, "utf-8");
     expect(content).toMatch(/let currentUiMode = "essencial"/);
     expect(content).toMatch(/uiMode:\s*normalizeUiMode\(currentUiMode\)/);
-    expect(content).toMatch(/persistState\(\{\s*\.\.\.s,\s*uiMode:\s*currentUiMode\s*\}\)/);
+    expect(content).toMatch(/persistState\(\{\s*\.\.\.(?:s|getStateFromInputs\(\)),\s*uiMode:\s*currentUiMode\s*\}\)/);
   });
 
   test("setupTabs updates mode label and context hint", () => {
@@ -64,3 +64,4 @@ describe("index markup for mode UX", () => {
     expect(html).toMatch(/Usar precificacao por valor \(VCE\/ROIx\/CDO\)/);
   });
 });
+
