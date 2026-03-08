@@ -1,4 +1,4 @@
-﻿import { computePricingEngineV1 } from "../../src/domain/pricing/engine-v1.js";
+import { computePricingEngineV1 } from "../../src/domain/pricing/engine-v1.js";
 
 const BASE_INPUT = {
   targetIncome: 9000,
@@ -50,6 +50,15 @@ describe("pricing engine v1 semantics", () => {
 
     expect(retainerBlocked.guardrails.retainerWithoutVolume).toBe(true);
     expect(retainerCodes.includes("RETAINER_WITHOUT_VOLUME")).toBe(false);
+  });
+
+
+  test("project totals and discount impact remain domain-owned", () => {
+    const result = computePricingEngineV1(BASE_INPUT);
+
+    expect(result.project.total).toBe(result.pricingBand.sustentavel);
+    const discountImpactDelta = Math.abs(result.project.discountImpact - Number((result.project.total - result.project.totalAfterDiscount).toFixed(2)));
+    expect(discountImpactDelta).toBeLessThanOrEqual(0.02);
   });
 
   test("explain impacts match counterfactual deltas", () => {

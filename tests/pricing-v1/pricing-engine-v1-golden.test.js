@@ -1,4 +1,4 @@
-﻿import { computePricingEngineV1 } from "../../src/domain/pricing/engine-v1.js";
+import { computePricingEngineV1 } from "../../src/domain/pricing/engine-v1.js";
 
 const GOLDEN_CASES = [
   {
@@ -26,6 +26,7 @@ const GOLDEN_CASES = [
       pricingBand: { piso: 8095.24, sustentavel: 8931.75, ideal: 10271.51 },
       rates: { hora: 223.29, dia: 1339.76 },
       economics: { faturamentoAlvo: 17000, horasFaturaveisMes: 84, ocupacaoReal: 0.7 },
+      project: { total: 8931.75, estimatedHours: 40, discountPct: 10, discountImpact: 893.17, totalAfterDiscount: 8038.57 },
       guardrails: { floorBreached: true, highRisk: false, unclearScope: false, retainerWithoutVolume: false },
       explainCodes: ["HIGH_SCOPE_RISK", "HIGH_REVISION_LOAD", "LOW_OCCUPANCY"],
     },
@@ -55,6 +56,7 @@ const GOLDEN_CASES = [
       pricingBand: { piso: 9941.52, sustentavel: 16423.39, ideal: 18886.9 },
       rates: { hora: 410.58, dia: 2463.51 },
       economics: { faturamentoAlvo: 13421.05, horasFaturaveisMes: 54, ocupacaoReal: 0.45 },
+      project: { total: 16423.39, estimatedHours: 40, discountPct: 5, discountImpact: 821.17, totalAfterDiscount: 15602.22 },
       guardrails: { floorBreached: false, highRisk: true, unclearScope: true, retainerWithoutVolume: false },
       explainCodes: ["HIGH_SCOPE_RISK", "URGENT_DEADLINE", "UNCLEAR_SCOPE", "LOW_OCCUPANCY", "HIGH_REVISION_LOAD", "LOW_MARGIN"],
     },
@@ -84,6 +86,7 @@ const GOLDEN_CASES = [
       pricingBand: { piso: 8095.24, sustentavel: 8931.75, ideal: 10271.51 },
       rates: { hora: 223.29, dia: 1339.76 },
       economics: { faturamentoAlvo: 17000, horasFaturaveisMes: 84, ocupacaoReal: 0.7 },
+      project: { total: 8931.75, estimatedHours: 40, discountPct: 10, discountImpact: 893.17, totalAfterDiscount: 8038.57 },
       guardrails: { floorBreached: true, highRisk: false, unclearScope: false, retainerWithoutVolume: true },
       explainCodes: ["HIGH_SCOPE_RISK", "HIGH_REVISION_LOAD", "LOW_OCCUPANCY"],
     },
@@ -97,6 +100,7 @@ describe("pricing engine v1 golden dataset", () => {
     expect(result.pricingBand).toEqual(expected.pricingBand);
     expect(result.rates).toEqual(expected.rates);
     expect(result.economics).toEqual(expected.economics);
+    expect(result.project).toEqual(expected.project);
     expect(result.guardrails).toEqual(expected.guardrails);
     expect(result.explainFactors.map((f) => f.code)).toEqual(expected.explainCodes);
   });

@@ -1,4 +1,4 @@
-﻿import { computePricingEngineV1, PRICING_ENGINE_V1_CONTRACT_VERSION } from "../../src/domain/pricing/engine-v1.js";
+import { computePricingEngineV1, PRICING_ENGINE_V1_CONTRACT_VERSION } from "../../src/domain/pricing/engine-v1.js";
 
 const BASE_INPUT = {
   targetIncome: 9000,
@@ -36,6 +36,16 @@ describe("pricing engine v1 invariants", () => {
     expect(result.economics.ocupacaoReal).toBeLessThanOrEqual(1);
   });
 
+  test("project output is engine-owned and internally consistent", () => {
+    const result = computePricingEngineV1(BASE_INPUT);
+
+    expect(result.project.total).toBe(result.pricingBand.sustentavel);
+    expect(result.project.estimatedHours).toBe(BASE_INPUT.projectHours);
+    expect(result.project.discountPct).toBe(BASE_INPUT.discount);
+    const discountDrift = Math.abs(result.project.totalAfterDiscount - (result.project.total - result.project.discountImpact));
+    expect(discountDrift).toBeLessThanOrEqual(0.02);
+  });
+
   test("hard guardrails flip to true in blocking scenarios", () => {
     const floorBreach = computePricingEngineV1({ ...BASE_INPUT, discount: 80 });
     expect(floorBreach.guardrails.floorBreached).toBe(true);
@@ -57,4 +67,3 @@ describe("pricing engine v1 invariants", () => {
     expect(retainerWithoutVolume.guardrails.retainerWithoutVolume).toBe(true);
   });
 });
-
