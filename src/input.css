@@ -327,6 +327,21 @@ body.wizard-bar-visible main { padding-bottom: 5.5rem; }
   line-height: 1.15;
   padding: 0.26rem 0.6rem;
 }
+.pricing-impact-preview.preview-up {
+  border-color: rgba(52,211,153,.45);
+  background: rgba(16,185,129,.14);
+  color: rgba(167,243,208,.95);
+}
+.pricing-impact-preview.preview-down {
+  border-color: rgba(251,191,36,.5);
+  background: rgba(245,158,11,.14);
+  color: rgba(254,240,138,.95);
+}
+.pricing-impact-preview.preview-neutral {
+  border-color: rgba(99,102,241,.45);
+  background: rgba(79,70,229,.18);
+  color: rgba(224,231,255,.95);
+}
 .command-center-control-deck {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

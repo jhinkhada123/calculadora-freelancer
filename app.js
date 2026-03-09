@@ -226,9 +226,25 @@ function tuneHeroSignalSpacing() {
       "floorPrice",
       "riskIndicator",
     ]);
+    const IMPACT_PREVIEW_INPUT_KEYS_V1 = new Set([
+      "discount",
+      "scopeClarity",
+      "revisionLoad",
+      "urgentDeadline",
+      "scopeRisk",
+    ]);
+    const IMPACT_PREVIEW_METRIC_LABELS_V1 = Object.freeze({
+      heroPrice: "taxa/hora",
+      sustainablePrice: "sustentavel",
+      floorPrice: "piso",
+      riskIndicator: "risco",
+    });
     const traceabilityUiState = {
       activeMetric: null,
       activeInputKeys: [],
+    };
+    const impactPreviewUiState = {
+      activeInputKey: null,
     };
     let traceabilityStickyMode = false;
     let traceabilityStrengthByInputKey = new Map();
@@ -266,6 +282,7 @@ function tuneHeroSignalSpacing() {
       pricingHudHeroMetric: $("pricingHudHeroMetric"),
       pricingHudHeroValue: $("pricingHudHeroValue"),
       pricingHudHeroTag: $("pricingHudHeroTag"),
+      pricingImpactPreview: $("pricingImpactPreview"),
       pricingHudRiskMetric: $("pricingHudRiskMetric"),
       pricingHudRiskDot: $("pricingHudRiskDot"),
       pricingHudRiskLabel: $("pricingHudRiskLabel"),
@@ -1148,6 +1165,78 @@ function tuneHeroSignalSpacing() {
       const nonChip = all.find((node) => !node.classList.contains("command-center-control-chip"));
       return nonChip || all[0] || null;
     }
+
+
+    function getImpactPreviewDelta(vm, inputKey) {
+      if (!vm || vm.status !== "ready" || !vm.result || !IMPACT_PREVIEW_INPUT_KEYS_V1.has(inputKey)) return null;
+      const rawPreview = vm.result.impactPreview && vm.result.impactPreview[inputKey];
+      if (!rawPreview || rawPreview.inputKey !== inputKey) return null;
+      return rawPreview;
+    }
+
+    function formatImpactPreviewText(delta, curr) {
+      const metricLabel = IMPACT_PREVIEW_METRIC_LABELS_V1[delta.metric] || "preco";
+      const direction = delta.direction || "neutral";
+      const deltaValueAbs = Math.abs(toNum(delta.deltaValue));
+      const deltaPctAbs = Math.abs(toNum(delta.deltaPct));
+      if (direction === "neutral" || (deltaValueAbs <= 0 && deltaPctAbs <= 0)) {
+        return `Previa no ${metricLabel}: sem impacto`;
+      }
+      if (delta.metric === "riskIndicator") {
+        const arrow = direction === "up" ? "+" : "-";
+        return `Previa no ${metricLabel}: ${arrow} ${fmtNumber(deltaPctAbs, 1)}%`;
+      }
+      const arrow = direction === "up" ? "+" : "-";
+      return `Previa no ${metricLabel}: ${arrow} ${fmtMoney(deltaValueAbs, curr)} (${fmtNumber(deltaPctAbs, 1)}%)`;
+    }
+
+    function clearImpactPreviewState() {
+      impactPreviewUiState.activeInputKey = null;
+      if (!els.pricingImpactPreview) return;
+      els.pricingImpactPreview.classList.add("hidden");
+      els.pricingImpactPreview.classList.remove("preview-up", "preview-down", "preview-neutral");
+      els.pricingImpactPreview.removeAttribute("data-preview-input-key");
+      safeText(els.pricingImpactPreview, "");
+    }
+
+    function renderImpactPreview(vm, s) {
+      if (!els.pricingImpactPreview) return;
+      const inputKey = impactPreviewUiState.activeInputKey;
+      if (!inputKey) {
+        clearImpactPreviewState();
+        return;
+      }
+      const delta = getImpactPreviewDelta(vm, inputKey);
+      if (!delta) {
+        clearImpactPreviewState();
+        return;
+      }
+
+      safeText(els.pricingImpactPreview, formatImpactPreviewText(delta, s.currency));
+      els.pricingImpactPreview.classList.remove("hidden", "preview-up", "preview-down", "preview-neutral");
+      els.pricingImpactPreview.classList.add(
+        delta.direction === "up" ? "preview-up" : (delta.direction === "down" ? "preview-down" : "preview-neutral")
+      );
+      els.pricingImpactPreview.setAttribute("data-preview-input-key", inputKey);
+    }
+
+    function setImpactPreviewInput(inputKey, vm, s) {
+      if (!IMPACT_PREVIEW_INPUT_KEYS_V1.has(inputKey)) {
+        clearImpactPreviewState();
+        return;
+      }
+      impactPreviewUiState.activeInputKey = inputKey;
+      renderImpactPreview(vm || latestPricingEngineV1Vm, s || getStateFromInputs());
+    }
+
+    function syncImpactPreviewState(vm, s) {
+      if (!impactPreviewUiState.activeInputKey) {
+        clearImpactPreviewState();
+        return;
+      }
+      renderImpactPreview(vm, s);
+    }
+
     function renderPricingEngineV1Card(s, vm) {
       if (!els.pricingEngineV1Card) return;
 
@@ -2865,6 +2954,7 @@ function tuneHeroSignalSpacing() {
         latestPricingEngineV1Vm = pricingEngineV1Vm;
         renderPricingEngineV1Card(s, pricingEngineV1Vm);
         syncTraceabilityState(pricingEngineV1Vm);
+        syncImpactPreviewState(pricingEngineV1Vm, s);
         if (els.resultError) {
           if (pricingCtx.warning) {
             els.resultError.textContent = pricingCtx.warning;
@@ -4042,6 +4132,40 @@ function tuneHeroSignalSpacing() {
         });
       }
 
+
+
+      const impactInputNodes = Array.from(document.querySelectorAll("[data-input-key]"));
+      impactInputNodes.forEach((node) => {
+        if (node.classList && node.classList.contains("command-center-control-chip")) return;
+        const inputKey = node.getAttribute("data-input-key") || "";
+        if (!IMPACT_PREVIEW_INPUT_KEYS_V1.has(inputKey)) return;
+
+        node.addEventListener("focusin", () => {
+          setImpactPreviewInput(inputKey, latestPricingEngineV1Vm, getStateFromInputs());
+        });
+
+        node.addEventListener("focusout", () => {
+          window.setTimeout(() => {
+            const active = document.activeElement;
+            if (!active || typeof active.closest !== "function") {
+              clearImpactPreviewState();
+              return;
+            }
+            const activeNode = active.closest("[data-input-key]");
+            if (!activeNode || activeNode.classList.contains("command-center-control-chip")) {
+              clearImpactPreviewState();
+              return;
+            }
+            const nextInputKey = activeNode.getAttribute("data-input-key") || "";
+            if (IMPACT_PREVIEW_INPUT_KEYS_V1.has(nextInputKey)) {
+              setImpactPreviewInput(nextInputKey, latestPricingEngineV1Vm, getStateFromInputs());
+              return;
+            }
+            clearImpactPreviewState();
+          }, 0);
+        });
+      });
+
       if (els.btnCopyHourly) els.btnCopyHourly.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
           showToast("Para usar esta função, aceite os termos no início da página.");
@@ -4641,6 +4765,8 @@ function tuneHeroSignalSpacing() {
       showBootError(bootErr, "Erro na inicialização");
     }
   })().catch((e) => showBootError(e, "Bootstrap"));
+
+
 
 
 
