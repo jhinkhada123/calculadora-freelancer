@@ -1,4 +1,4 @@
-import { escapeHtml } from "./utils/escape.js";
+﻿import { escapeHtml } from "./utils/escape.js";
 import { sanitizeState } from "./utils/sanitize-state.js";
 import { normalizeTextForPdf, PDF_FIELD_MAX } from "./utils/normalize-text-for-pdf.js";
 import { readLocal, writeLocal, removeLocal, readSession, writeSession, STORAGE_KEYS } from "./utils/storage.js";
@@ -220,7 +220,19 @@ function tuneHeroSignalSpacing() {
     let riskTelemetryState = null;
     let proposalJustificationPinned = false;
     const counterAnimationState = new WeakMap();
-    let riskThermometerRefs = null;
+    const TRACEABILITY_METRICS_V1 = new Set([
+      "heroPrice",
+      "sustainablePrice",
+      "floorPrice",
+      "riskIndicator",
+    ]);
+    const traceabilityUiState = {
+      activeMetric: null,
+      activeInputKeys: [],
+    };
+    let traceabilityStickyMode = false;
+    let traceabilityStrengthByInputKey = new Map();
+    let latestPricingEngineV1Vm = null;
 
     const $ = (id) => document.getElementById(id);
 
@@ -1049,7 +1061,93 @@ function tuneHeroSignalSpacing() {
       li.textContent = text;
       node.appendChild(li);
     }
+    function isCoarsePointerDevice() {
+      return !!(window.matchMedia && window.matchMedia("(hover: none), (pointer: coarse)").matches);
+    }
 
+    function getTraceDriversForMetric(vm, metric) {
+      if (!vm || vm.status !== "ready" || !vm.result || !TRACEABILITY_METRICS_V1.has(metric)) return [];
+      const rawDrivers = vm.result.traceability && vm.result.traceability[metric];
+      if (!Array.isArray(rawDrivers) || rawDrivers.length === 0) return [];
+      return rawDrivers
+        .filter((driver) => driver && typeof driver.inputKey === "string")
+        .slice(0, 3);
+    }
+
+    function applyTraceabilityVisualState() {
+      const appContainer = document.getElementById("appContainer");
+      const activeMetric = traceabilityUiState.activeMetric;
+      const activeInputKeys = new Set(traceabilityUiState.activeInputKeys || []);
+      const traceActive = !!activeMetric && activeInputKeys.size > 0;
+
+      if (appContainer) appContainer.classList.toggle("traceability-mode-active", traceActive);
+
+      const metricNodes = Array.from(document.querySelectorAll("[data-trace-metric]"));
+      metricNodes.forEach((node) => {
+        const metric = node.getAttribute("data-trace-metric") || "";
+        const isActiveMetric = traceActive && metric === activeMetric;
+        node.classList.toggle("traceability-metric-active", isActiveMetric);
+        node.classList.toggle("traceability-metric-dim", traceActive && !isActiveMetric);
+      });
+
+      const inputNodes = Array.from(document.querySelectorAll("[data-input-key]"));
+      inputNodes.forEach((node) => {
+        const key = node.getAttribute("data-input-key") || "";
+        const isActiveInput = traceActive && activeInputKeys.has(key);
+        node.classList.toggle("traceability-input-active", isActiveInput);
+        node.classList.toggle("traceability-input-dim", traceActive && !isActiveInput);
+        const strength = isActiveInput ? (traceabilityStrengthByInputKey.get(key) || "") : "";
+        if (strength) node.setAttribute("data-trace-strength", strength);
+        else node.removeAttribute("data-trace-strength");
+      });
+    }
+
+    function clearTraceabilityState() {
+      traceabilityUiState.activeMetric = null;
+      traceabilityUiState.activeInputKeys = [];
+      traceabilityStickyMode = false;
+      traceabilityStrengthByInputKey = new Map();
+      applyTraceabilityVisualState();
+    }
+
+    function activateTraceabilityMetric(metric, options = {}) {
+      const vm = options.vm || latestPricingEngineV1Vm;
+      if (!TRACEABILITY_METRICS_V1.has(metric)) return;
+
+      const drivers = getTraceDriversForMetric(vm, metric);
+      if (!drivers.length) {
+        clearTraceabilityState();
+        return;
+      }
+
+      traceabilityUiState.activeMetric = metric;
+      traceabilityUiState.activeInputKeys = drivers.map((driver) => driver.inputKey).slice(0, 3);
+      traceabilityStrengthByInputKey = new Map(
+        drivers.slice(0, 3).map((driver) => [driver.inputKey, driver.strength || "low"])
+      );
+
+      if (typeof options.sticky === "boolean") {
+        traceabilityStickyMode = options.sticky;
+      }
+
+      applyTraceabilityVisualState();
+    }
+
+    function syncTraceabilityState(vm) {
+      if (!traceabilityUiState.activeMetric) {
+        applyTraceabilityVisualState();
+        return;
+      }
+      activateTraceabilityMetric(traceabilityUiState.activeMetric, { vm, sticky: traceabilityStickyMode });
+    }
+
+    function findPrimaryInputByKey(inputKey) {
+      if (!inputKey) return null;
+      const selector = `[data-input-key="${inputKey}"]`;
+      const all = Array.from(document.querySelectorAll(selector));
+      const nonChip = all.find((node) => !node.classList.contains("command-center-control-chip"));
+      return nonChip || all[0] || null;
+    }
     function renderPricingEngineV1Card(s, vm) {
       if (!els.pricingEngineV1Card) return;
 
@@ -2764,7 +2862,9 @@ function tuneHeroSignalSpacing() {
 
         const curr = s.currency;
         const pricingEngineV1Vm = buildPricingUiV1ViewModel(s);
+        latestPricingEngineV1Vm = pricingEngineV1Vm;
         renderPricingEngineV1Card(s, pricingEngineV1Vm);
+        syncTraceabilityState(pricingEngineV1Vm);
         if (els.resultError) {
           if (pricingCtx.warning) {
             els.resultError.textContent = pricingCtx.warning;
@@ -3880,6 +3980,68 @@ function tuneHeroSignalSpacing() {
         if (el) el.addEventListener("change", updateUI);
       }
 
+      const traceMetricNodes = Array.from(document.querySelectorAll("[data-trace-metric]"));
+      traceMetricNodes.forEach((node) => {
+        const metric = node.getAttribute("data-trace-metric") || "";
+        if (!TRACEABILITY_METRICS_V1.has(metric)) return;
+
+        node.addEventListener("mouseenter", () => {
+          if (isCoarsePointerDevice()) return;
+          activateTraceabilityMetric(metric, { sticky: false });
+        });
+
+        node.addEventListener("mouseleave", () => {
+          if (isCoarsePointerDevice()) return;
+          if (!traceabilityStickyMode) clearTraceabilityState();
+        });
+
+        node.addEventListener("focusin", () => {
+          activateTraceabilityMetric(metric, { sticky: false });
+        });
+
+        node.addEventListener("focusout", (event) => {
+          if (isCoarsePointerDevice()) return;
+          const nextTarget = event.relatedTarget;
+          if (nextTarget && nextTarget.closest && nextTarget.closest("[data-trace-metric]")) return;
+          if (!traceabilityStickyMode) clearTraceabilityState();
+        });
+
+        node.addEventListener("click", (event) => {
+          if (!isCoarsePointerDevice()) return;
+          event.preventDefault();
+          event.stopPropagation();
+          if (traceabilityStickyMode && traceabilityUiState.activeMetric === metric) {
+            clearTraceabilityState();
+            return;
+          }
+          activateTraceabilityMetric(metric, { sticky: true });
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!traceabilityStickyMode) return;
+        const target = event.target;
+        if (target && target.closest && target.closest("[data-trace-metric]")) return;
+        clearTraceabilityState();
+      });
+
+      const commandCenterDeck = document.getElementById("commandCenterControlDeck");
+      if (commandCenterDeck) {
+        commandCenterDeck.addEventListener("click", (event) => {
+          const chip = event.target && event.target.closest
+            ? event.target.closest(".command-center-control-chip[data-input-key]")
+            : null;
+          if (!chip) return;
+          const inputKey = chip.getAttribute("data-input-key") || "";
+          const input = findPrimaryInputByKey(inputKey);
+          if (!input || typeof input.focus !== "function") return;
+          input.focus({ preventScroll: false });
+          if (typeof input.scrollIntoView === "function") {
+            input.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        });
+      }
+
       if (els.btnCopyHourly) els.btnCopyHourly.addEventListener("click", () => {
         if (!hasAcceptedTerms()) {
           showToast("Para usar esta função, aceite os termos no início da página.");
@@ -4479,3 +4641,6 @@ function tuneHeroSignalSpacing() {
       showBootError(bootErr, "Erro na inicialização");
     }
   })().catch((e) => showBootError(e, "Bootstrap"));
+
+
+

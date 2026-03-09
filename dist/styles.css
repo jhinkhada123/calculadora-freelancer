@@ -632,6 +632,10 @@ video {
   position: relative;
 }
 
+.sticky {
+  position: sticky;
+}
+
 .inset-0 {
   inset: 0px;
 }
@@ -2372,6 +2376,42 @@ body.wizard-bar-visible main {
   opacity: 0.9;
 }
 
+#appContainer.traceability-mode-active [data-trace-metric] {
+  transition: opacity 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+#appContainer.traceability-mode-active [data-trace-metric].traceability-metric-dim {
+  opacity: 0.56;
+}
+
+#appContainer.traceability-mode-active [data-trace-metric].traceability-metric-active {
+  opacity: 1;
+  border-color: rgba(99, 102, 241, 0.52);
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.32);
+}
+
+#appContainer.traceability-mode-active [data-input-key] {
+  transition: opacity 140ms ease, filter 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+#appContainer.traceability-mode-active [data-input-key].traceability-input-dim {
+  opacity: 0.32;
+  filter: saturate(0.72);
+}
+
+#appContainer.traceability-mode-active [data-input-key].traceability-input-active {
+  opacity: 1;
+  filter: saturate(1);
+  border-color: rgba(16, 185, 129, 0.58) !important;
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.26);
+}
+
+.command-center-control-chip.traceability-input-active .trace-chip-tag {
+  border-color: rgba(99, 102, 241, 0.58);
+  background: rgba(79, 70, 229, 0.22);
+  color: rgba(224, 231, 255, 0.95);
+}
+
 @media (max-width: 640px) {
   .command-center-control-deck {
     grid-template-columns: 1fr;
@@ -2723,3 +2763,4 @@ body.input-focused.mobile-a11y-bar-visible main {
     align-items: flex-start;
   }
 }
+
