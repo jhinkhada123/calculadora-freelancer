@@ -144,28 +144,74 @@
     <header class="relative z-40">
       <div class="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <div class="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-start">
-          <div class="space-y-3 lg:col-span-7">
+                    <div class="space-y-4 lg:col-span-7">
             <p
               class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200"
             >
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-              <span id="brandTaglineText">Precifica&ccedil;&atilde;o profissional em minutos</span>
+              <span id="brandTaglineText">Strategic Pricing Command Center</span>
             </p>
             <h1 id="brandHeroHeadlineText" class="font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              Precifica&ccedil;&atilde;o estrat&eacute;gica para quem entrega valor, n&atilde;o horas.
+              Pre&ccedil;o estrat&eacute;gico em tempo real, com causalidade audit&aacute;vel.
             </h1>
-            <p id="brandSubtitleText" class="text-sm font-semibold text-slate-100">
-              Calculadora de Precifica&ccedil;&atilde;o para Freelancers
-            </p>
             <p id="brandSubheadlineText" class="max-w-2xl text-sm leading-relaxed text-slate-300">
-              Calcule taxas sustent&aacute;veis, justifique propostas com respaldo t&eacute;cnico e negocie com clareza em uma &uacute;nica ferramenta.
+              O motor define o valor. A interface destaca sinais, risco e impacto para decis&atilde;o r&aacute;pida.
             </p>
-            <div class="hero-signal-inline">
-              <span class="hero-signal-dot"><strong>Posicionamento</strong> consultivo</span>
-              <span class="hero-signal-dot"><strong>Entrega</strong> em PDF executivo</span>
-              <span class="hero-signal-dot"><strong>Confian&ccedil;a</strong> sem cadastro</span>
+
+            <div id="pricingHudShell" class="pricing-hud-shell command-center-shell card-macro" data-trace-metric="heroPrice">
+              <div class="pricing-hud-hero" data-trace-metric="heroPrice">
+                <p id="pricingHudHeroMetric" class="text-xs text-slate-400">Taxa/hora sugerida</p>
+                <p id="pricingHudHeroValue" class="mt-1 text-4xl font-bold tracking-tight tabular-nums font-result-value micro-result-value">&mdash;</p>
+                <p id="pricingHudHeroTag" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade fatur&aacute;vel.</p>
+                <p id="pricingImpactPreview" class="pricing-impact-preview hidden" aria-live="polite"></p>
+              </div>
+              <div class="pricing-hud-band">
+                <div class="pricing-hud-band-item" data-trace-metric="floorPrice">
+                  <p id="pricingHudFloorMetric" class="text-[11px] text-slate-500">Piso</p>
+                  <p id="pricingHudFloorValue" class="mt-0.5 text-sm font-semibold tabular-nums">&mdash;</p>
+                </div>
+                <div class="pricing-hud-band-item" data-trace-metric="sustainablePrice">
+                  <p id="pricingHudSustainableMetric" class="text-[11px] text-slate-500">Sustent&aacute;vel</p>
+                  <p id="pricingHudSustainableValue" class="mt-0.5 text-sm font-semibold tabular-nums">&mdash;</p>
+                </div>
+                <div class="pricing-hud-band-item">
+                  <p class="text-[11px] text-slate-500">Ideal</p>
+                  <p id="pricingHudIdealValue" class="mt-0.5 text-sm font-semibold tabular-nums">&mdash;</p>
+                </div>
+              </div>
+              <div class="pricing-hud-risk" data-trace-metric="riskIndicator">
+                <p id="pricingHudRiskMetric" class="text-[11px] text-slate-500">Risco/Health</p>
+                <span id="pricingHudRiskDot" class="pricing-hud-risk-dot" aria-hidden="true"></span>
+                <p id="pricingHudRiskLabel" class="text-xs text-slate-400/90">Ative o modo avan&ccedil;ado para calcular.</p>
+              </div>
             </div>
-            <p class="hero-trust-line">Dados salvos localmente &middot; Metodologia transparente &middot; Sem promessa irreal</p>
+
+            <div id="commandCenterControlDeck" class="command-center-control-deck" aria-label="Controles de maior impacto">
+              <button type="button" class="command-center-control-chip" data-input-key="projectHours">
+                Horas do projeto
+                <span class="trace-chip-tag">drives price</span>
+              </button>
+              <button type="button" class="command-center-control-chip" data-input-key="discount">
+                Desconto
+                <span class="trace-chip-tag">discount pressure</span>
+              </button>
+              <button type="button" class="command-center-control-chip" data-input-key="scopeRisk">
+                Margem de escopo
+                <span class="trace-chip-tag">raises risk</span>
+              </button>
+              <button type="button" class="command-center-control-chip" data-input-key="scopeClarity">
+                Clareza de escopo
+                <span class="trace-chip-tag">drives price</span>
+              </button>
+              <button type="button" class="command-center-control-chip" data-input-key="revisionLoad">
+                Carga de revis&otilde;es
+                <span class="trace-chip-tag">raises risk</span>
+              </button>
+              <button type="button" class="command-center-control-chip" data-input-key="urgentDeadline">
+                Prazo urgente
+                <span class="trace-chip-tag">price pressure</span>
+              </button>
+            </div>
           </div>
 
           <div class="lg:col-span-5">
@@ -348,7 +394,7 @@
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="targetIncome">Renda líquida desejada / mês</label>
                 <input
-                  id="targetIncome"
+                  id="targetIncome" data-input-key="targetIncome"
                   type="number"
                   inputmode="decimal"
                   min="0"
@@ -363,7 +409,7 @@
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="monthlyCosts">Custos fixos do negócio / mês</label>
                 <input
-                  id="monthlyCosts"
+                  id="monthlyCosts" data-input-key="monthlyCosts"
                   type="number"
                   inputmode="decimal"
                   min="0"
@@ -377,7 +423,7 @@
                 <label class="text-sm text-slate-200" for="taxRate">Impostos sobre faturamento</label>
                 <div class="relative">
                   <input
-                    id="taxRate"
+                    id="taxRate" data-input-key="taxRate"
                     type="number"
                     min="0"
                     max="70"
@@ -393,7 +439,7 @@
                 <label class="text-sm text-slate-200" for="profitMargin">Margem de lucro</label>
                 <div class="relative">
                   <input
-                    id="profitMargin"
+                    id="profitMargin" data-input-key="profitMargin"
                     type="number"
                     min="0"
                     max="200"
@@ -409,7 +455,7 @@
                 <label class="text-sm text-slate-200" for="buffer">Buffer (atrasos/imprevistos)</label>
                 <div class="relative">
                   <input
-                    id="buffer"
+                    id="buffer" data-input-key="buffer"
                     type="number"
                     min="0"
                     max="100"
@@ -425,7 +471,7 @@
                 <label class="text-sm text-slate-200" for="utilization">Taxa de horas faturáveis</label>
                 <div class="relative">
                   <input
-                    id="utilization"
+                    id="utilization" data-input-key="utilization"
                     type="number"
                     min="10"
                     max="100"
@@ -537,7 +583,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="projectHours">Horas estimadas</label>
                   <input
-                    id="projectHours"
+                    id="projectHours" data-input-key="projectHours"
                     type="number"
                     min="0"
                     step="1"
@@ -548,7 +594,7 @@
                   <label class="text-sm text-slate-200" for="scopeRisk">Margem de escopo (%)</label>
                   <div class="relative">
                     <input
-                      id="scopeRisk"
+                      id="scopeRisk" data-input-key="scopeRisk"
                       type="number"
                       min="0"
                       max="100"
@@ -562,7 +608,7 @@
                   <label class="text-sm text-slate-200" for="discount">Desconto</label>
                   <div class="relative">
                     <input
-                      id="discount"
+                      id="discount" data-input-key="discount"
                       type="number"
                       min="0"
                       max="90"
@@ -578,7 +624,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="scopeClarity">Clareza de escopo</label>
                   <select
-                    id="scopeClarity"
+                    id="scopeClarity" data-input-key="scopeClarity"
                     class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   >
                     <option value="clear" selected>Claro</option>
@@ -589,7 +635,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="revisionLoad">Carga de revisoes</label>
                   <select
-                    id="revisionLoad"
+                    id="revisionLoad" data-input-key="revisionLoad"
                     class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   >
                     <option value="low" selected>Baixa</option>
@@ -600,7 +646,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="engagementModel">Modelo</label>
                   <select
-                    id="engagementModel"
+                    id="engagementModel" data-input-key="engagementModel"
                     class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   >
                     <option value="project" selected>Projeto fechado</option>
@@ -610,7 +656,7 @@
                 <div id="monthlyVolumeHoursWrap" class="space-y-2 hidden">
                   <label class="text-sm text-slate-200" for="monthlyVolumeHours">Volume mensal (h)</label>
                   <input
-                    id="monthlyVolumeHours"
+                    id="monthlyVolumeHours" data-input-key="monthlyVolumeHours"
                     type="number"
                     min="0"
                     step="1"
@@ -620,7 +666,7 @@
               </div>
 
               <label class="mt-3 inline-flex items-center gap-2 text-xs text-slate-300">
-                <input id="urgentDeadline" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
+                <input id="urgentDeadline" data-input-key="urgentDeadline" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
                 Prazo urgente
               </label>
 
@@ -716,7 +762,7 @@
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="occupancyRate">Ocupação da agenda (%)</label>
-                  <input id="occupancyRate" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
+                  <input id="occupancyRate" data-input-key="occupancyRate" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="weeklyHours">Horas semanais planejadas</label>
@@ -923,7 +969,7 @@
               <div id="resultCardsInternal" class="preview-anchor preview-anchor-grid" data-anchor-enabled="false">
                 <div class="flex items-start justify-between gap-4 preview-block" data-order="0">
                   <div>
-                    <h2 class="text-[15px] font-semibold">Resultado</h2>
+                    <h2 class="text-[15px] font-semibold">Detalhes e suporte</h2>
                     <p class="mt-0.5 text-[11px] text-slate-500">Atualiza automaticamente conforme você ajusta as entradas.</p>
                   </div>
                   <button
@@ -936,31 +982,8 @@
                   </button>
                 </div>
 
-                <div id="pricingHudShell" class="preview-block pricing-hud-shell mt-4" data-order="1" data-trace-metric="heroPrice">
-                  <div class="pricing-hud-hero" data-trace-metric="heroPrice">
-                    <p id="pricingHudHeroMetric" class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                    <p id="pricingHudHeroValue" class="mt-1 text-4xl font-bold tracking-tight tabular-nums font-result-value micro-result-value">—</p>
-                    <p id="pricingHudHeroTag" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
-                  </div>
-                  <div class="pricing-hud-band" data-trace-metric="floorPrice">
-                    <div class="pricing-hud-band-item">
-                      <p id="pricingHudFloorMetric" class="text-[11px] text-slate-500">Piso</p>
-                      <p id="pricingHudFloorValue" class="mt-0.5 text-sm font-semibold tabular-nums">—</p>
-                    </div>
-                    <div class="pricing-hud-band-item">
-                      <p id="pricingHudSustainableMetric" class="text-[11px] text-slate-500">Sustentável</p>
-                      <p id="pricingHudSustainableValue" class="mt-0.5 text-sm font-semibold tabular-nums">—</p>
-                    </div>
-                    <div class="pricing-hud-band-item">
-                      <p class="text-[11px] text-slate-500">Ideal</p>
-                      <p id="pricingHudIdealValue" class="mt-0.5 text-sm font-semibold tabular-nums">—</p>
-                    </div>
-                  </div>
-                  <div class="pricing-hud-risk" data-trace-metric="riskIndicator">
-                    <p id="pricingHudRiskMetric" class="text-[11px] text-slate-500">Risco</p>
-                    <span id="pricingHudRiskDot" class="pricing-hud-risk-dot" aria-hidden="true"></span>
-                    <p id="pricingHudRiskLabel" class="text-xs text-slate-400/90">Ative o modo avançado para calcular.</p>
-                  </div>
+                <div class="preview-block mt-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-slate-400 command-center-support" data-order="1">
+                  Telemetria detalhada e trilhas de suporte abaixo do painel principal.
                 </div>
 
                 <div class="preview-block grid grid-cols-2 gap-3" data-order="2">
@@ -980,7 +1003,9 @@
                   <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
                 </div>
 
-                <div id="pricingEngineV1Card" class="preview-block mt-4 rounded-2xl border border-cyan-400/20 bg-cyan-500/[0.04] p-3.5 card-inner" data-order="4">
+                                <details class="preview-block mt-4 command-center-support" data-order="7">
+                  <summary class="cursor-pointer rounded-xl border border-cyan-400/20 bg-cyan-500/[0.03] px-3 py-2 text-xs font-medium text-cyan-200">Engine telemetry (contrato v1)</summary>
+                  <div id="pricingEngineV1Card" class="mt-2 rounded-2xl border border-cyan-400/20 bg-cyan-500/[0.03] p-3.5 card-inner command-center-support">
                   <div class="flex items-start justify-between gap-3">
                     <div>
                     <p class="text-[10px] font-medium uppercase tracking-wider text-cyan-400/70">Motor v1 (contrato)</p>
@@ -1035,6 +1060,7 @@
                     </div>
                   </div>
                 </div>
+                </details>
 
                 <div class="preview-block hidden mt-4 rounded-2xl border border-indigo-400/30 bg-[linear-gradient(135deg,rgba(99,102,241,.18),rgba(15,23,42,.4))] p-4 card-inner" data-order="5" id="agencyEquivalentBlock">
                   <div class="flex items-start justify-between gap-2">
@@ -1089,7 +1115,7 @@
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur command-center-support">
               <h3 class="text-sm font-semibold">Composição do Faturamento</h3>
               <p class="mt-1 text-xs text-slate-400">Distribuição estimada do faturamento alvo mensal.</p>
               <div class="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
@@ -1098,13 +1124,13 @@
               </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur command-center-support">
               <h3 class="text-sm font-semibold">Alertas Inteligentes</h3>
               <p class="mt-1 text-xs text-slate-400">Sinais práticos para reduzir risco de sobrecarga e precificação frágil.</p>
               <div id="alertsList" class="mt-4 space-y-2 text-sm text-slate-200"></div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
+            <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur command-center-support">
               <h3 class="text-sm font-semibold">Base de Confiança</h3>
               <p class="mt-1 text-xs text-slate-400">Referências consultivas para decisões profissionais, sem promessas absolutas.</p>
               <ul id="trustMicrocopyList" class="mt-3 list-disc space-y-1 pl-5 text-xs text-slate-200">

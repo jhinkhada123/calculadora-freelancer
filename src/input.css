@@ -256,11 +256,21 @@ body.wizard-bar-visible main { padding-bottom: 5.5rem; }
 .pricing-hud-shell {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  padding: 1.25rem 1.125rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(15,23,42,.45);
+  gap: 1rem;
+  padding: 1.35rem 1.2rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(148,163,184,.2);
+  background:
+    radial-gradient(1200px 380px at -8% -45%, rgba(16,185,129,.16), transparent 55%),
+    radial-gradient(1200px 380px at 108% -50%, rgba(99,102,241,.18), transparent 55%),
+    rgba(15,23,42,.58);
+  box-shadow:
+    0 22px 48px rgba(2,6,23,.35),
+    inset 0 1px 0 rgba(255,255,255,.07);
+}
+.command-center-shell {
+  position: relative;
+  isolation: isolate;
 }
 .pricing-hud-hero {
   order: 1;
@@ -277,15 +287,15 @@ body.wizard-bar-visible main { padding-bottom: 5.5rem; }
 .pricing-hud-band {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
+  gap: 0.55rem;
   order: 2;
-  opacity: 0.92;
+  opacity: 0.9;
 }
 .pricing-hud-band-item {
-  padding: 0.4rem 0.6rem;
+  padding: 0.5rem 0.65rem;
   border-radius: 0.5rem;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.05);
+  background: rgba(15,23,42,.58);
+  border: 1px solid rgba(148,163,184,.16);
   font-size: 11px;
 }
 .pricing-hud-risk {
@@ -306,6 +316,60 @@ body.wizard-bar-visible main { padding-bottom: 5.5rem; }
 .pricing-hud-risk-dot.risk-low { background: rgba(52,211,153,.6); }
 .pricing-hud-risk-dot.risk-medium { background: rgba(251,191,36,.6); }
 .pricing-hud-risk-dot.risk-high { background: rgba(239,68,68,.5); }
+.pricing-impact-preview {
+  margin-top: 0.45rem;
+  width: fit-content;
+  border: 1px solid rgba(99,102,241,.45);
+  border-radius: 9999px;
+  background: rgba(79,70,229,.18);
+  color: rgba(224,231,255,.95);
+  font-size: 11px;
+  line-height: 1.15;
+  padding: 0.26rem 0.6rem;
+}
+.command-center-control-deck {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+.command-center-control-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  border: 1px solid rgba(148,163,184,.22);
+  border-radius: 0.72rem;
+  background: rgba(15,23,42,.46);
+  color: rgba(226,232,240,.95);
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+}
+.command-center-control-chip:hover,
+.command-center-control-chip:focus-visible {
+  border-color: rgba(99,102,241,.58);
+  background: rgba(30,41,59,.82);
+  transform: translateY(-1px);
+}
+.trace-chip-tag {
+  border: 1px solid rgba(16,185,129,.28);
+  border-radius: 9999px;
+  background: rgba(16,185,129,.12);
+  color: rgba(167,243,208,.96);
+  font-size: 9px;
+  padding: 0.18rem 0.42rem;
+  white-space: nowrap;
+}
+.command-center-support {
+  opacity: 0.9;
+}
+@media (max-width: 640px) {
+  .command-center-control-deck {
+    grid-template-columns: 1fr;
+  }
+}
 
 #pricingHudHeroValue,
 #pricingHudHeroValue * {
