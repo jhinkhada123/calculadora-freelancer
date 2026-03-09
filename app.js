@@ -250,7 +250,18 @@ function tuneHeroSignalSpacing() {
       monthlyVolumeHours: $("monthlyVolumeHours"),
       monthlyVolumeHoursWrap: $("monthlyVolumeHoursWrap"),
 
-      hourlyRate: $("hourlyRate"),
+      pricingHudShell: $("pricingHudShell"),
+      pricingHudHeroMetric: $("pricingHudHeroMetric"),
+      pricingHudHeroValue: $("pricingHudHeroValue"),
+      pricingHudHeroTag: $("pricingHudHeroTag"),
+      pricingHudRiskMetric: $("pricingHudRiskMetric"),
+      pricingHudRiskDot: $("pricingHudRiskDot"),
+      pricingHudRiskLabel: $("pricingHudRiskLabel"),
+      pricingHudFloorMetric: $("pricingHudFloorMetric"),
+      pricingHudFloorValue: $("pricingHudFloorValue"),
+      pricingHudSustainableMetric: $("pricingHudSustainableMetric"),
+      pricingHudSustainableValue: $("pricingHudSustainableValue"),
+      pricingHudIdealValue: $("pricingHudIdealValue"),
       dailyRate: $("dailyRate"),
       billableHours: $("billableHours"),
       revenueTarget: $("revenueTarget"),
@@ -1070,6 +1081,10 @@ function tuneHeroSignalSpacing() {
       safeMoney(els.pricingBandPiso, pricingBand ? fmtMoney(pricingBand.piso, curr) : placeholder);
       safeMoney(els.pricingBandSustentavel, pricingBand ? fmtMoney(pricingBand.sustentavel, curr) : placeholder);
       safeMoney(els.pricingBandIdeal, pricingBand ? fmtMoney(pricingBand.ideal, curr) : placeholder);
+      const hudPlaceholder = "—";
+      if (els.pricingHudFloorValue) safeMoney(els.pricingHudFloorValue, pricingBand ? fmtMoney(pricingBand.piso, curr) : hudPlaceholder);
+      if (els.pricingHudSustainableValue) safeMoney(els.pricingHudSustainableValue, pricingBand ? fmtMoney(pricingBand.sustentavel, curr) : hudPlaceholder);
+      if (els.pricingHudIdealValue) safeMoney(els.pricingHudIdealValue, pricingBand ? fmtMoney(pricingBand.ideal, curr) : hudPlaceholder);
       safeMoney(els.pricingProjectTotal, projectTotal != null ? fmtMoney(projectTotal, curr) : placeholder);
       safeText(els.pricingProjectHours, Number(s.projectHours) > 0 ? `${fmtNumber(s.projectHours, 0)} h` : placeholder);
       safeText(
@@ -1264,9 +1279,9 @@ function tuneHeroSignalSpacing() {
       }
 
       const hourlyOk = r.ok && r.hourly != null;
-      safeMoney(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+      if (els.pricingHudHeroValue) safeMoney(els.pricingHudHeroValue, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
       safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
-      safeText(els.hourlyNote, s.advancedMode ? "Baseada na estratégia premium." : "Baseada na sua capacidade faturável.");
+      if (els.pricingHudHeroTag) safeText(els.pricingHudHeroTag, s.advancedMode ? "Baseada na estratégia premium." : "Baseada na sua capacidade faturável.");
       if (els.dailyLabel) safeText(els.dailyLabel, `Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h)`);
       safeText(els.billableHours, r.billableHours != null ? `${fmtNumber(r.billableHours, 1)} h` : "—");
       safeMoney(els.revenueTarget, r.ok && r.revenueTarget != null ? fmtMoney(r.revenueTarget, curr) : "—");
@@ -2639,6 +2654,8 @@ function tuneHeroSignalSpacing() {
         const isAdvanced = s.advancedMode && ctx.mode === "advanced" && ctx.advanced;
         els.auditModeCard.classList.toggle("hidden", !isAdvanced);
         if (!isAdvanced) {
+          if (els.pricingHudRiskLabel) safeText(els.pricingHudRiskLabel, "Ative o modo avançado para calcular.");
+          if (els.pricingHudRiskDot) els.pricingHudRiskDot.className = "pricing-hud-risk-dot";
           riskTelemetryState = null;
           return;
         }
@@ -2650,6 +2667,10 @@ function tuneHeroSignalSpacing() {
         });
         els.riskScoreValue.textContent = `${fmtNumber(risk.score, 1)} / 100`;
         els.riskScoreNarrative.textContent = riskNarrative(risk);
+        if (els.pricingHudRiskLabel) safeText(els.pricingHudRiskLabel, riskNarrative(risk));
+        if (els.pricingHudRiskDot) {
+          els.pricingHudRiskDot.className = "pricing-hud-risk-dot " + (risk.score >= 70 ? "risk-high" : risk.score >= 40 ? "risk-medium" : "risk-low");
+        }
         els.riskScoreBreakdown.textContent =
           `Escopo ${fmtNumber(risk.subscores.riscoEscopo, 1)} · Ocupação ${fmtNumber(risk.subscores.ocupacaoPressao, 1)} · Exaustão ${fmtNumber(risk.subscores.exaustaoPressao, 1)} · Margem ${fmtNumber(risk.subscores.margemFragilidade, 1)}`;
 
@@ -2758,13 +2779,15 @@ function tuneHeroSignalSpacing() {
         }
 
         const hourlyOk = r.ok && r.hourly != null;
-        if (FEATURE_FLAGS.ui_counter_up_enabled) {
-          animateMoneyCounter(els.hourlyRate, hourlyOk ? r.hourly : null, curr);
-        } else {
-          safeMoney(els.hourlyRate, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+        if (els.pricingHudHeroValue) {
+          if (FEATURE_FLAGS.ui_counter_up_enabled) {
+            animateMoneyCounter(els.pricingHudHeroValue, hourlyOk ? r.hourly : null, curr);
+          } else {
+            safeMoney(els.pricingHudHeroValue, hourlyOk ? fmtMoney(r.hourly, curr) : "—");
+          }
         }
         safeText(els.dailyRate, hourlyOk ? fmtMoney(r.daily, curr) : "—");
-        safeText(els.hourlyNote, s.advancedMode ? "Baseada na estratégia premium (patrimônio, risco, escassez e exaustão)." : "Baseada na sua capacidade faturável.");
+        if (els.pricingHudHeroTag) safeText(els.pricingHudHeroTag, s.advancedMode ? "Baseada na estratégia premium (patrimônio, risco, escassez e exaustão)." : "Baseada na sua capacidade faturável.");
         if (els.dailyLabel) {
           safeText(els.dailyLabel, `Taxa/dia (${fmtNumber(s.hoursPerDay, 1)}h)`);
         }

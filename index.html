@@ -936,10 +936,31 @@
                   </button>
                 </div>
 
-                <div class="preview-block mt-5 rounded-2xl border border-white/10 bg-ink-900/40 p-4 card-inner" data-order="1">
-                  <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-value micro-result-value">—</p>
-                  <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
+                <div id="pricingHudShell" class="preview-block pricing-hud-shell mt-5" data-order="1" data-trace-metric="heroPrice">
+                  <div class="pricing-hud-hero" data-trace-metric="heroPrice">
+                    <p id="pricingHudHeroMetric" class="text-xs text-slate-400">Taxa/hora sugerida</p>
+                    <p id="pricingHudHeroValue" class="mt-1 text-4xl font-bold tracking-tight tabular-nums font-result-value micro-result-value">—</p>
+                    <p id="pricingHudHeroTag" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
+                  </div>
+                  <div class="pricing-hud-band" data-trace-metric="floorPrice">
+                    <div class="pricing-hud-band-item">
+                      <p id="pricingHudFloorMetric" class="text-[11px] text-slate-500">Piso</p>
+                      <p id="pricingHudFloorValue" class="mt-0.5 text-sm font-semibold tabular-nums">—</p>
+                    </div>
+                    <div class="pricing-hud-band-item">
+                      <p id="pricingHudSustainableMetric" class="text-[11px] text-slate-500">Sustentável</p>
+                      <p id="pricingHudSustainableValue" class="mt-0.5 text-sm font-semibold tabular-nums">—</p>
+                    </div>
+                    <div class="pricing-hud-band-item">
+                      <p class="text-[11px] text-slate-500">Ideal</p>
+                      <p id="pricingHudIdealValue" class="mt-0.5 text-sm font-semibold tabular-nums">—</p>
+                    </div>
+                  </div>
+                  <div class="pricing-hud-risk" data-trace-metric="riskIndicator">
+                    <p id="pricingHudRiskMetric" class="text-[11px] text-slate-500">Risco</p>
+                    <span id="pricingHudRiskDot" class="pricing-hud-risk-dot" aria-hidden="true"></span>
+                    <p id="pricingHudRiskLabel" class="text-xs text-slate-400/90">Ative o modo avançado para calcular.</p>
+                  </div>
                 </div>
 
                 <div class="preview-block grid grid-cols-2 gap-3" data-order="2">
