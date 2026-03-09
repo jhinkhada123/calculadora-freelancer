@@ -1,6 +1,11 @@
-import { isPricingReasonCodeV1 } from "./reason-codes-v1.js";
+﻿import { isPricingReasonCodeV1 } from "./reason-codes-v1.js";
+import {
+  TRACEABILITY_REASON_TO_INPUT_KEY_V1,
+  isTraceabilityInputKeyV1,
+} from "./traceability-v1.js";
 
 export const PRICING_ENGINE_V1_CONTRACT_VERSION = 1;
+const MAX_TRACEABILITY_DRIVERS = 3;
 
 export const PRICING_ENGINE_V1_DEFAULTS = Object.freeze({
   occupancyTarget: 0.75,
@@ -89,6 +94,37 @@ function sanitizeInput(input = {}, cfg = PRICING_ENGINE_V1_DEFAULTS) {
     urgentDeadline: !!input.urgentDeadline,
     revisionLoad: normalizeRevisionLoad(input.revisionLoad),
     engagementModel: normalizeEngagementModel(input.engagementModel),
+  };
+}
+
+function computeCoreFinancials(state, cfg) {
+  const baseNeed = state.targetIncome + state.monthlyCosts;
+  const rawTotalPercent = state.taxRate + state.profitMargin + state.buffer;
+  const totalPercent = clamp(rawTotalPercent, 0, cfg.maxTotalPercent);
+  const denominator = Math.max(0.01, 1 - totalPercent / 100);
+
+  const workingWeeks = Math.max(0, 52 - state.vacationWeeks);
+  const hoursPerWeek = state.hoursPerDay * state.daysPerWeek;
+  const hoursPerMonth = (workingWeeks * hoursPerWeek) / 12;
+  const occupancyReal = state.utilizationPct / 100;
+  const billableHoursMonth = Math.max(1, hoursPerMonth * occupancyReal);
+
+  const faturamentoAlvoRaw = baseNeed / denominator;
+  const floorHourlyRaw = faturamentoAlvoRaw / billableHoursMonth;
+  const projectFloorRaw = floorHourlyRaw * state.projectHours;
+
+  return {
+    baseNeed,
+    totalPercent,
+    denominator,
+    workingWeeks,
+    hoursPerWeek,
+    hoursPerMonth,
+    occupancyReal,
+    billableHoursMonth,
+    faturamentoAlvoRaw,
+    floorHourlyRaw,
+    projectFloorRaw,
   };
 }
 
@@ -213,27 +249,182 @@ function buildExplainFactors(projectFloorPrice, state, premiumComponents, cfg) {
   return factors;
 }
 
+function mapImpactPctToStrength(impactPct) {
+  if (impactPct >= 8) return "high";
+  if (impactPct >= 3) return "medium";
+  return "low";
+}
+
+function appendTraceDriver(drivers, driver, maxDrivers = MAX_TRACEABILITY_DRIVERS) {
+  if (!driver || !isTraceabilityInputKeyV1(driver.inputKey)) return;
+  if (!drivers.some((item) => item.inputKey === driver.inputKey)) {
+    drivers.push({
+      inputKey: driver.inputKey,
+      strength: driver.strength || "medium",
+      ...(driver.reasonCode ? { reasonCode: driver.reasonCode } : {}),
+    });
+  }
+  if (drivers.length > maxDrivers) drivers.length = maxDrivers;
+}
+
+function mapExplainFactorToTraceDriver(factor) {
+  if (!factor || !factor.code) return null;
+  const inputKey = TRACEABILITY_REASON_TO_INPUT_KEY_V1[factor.code];
+  if (!isTraceabilityInputKeyV1(inputKey)) return null;
+  return {
+    inputKey,
+    strength: mapImpactPctToStrength(Number(factor.impactoPct) || 0),
+    reasonCode: factor.code,
+  };
+}
+
+function buildExplainTraceDrivers(explainFactors, maxDrivers = MAX_TRACEABILITY_DRIVERS) {
+  const drivers = [];
+  for (const factor of Array.isArray(explainFactors) ? explainFactors : []) {
+    appendTraceDriver(drivers, mapExplainFactorToTraceDriver(factor), maxDrivers);
+  }
+  return drivers;
+}
+
+function buildFloorTraceDrivers(state, cfg, projectFloorRaw) {
+  const candidates = [
+    { inputKey: "projectHours", patch: { projectHours: cfg.defaultProjectHours } },
+    { inputKey: "utilization", patch: { utilizationPct: 100 } },
+    { inputKey: "targetIncome", patch: { targetIncome: 0 } },
+    { inputKey: "monthlyCosts", patch: { monthlyCosts: 0 } },
+    { inputKey: "taxRate", patch: { taxRate: 0 } },
+    { inputKey: "profitMargin", patch: { profitMargin: 0 } },
+    { inputKey: "buffer", patch: { buffer: 0 } },
+  ];
+
+  const deltas = candidates
+    .map((candidate) => {
+      const patchedState = { ...state, ...candidate.patch };
+      const patchedCore = computeCoreFinancials(patchedState, cfg);
+      const delta = Math.max(0, projectFloorRaw - patchedCore.projectFloorRaw);
+      return {
+        inputKey: candidate.inputKey,
+        delta,
+      };
+    })
+    .filter((item) => item.delta > 0)
+    .sort((a, b) => {
+      if (b.delta !== a.delta) return b.delta - a.delta;
+      return a.inputKey.localeCompare(b.inputKey);
+    });
+
+  const drivers = [];
+  for (const item of deltas) {
+    const impactPct = projectFloorRaw > 0 ? (item.delta / projectFloorRaw) * 100 : 0;
+    appendTraceDriver(drivers, {
+      inputKey: item.inputKey,
+      strength: mapImpactPctToStrength(impactPct),
+    });
+    if (drivers.length >= MAX_TRACEABILITY_DRIVERS) break;
+  }
+
+  return drivers;
+}
+
+function buildRiskTraceDrivers(state, cfg, guardrails, explainFactors) {
+  const drivers = [];
+
+  if (guardrails.floorBreached) {
+    appendTraceDriver(drivers, {
+      inputKey: "discount",
+      strength: "high",
+      reasonCode: "DISCOUNT_BELOW_FLOOR",
+    });
+  }
+
+  if (guardrails.retainerWithoutVolume) {
+    appendTraceDriver(drivers, {
+      inputKey: "monthlyVolumeHours",
+      strength: "high",
+      reasonCode: "RETAINER_WITHOUT_VOLUME",
+    });
+    appendTraceDriver(drivers, {
+      inputKey: "engagementModel",
+      strength: "medium",
+      reasonCode: "RETAINER_WITHOUT_VOLUME",
+    });
+  }
+
+  if (guardrails.unclearScope) {
+    appendTraceDriver(drivers, {
+      inputKey: "scopeClarity",
+      strength: "high",
+      reasonCode: "UNCLEAR_SCOPE",
+    });
+  }
+
+  if (guardrails.highRisk) {
+    appendTraceDriver(drivers, {
+      inputKey: "scopeRisk",
+      strength: "high",
+      reasonCode: "HIGH_SCOPE_RISK",
+    });
+    if (state.buffer < cfg.minBufferForHighRiskPct) {
+      appendTraceDriver(drivers, {
+        inputKey: "buffer",
+        strength: "medium",
+      });
+    }
+    if (state.profitMargin < cfg.minMarginForClosedUnclearScopePct) {
+      appendTraceDriver(drivers, {
+        inputKey: "profitMargin",
+        strength: "medium",
+        reasonCode: "LOW_MARGIN",
+      });
+    }
+  }
+
+  for (const explainDriver of buildExplainTraceDrivers(explainFactors, MAX_TRACEABILITY_DRIVERS)) {
+    appendTraceDriver(drivers, explainDriver);
+    if (drivers.length >= MAX_TRACEABILITY_DRIVERS) break;
+  }
+
+  return drivers;
+}
+
+function buildTraceability(state, cfg, context) {
+  const explainDrivers = buildExplainTraceDrivers(context.explainFactors, MAX_TRACEABILITY_DRIVERS);
+
+  const heroPriceDrivers = [];
+  if (state.discountPct > 0) {
+    appendTraceDriver(heroPriceDrivers, {
+      inputKey: "discount",
+      strength: state.discountPct >= 15 ? "high" : "medium",
+      reasonCode: context.guardrails.floorBreached ? "DISCOUNT_BELOW_FLOOR" : undefined,
+    });
+  }
+  for (const driver of explainDrivers) {
+    appendTraceDriver(heroPriceDrivers, driver);
+    if (heroPriceDrivers.length >= MAX_TRACEABILITY_DRIVERS) break;
+  }
+
+  const sustainablePriceDrivers = [];
+  for (const driver of explainDrivers) {
+    appendTraceDriver(sustainablePriceDrivers, driver);
+    if (sustainablePriceDrivers.length >= MAX_TRACEABILITY_DRIVERS) break;
+  }
+
+  return {
+    heroPrice: heroPriceDrivers,
+    sustainablePrice: sustainablePriceDrivers,
+    floorPrice: buildFloorTraceDrivers(state, cfg, context.projectFloorRaw),
+    riskIndicator: buildRiskTraceDrivers(state, cfg, context.guardrails, context.explainFactors),
+  };
+}
+
 export function computePricingEngineV1(input = {}, config = {}) {
   const cfg = { ...PRICING_ENGINE_V1_DEFAULTS, ...config };
   const state = sanitizeInput(input, cfg);
 
-  const baseNeed = state.targetIncome + state.monthlyCosts;
-  const rawTotalPercent = state.taxRate + state.profitMargin + state.buffer;
-  const totalPercent = clamp(rawTotalPercent, 0, cfg.maxTotalPercent);
-  const denominator = Math.max(0.01, 1 - totalPercent / 100);
-
-  const workingWeeks = Math.max(0, 52 - state.vacationWeeks);
-  const hoursPerWeek = state.hoursPerDay * state.daysPerWeek;
-  const hoursPerMonth = (workingWeeks * hoursPerWeek) / 12;
-  const occupancyReal = state.utilizationPct / 100;
-  const billableHoursMonth = Math.max(1, hoursPerMonth * occupancyReal);
-
-  const faturamentoAlvoRaw = baseNeed / denominator;
-  const floorHourlyRaw = faturamentoAlvoRaw / billableHoursMonth;
-  const projectFloorRaw = floorHourlyRaw * state.projectHours;
+  const core = computeCoreFinancials(state, cfg);
 
   const premiumComponents = buildPremiumComponents(state, cfg);
-  const sustainableProjectRaw = projectFloorRaw * (1 + premiumComponents.totalPremiumPct);
+  const sustainableProjectRaw = core.projectFloorRaw * (1 + premiumComponents.totalPremiumPct);
   const idealProjectRaw = sustainableProjectRaw * (1 + cfg.idealMarkupPct);
 
   const sustainableHourlyRaw = sustainableProjectRaw / state.projectHours;
@@ -250,7 +441,7 @@ export function computePricingEngineV1(input = {}, config = {}) {
     state.profitMargin < cfg.minMarginForClosedUnclearScopePct;
 
   const guardrails = {
-    floorBreached: projectAfterDiscountRaw < projectFloorRaw,
+    floorBreached: projectAfterDiscountRaw < core.projectFloorRaw,
     highRisk: highRiskByScope || highRiskByBuffer || highRiskByClosedUnclear,
     unclearScope: state.scopeClarity === "unclear",
     retainerWithoutVolume:
@@ -258,10 +449,12 @@ export function computePricingEngineV1(input = {}, config = {}) {
       state.monthlyVolumeHours < cfg.minRetainerVolumeHours,
   };
 
+  const explainFactors = buildExplainFactors(core.projectFloorRaw, state, premiumComponents, cfg);
+
   return {
     contractVersion: PRICING_ENGINE_V1_CONTRACT_VERSION,
     pricingBand: {
-      piso: roundMoney(projectFloorRaw),
+      piso: roundMoney(core.projectFloorRaw),
       sustentavel: roundMoney(sustainableProjectRaw),
       ideal: roundMoney(idealProjectRaw),
     },
@@ -270,9 +463,9 @@ export function computePricingEngineV1(input = {}, config = {}) {
       dia: roundMoney(dayRateRaw),
     },
     economics: {
-      faturamentoAlvo: roundMoney(faturamentoAlvoRaw),
-      horasFaturaveisMes: roundMoney(billableHoursMonth),
-      ocupacaoReal: roundRatio(occupancyReal),
+      faturamentoAlvo: roundMoney(core.faturamentoAlvoRaw),
+      horasFaturaveisMes: roundMoney(core.billableHoursMonth),
+      ocupacaoReal: roundRatio(core.occupancyReal),
     },
     // Project totals are domain-owned so UI can stay display-only.
     project: {
@@ -283,6 +476,11 @@ export function computePricingEngineV1(input = {}, config = {}) {
       totalAfterDiscount: roundMoney(projectAfterDiscountRaw),
     },
     guardrails,
-    explainFactors: buildExplainFactors(projectFloorRaw, state, premiumComponents, cfg),
+    explainFactors,
+    traceability: buildTraceability(state, cfg, {
+      guardrails,
+      explainFactors,
+      projectFloorRaw: core.projectFloorRaw,
+    }),
   };
 }
