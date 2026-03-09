@@ -110,13 +110,13 @@ input[type="number"] {
   box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
 }
 .hero-signal-inline {
-  margin-top: 2.2rem !important;
+  margin-top: 1.75rem !important;
   max-width: 42rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
-  font-size: 11px;
-  color: rgba(148,163,184,.8);
+  gap: 0.4rem 0.85rem;
+  font-size: 10px;
+  color: rgba(148,163,184,.72);
 }
 .hero-signal-inline strong {
   color: rgba(226,232,240,.88);
@@ -128,23 +128,23 @@ input[type="number"] {
   color: rgba(16,185,129,.7);
 }
 .hero-trust-line {
-  margin-top: 0.8rem;
-  font-size: 11px;
-  color: rgba(148,163,184,.72);
+  margin-top: 0.6rem;
+  font-size: 10px;
+  color: rgba(148,163,184,.62);
 }
 .mode-card {
-  min-height: 54px;
+  min-height: 48px;
   justify-content: space-between;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(148,163,184,.24);
-  background: linear-gradient(180deg, rgba(15,23,42,.72), rgba(11,16,32,.72));
-  padding: 0.55rem 0.75rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(148,163,184,.18);
+  background: linear-gradient(180deg, rgba(15,23,42,.6), rgba(11,16,32,.6));
+  padding: 0.45rem 0.65rem;
   transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 .mode-card:hover {
-  background: linear-gradient(180deg, rgba(30,41,59,.7), rgba(11,16,32,.72));
-  border-color: rgba(148,163,184,.34);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+  background: linear-gradient(180deg, rgba(30,41,59,.55), rgba(11,16,32,.6));
+  border-color: rgba(148,163,184,.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
 }
 .mode-card-head {
   display: flex;
@@ -153,17 +153,17 @@ input[type="number"] {
   gap: 0.65rem;
 }
 .mode-card-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: rgba(241,245,249,.97);
+  color: rgba(241,245,249,.95);
   line-height: 1.2;
 }
 .mode-card-sub {
-  margin-top: 0.15rem;
-  min-height: 2.9em;
-  line-height: 1.35;
-  font-size: 11px;
-  color: rgba(148,163,184,.86);
+  margin-top: 0.1rem;
+  min-height: 2.6em;
+  line-height: 1.32;
+  font-size: 10px;
+  color: rgba(148,163,184,.8);
 }
 .mode-toggle {
   position: relative;
@@ -251,6 +251,68 @@ body.wizard-bar-visible main { padding-bottom: 5.5rem; }
 /* Fase 3: Cards macro vs internos */
 .card-macro { box-shadow: var(--token-shadow-macro); }
 .card-inner { border: var(--token-border-inner); background: var(--token-bg-inner); }
+
+/* Design polish v2: Hero HUD dominance, band secondary, risk compact (scan: hero > band > risk > CTA) */
+.pricing-hud-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1.25rem 1.125rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(15,23,42,.45);
+}
+.pricing-hud-hero {
+  order: 1;
+}
+.pricing-hud-hero #pricingHudHeroValue {
+  font-size: 2.5rem;
+  line-height: 2.75rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+@media (min-width: 640px) {
+  .pricing-hud-hero #pricingHudHeroValue { font-size: 2.75rem; line-height: 3rem; }
+}
+.pricing-hud-band {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  order: 2;
+  opacity: 0.92;
+}
+.pricing-hud-band-item {
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.05);
+  font-size: 11px;
+}
+.pricing-hud-risk {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  order: 3;
+  opacity: 0.78;
+  font-size: 11px;
+}
+.pricing-hud-risk-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(148,163,184,.5);
+  flex-shrink: 0;
+}
+.pricing-hud-risk-dot.risk-low { background: rgba(52,211,153,.6); }
+.pricing-hud-risk-dot.risk-medium { background: rgba(251,191,36,.6); }
+.pricing-hud-risk-dot.risk-high { background: rgba(239,68,68,.5); }
+
+#pricingHudHeroValue,
+#pricingHudHeroValue * {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
 /* Fase 4: Preview anchor reorder (quando ui_preview_anchor_enabled) */
 .preview-anchor { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
 .preview-anchor[data-anchor-enabled="true"] { display: flex; flex-direction: column; gap: var(--token-spacing-lg); }
