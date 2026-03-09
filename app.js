@@ -30,6 +30,14 @@ function showBootError(err, context) {
   }
   if (typeof console !== "undefined" && console.error) console.error(context || "Boot", err);
 }
+
+function debugSoftFallback(context, err) {
+  if (typeof console !== "undefined" && typeof console.debug === "function") {
+    const message = err && (err.message || String(err)) ? (err.message || String(err)) : "erro desconhecido";
+    console.debug("[soft-fallback]", context, message);
+  }
+}
+
 function tuneHeroSignalSpacing() {
   const signals = document.querySelector(".hero-signal-inline");
   if (signals) {
@@ -67,6 +75,7 @@ function tuneHeroSignalSpacing() {
       const benchmarkMod = await import("./benchmarking.js");
       evaluateBenchmarkAlerts = benchmarkMod.evaluateBenchmarkAlerts;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar benchmarking.js", _);
       evaluateBenchmarkAlerts = () => [];
     }
     try {
@@ -75,6 +84,7 @@ function tuneHeroSignalSpacing() {
       deriveHistoricalVarianceSamples = advancedMod.deriveHistoricalVarianceSamples;
       computeAgencyEquivalent = advancedMod.computeAgencyEquivalent;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar advanced-pricing.js", _);
       computeAdvancedPricing = null;
       deriveHistoricalVarianceSamples = () => [];
       computeAgencyEquivalent = null;
@@ -83,6 +93,7 @@ function tuneHeroSignalSpacing() {
       const pricingEngineV1Mod = await import("./src/domain/pricing/engine-v1.js");
       computePricingEngineV1 = pricingEngineV1Mod.computePricingEngineV1;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar src/domain/pricing/engine-v1.js", _);
       computePricingEngineV1 = null;
     }
     try {
@@ -90,6 +101,7 @@ function tuneHeroSignalSpacing() {
       computeRiskScore = riskMod.computeRiskScore;
       riskNarrative = riskMod.riskNarrative;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar risk-audit.js", _);
       computeRiskScore = () => ({ score: 0, subscores: { riscoEscopo: 0, ocupacaoPressao: 0, exaustaoPressao: 0, margemFragilidade: 0 } });
       riskNarrative = () => "Sem dados para auditoria de risco.";
     }
@@ -97,6 +109,7 @@ function tuneHeroSignalSpacing() {
       const telemetryMod = await import("./telemetry.js");
       trackEvent = telemetryMod.trackEvent;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar telemetry.js", _);
       trackEvent = () => null;
     }
     try {
@@ -107,6 +120,7 @@ function tuneHeroSignalSpacing() {
       computeRoiAnchor = negotiationMod.computeRoiAnchor;
       generateJustificationBlocks = negotiationMod.generateJustificationBlocks;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar negotiation-v21.js", _);
       computeScopeShielding = () => ({ score: 0, level: "low", markupPct: 0, capPct: 18 });
       computeDynamicScarcityMarkup = () => ({ ocupacaoAgenda: 0, markupPct: 0, capPct: 30 });
       computeRunwaySummary = () => ({
@@ -135,8 +149,9 @@ function tuneHeroSignalSpacing() {
       formatStrategistValue = strategistMod.formatStrategistValue;
       STRATEGIST_CAVEAT = strategistMod.STRATEGIST_CAVEAT;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar strategist-mode.js", _);
       computeStrategistMetrics = () => ({ ok: false, vce: null, roix: null, cdo: null, vceLabel: null, viabilidadeAlerta: false });
-      formatStrategistValue = () => "â€”";
+      formatStrategistValue = () => "—";
       STRATEGIST_CAVEAT = "Estimativa baseada nas premissas informadas; sem garantias.";
     }
     try {
@@ -148,6 +163,7 @@ function tuneHeroSignalSpacing() {
       advancePdfYModel = hardeningMod.advancePdfY;
       advancePdfYByLinesModel = hardeningMod.advancePdfYByLines;
     } catch (_) {
+      debugSoftFallback("Falha ao carregar hardening-v21.js", _);
       validateEndpointUrl = () => ({ ok: false, reason: "INVALID_URL" });
       shouldTrackRiskScoreView = () => ({ shouldTrack: true, next: null });
       buildCompositionPartsModel = (s, r) => {
@@ -702,7 +718,11 @@ function tuneHeroSignalSpacing() {
       panel.querySelectorAll(".tab-skeleton-overlay").forEach((n) => n.remove());
       const overlay = document.createElement("div");
       overlay.className = "tab-skeleton-overlay";
-      overlay.innerHTML = '<span class="tab-skeleton-line"></span><span class="tab-skeleton-line short"></span>';
+      const lineA = document.createElement("span");
+      lineA.className = "tab-skeleton-line";
+      const lineB = document.createElement("span");
+      lineB.className = "tab-skeleton-line short";
+      overlay.append(lineA, lineB);
       panel.classList.add("tab-panel-relative");
       panel.appendChild(overlay);
       requestAnimationFrame(() => overlay.classList.add("is-visible"));
@@ -759,23 +779,35 @@ function tuneHeroSignalSpacing() {
       if (!firstRisk) return;
       const host = firstRisk.closest(".rounded-xl");
       if (!host) return;
+
       const wrap = document.createElement("div");
       wrap.id = "riskThermometerWrap";
       wrap.className = "mt-3 space-y-1";
-      wrap.innerHTML = `
-          <div class="flex items-center justify-between text-[11px] text-slate-300">
-            <span>TermÃ´metro de risco</span>
-            <span id="riskThermometerLabel" class="risk-thermo-label text-emerald-300">Baixo (0/5)</span>
-          </div>
-          <div class="risk-thermo-track">
-            <div id="riskThermometerFill" class="risk-thermo-fill"></div>
-          </div>
-        `;
+      const header = document.createElement("div");
+      header.className = "flex items-center justify-between text-[11px] text-slate-300";
+
+      const title = document.createElement("span");
+      title.textContent = "Termometro de risco";
+
+      const label = document.createElement("span");
+      label.id = "riskThermometerLabel";
+      label.className = "risk-thermo-label text-emerald-300";
+      label.textContent = "Baixo (0/5)";
+
+      header.append(title, label);
+
+      const track = document.createElement("div");
+      track.className = "risk-thermo-track";
+
+      const fill = document.createElement("div");
+      fill.id = "riskThermometerFill";
+      fill.className = "risk-thermo-fill";
+      track.appendChild(fill);
+
+      wrap.append(header, track);
       host.appendChild(wrap);
-      riskThermometerRefs = {
-        label: wrap.querySelector("#riskThermometerLabel"),
-        fill: wrap.querySelector("#riskThermometerFill"),
-      };
+
+      riskThermometerRefs = { label, fill };
     }
 
     function updateRiskThermometer(state) {
@@ -793,7 +825,7 @@ function tuneHeroSignalSpacing() {
       const ratio = count / checks.length;
       const hue = 120 - Math.round(120 * ratio);
       const width = Math.max(8, Math.round(ratio * 100));
-      const levels = ["Baixo", "Leve", "Moderado", "Alto", "CrÃ­tico", "CrÃ­tico"];
+      const levels = ["Baixo", "Leve", "Moderado", "Alto", "Crítico", "Crítico"];
       const level = levels[Math.min(levels.length - 1, count)] || "Baixo";
       riskThermometerRefs.fill.style.width = `${width}%`;
       riskThermometerRefs.fill.style.backgroundColor = `hsl(${hue} 82% 48%)`;
@@ -4369,7 +4401,9 @@ function tuneHeroSignalSpacing() {
       window.addEventListener("resize", checkScrollEnd);
       try {
         new ResizeObserver(checkScrollEnd).observe(els.termsScroll);
-      } catch (_) { }
+      } catch (_) {
+        debugSoftFallback("ResizeObserver indisponivel para termsScroll", _);
+      }
       checkScrollEnd();
 
       function isFocusable(el) {
@@ -4618,9 +4652,13 @@ function tuneHeroSignalSpacing() {
         updateUI();
       })();
     } catch (bootErr) {
-      showBootError(bootErr, "Erro na inicializaÃ§Ã£o");
+      showBootError(bootErr, "Erro na inicialização");
     }
   })().catch((e) => showBootError(e, "Bootstrap"));
+
+
+
+
 
 
 
