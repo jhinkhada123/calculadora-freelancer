@@ -1,4 +1,10 @@
-import { isPricingReasonCodeV1 } from "./reason-codes-v1.js";
+﻿import { isPricingReasonCodeV1 } from "./reason-codes-v1.js";
+import {
+  PRICING_IMPACT_PREVIEW_INPUT_KEYS_V1,
+  PRICING_TRACE_METRICS_V1,
+  PRICING_TRACE_REASON_CODE_BY_INPUT_KEY_V1,
+  selectTopTraceDriversV1,
+} from "./traceability-v1.js";
 
 export const PRICING_ENGINE_V1_CONTRACT_VERSION = 1;
 
@@ -19,6 +25,62 @@ export const PRICING_ENGINE_V1_DEFAULTS = Object.freeze({
   minRetainerVolumeHours: 20,
   defaultProjectHours: 40,
   maxTotalPercent: 99,
+});
+
+const TRACE_DRIVER_INPUT_CANDIDATES_BY_METRIC = Object.freeze({
+  heroPrice: Object.freeze([
+    "utilization",
+    "scopeRisk",
+    "scopeClarity",
+    "revisionLoad",
+    "urgentDeadline",
+    "profitMargin",
+    "buffer",
+    "targetIncome",
+    "monthlyCosts",
+    "taxRate",
+  ]),
+  sustainablePrice: Object.freeze([
+    "projectHours",
+    "utilization",
+    "scopeRisk",
+    "scopeClarity",
+    "revisionLoad",
+    "urgentDeadline",
+    "profitMargin",
+    "buffer",
+    "targetIncome",
+    "monthlyCosts",
+    "taxRate",
+  ]),
+  floorPrice: Object.freeze([
+    "projectHours",
+    "utilization",
+    "targetIncome",
+    "monthlyCosts",
+    "taxRate",
+    "profitMargin",
+    "buffer",
+  ]),
+  riskIndicator: Object.freeze([
+    "scopeRisk",
+    "scopeClarity",
+    "revisionLoad",
+    "urgentDeadline",
+    "discount",
+    "engagementModel",
+    "monthlyVolumeHours",
+    "buffer",
+    "profitMargin",
+  ]),
+});
+
+const PREVIEW_METRIC_BY_INPUT_KEY = Object.freeze({
+  discount: "sustainablePrice",
+  scopeClarity: "heroPrice",
+  revisionLoad: "heroPrice",
+  urgentDeadline: "heroPrice",
+  scopeRisk: "riskIndicator",
 });
 
 function toFiniteNumber(value, fallback = 0) {
@@ -54,6 +116,12 @@ function normalizeEngagementModel(value) {
   if (raw === "retainer") return "retainer";
   if (raw === "hourly") return "hourly";
   return "project";
+}
+
+function nextRevisionLoad(value) {
+  if (value === "low") return "medium";
+  if (value === "medium") return "high";
+  return "high";
 }
 
 function sanitizeInput(input = {}, cfg = PRICING_ENGINE_V1_DEFAULTS) {
@@ -213,10 +281,26 @@ function buildExplainFactors(projectFloorPrice, state, premiumComponents, cfg) {
   return factors;
 }
 
-export function computePricingEngineV1(input = {}, config = {}) {
-  const cfg = { ...PRICING_ENGINE_V1_DEFAULTS, ...config };
-  const state = sanitizeInput(input, cfg);
+function computeRiskIndicator(state, guardrails, cfg) {
+  let score = state.scopeRiskPct;
 
+  if (state.scopeClarity === "unclear") score += 20;
+  if (state.urgentDeadline) score += roundMoney(cfg.urgentDeadlinePremiumPct * 100);
+  if (state.revisionLoad === "high") score += roundMoney(cfg.highRevisionPremiumPct * 100);
+  if (state.revisionLoad === "medium") score += roundMoney(cfg.mediumRevisionPremiumPct * 100);
+
+  if (guardrails.floorBreached) score += 20;
+  if (guardrails.retainerWithoutVolume) score += 15;
+  if (guardrails.highRisk) score += 10;
+
+  const safeScore = clamp(roundMoney(score), 0, 100);
+  return {
+    score: safeScore,
+    level: safeScore >= 70 ? "high" : safeScore >= 40 ? "medium" : "low",
+  };
+}
+
+function computeCoreFromState(state, cfg) {
   const baseNeed = state.targetIncome + state.monthlyCosts;
   const rawTotalPercent = state.taxRate + state.profitMargin + state.buffer;
   const totalPercent = clamp(rawTotalPercent, 0, cfg.maxTotalPercent);
@@ -259,7 +343,6 @@ export function computePricingEngineV1(input = {}, config = {}) {
   };
 
   return {
-    contractVersion: PRICING_ENGINE_V1_CONTRACT_VERSION,
     pricingBand: {
       piso: roundMoney(projectFloorRaw),
       sustentavel: roundMoney(sustainableProjectRaw),
@@ -274,7 +357,6 @@ export function computePricingEngineV1(input = {}, config = {}) {
       horasFaturaveisMes: roundMoney(billableHoursMonth),
       ocupacaoReal: roundRatio(occupancyReal),
     },
-    // Project totals are domain-owned so UI can stay display-only.
     project: {
       total: roundMoney(sustainableProjectRaw),
       estimatedHours: roundMoney(state.projectHours),
@@ -283,6 +365,178 @@ export function computePricingEngineV1(input = {}, config = {}) {
       totalAfterDiscount: roundMoney(projectAfterDiscountRaw),
     },
     guardrails,
+    riskIndicator: computeRiskIndicator(state, guardrails, cfg),
     explainFactors: buildExplainFactors(projectFloorRaw, state, premiumComponents, cfg),
+  };
+}
+
+function getCoreMetricValue(coreResult, metric) {
+  if (metric === "heroPrice") return coreResult.rates.hora;
+  if (metric === "sustainablePrice") return coreResult.pricingBand.sustentavel;
+  if (metric === "floorPrice") return coreResult.pricingBand.piso;
+  if (metric === "riskIndicator") return coreResult.riskIndicator.score;
+  return 0;
+}
+
+function withNeutralizedInput(state, inputKey, cfg) {
+  const next = { ...state };
+
+  if (inputKey === "projectHours") {
+    next.projectHours = Math.max(1, cfg.defaultProjectHours);
+  } else if (inputKey === "scopeRisk") {
+    next.scopeRiskPct = 0;
+  } else if (inputKey === "discount") {
+    next.discountPct = 0;
+  } else if (inputKey === "scopeClarity") {
+    next.scopeClarity = "clear";
+  } else if (inputKey === "revisionLoad") {
+    next.revisionLoad = "low";
+  } else if (inputKey === "urgentDeadline") {
+    next.urgentDeadline = false;
+  } else if (inputKey === "engagementModel") {
+    next.engagementModel = "project";
+  } else if (inputKey === "monthlyVolumeHours") {
+    next.monthlyVolumeHours = Math.max(state.monthlyVolumeHours, cfg.minRetainerVolumeHours);
+  } else if (inputKey === "utilization" || inputKey === "occupancyRate") {
+    next.utilizationPct = 100;
+  } else if (inputKey === "profitMargin") {
+    next.profitMargin = Math.max(state.profitMargin, cfg.minHealthyMarginPct);
+  } else if (inputKey === "buffer") {
+    next.buffer = Math.max(state.buffer, cfg.minBufferForHighRiskPct);
+  } else if (inputKey === "targetIncome") {
+    next.targetIncome = 0;
+  } else if (inputKey === "monthlyCosts") {
+    next.monthlyCosts = 0;
+  } else if (inputKey === "taxRate") {
+    next.taxRate = 0;
+  } else {
+    return null;
+  }
+
+  if (JSON.stringify(next) === JSON.stringify(state)) {
+    return null;
+  }
+
+  return next;
+}
+
+function buildTraceabilityMap(coreResult, state, cfg) {
+  const traceability = {};
+
+  for (const metric of PRICING_TRACE_METRICS_V1) {
+    const baseValue = getCoreMetricValue(coreResult, metric);
+    const candidates = [];
+    const inputKeys = TRACE_DRIVER_INPUT_CANDIDATES_BY_METRIC[metric] || [];
+
+    for (const inputKey of inputKeys) {
+      const counterfactualState = withNeutralizedInput(state, inputKey, cfg);
+      if (!counterfactualState) continue;
+
+      const counterfactualResult = computeCoreFromState(counterfactualState, cfg);
+      const counterfactualValue = getCoreMetricValue(counterfactualResult, metric);
+      const impact = Math.abs(baseValue - counterfactualValue);
+      if (impact <= 0) continue;
+
+      candidates.push({
+        inputKey,
+        impact,
+        reasonCode: PRICING_TRACE_REASON_CODE_BY_INPUT_KEY_V1[inputKey],
+      });
+    }
+
+    traceability[metric] = selectTopTraceDriversV1(candidates, 3);
+  }
+
+  return traceability;
+}
+
+function withPreviewScenario(state, inputKey) {
+  const next = { ...state };
+
+  if (inputKey === "discount") {
+    next.discountPct = Math.min(95, state.discountPct + 5);
+  } else if (inputKey === "scopeClarity") {
+    next.scopeClarity = state.scopeClarity === "unclear" ? "clear" : "unclear";
+  } else if (inputKey === "revisionLoad") {
+    next.revisionLoad = nextRevisionLoad(state.revisionLoad);
+  } else if (inputKey === "urgentDeadline") {
+    next.urgentDeadline = !state.urgentDeadline;
+  } else if (inputKey === "scopeRisk") {
+    next.scopeRiskPct = Math.min(100, state.scopeRiskPct + 10);
+  } else {
+    return null;
+  }
+
+  if (JSON.stringify(next) === JSON.stringify(state)) {
+    return null;
+  }
+
+  return next;
+}
+
+function buildPreviewDelta(inputKey, metric, baseValueRaw, previewValueRaw) {
+  const baseValue = toFiniteNumber(baseValueRaw, 0);
+  const previewValue = toFiniteNumber(previewValueRaw, baseValue);
+  const deltaValue = roundMoney(previewValue - baseValue);
+  const deltaPct = baseValue > 0 ? roundMoney((deltaValue / baseValue) * 100) : 0;
+
+  let direction = "neutral";
+  if (deltaValue > 0) direction = "up";
+  if (deltaValue < 0) direction = "down";
+
+  return {
+    inputKey,
+    metric,
+    deltaValue,
+    deltaPct,
+    direction,
+  };
+}
+
+function getPreviewMetricValue(coreResult, inputKey, metric) {
+  if (inputKey === "discount" && metric === "sustainablePrice") {
+    return coreResult.project.totalAfterDiscount;
+  }
+  return getCoreMetricValue(coreResult, metric);
+}
+
+function buildImpactPreviewMap(coreResult, state, cfg) {
+  const impactPreview = {};
+
+  for (const inputKey of PRICING_IMPACT_PREVIEW_INPUT_KEYS_V1) {
+    const metric = PREVIEW_METRIC_BY_INPUT_KEY[inputKey] || "heroPrice";
+    const previewState = withPreviewScenario(state, inputKey);
+    const baseValue = getPreviewMetricValue(coreResult, inputKey, metric);
+
+    if (!previewState) {
+      impactPreview[inputKey] = buildPreviewDelta(inputKey, metric, baseValue, baseValue);
+      continue;
+    }
+
+    const previewResult = computeCoreFromState(previewState, cfg);
+    const previewValue = getPreviewMetricValue(previewResult, inputKey, metric);
+    impactPreview[inputKey] = buildPreviewDelta(inputKey, metric, baseValue, previewValue);
+  }
+
+  return impactPreview;
+}
+
+export function computePricingEngineV1(input = {}, config = {}) {
+  const cfg = { ...PRICING_ENGINE_V1_DEFAULTS, ...config };
+  const state = sanitizeInput(input, cfg);
+
+  const coreResult = computeCoreFromState(state, cfg);
+
+  return {
+    contractVersion: PRICING_ENGINE_V1_CONTRACT_VERSION,
+    pricingBand: coreResult.pricingBand,
+    rates: coreResult.rates,
+    economics: coreResult.economics,
+    project: coreResult.project,
+    guardrails: coreResult.guardrails,
+    riskIndicator: coreResult.riskIndicator,
+    explainFactors: coreResult.explainFactors,
+    traceability: buildTraceabilityMap(coreResult, state, cfg),
+    impactPreview: buildImpactPreviewMap(coreResult, state, cfg),
   };
 }
