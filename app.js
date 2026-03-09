@@ -218,6 +218,7 @@ function tuneHeroSignalSpacing() {
     let auditDebounceTimer = null;
     let deferredInstallPrompt = null;
     let riskTelemetryState = null;
+    let riskThermometerRefs = null;
     let proposalJustificationPinned = false;
     const counterAnimationState = new WeakMap();
     const TRACEABILITY_METRICS_V1 = new Set([
