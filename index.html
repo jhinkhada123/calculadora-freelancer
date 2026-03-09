@@ -959,46 +959,46 @@
                   <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">â€”</p>
                 </div>
 
-                <div id="pricingHudShell" class="pricing-hud-shell preview-block mt-4 rounded-2xl border border-emerald-400/30 bg-[linear-gradient(140deg,rgba(5,12,24,.96),rgba(9,18,32,.92))] p-4 card-inner" data-order="4">
-                  <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <button id="pricingHudHeroMetric" type="button" data-trace-metric="heroPrice" class="rounded-xl border border-white/10 bg-white/5 p-3 text-left">
-                      <p class="text-[11px] uppercase tracking-wider text-slate-400">Preco guia</p>
-                      <p id="pricingHudHeroValue" class="mt-1 text-2xl font-semibold tabular-nums text-emerald-200">-</p>
-                      <p id="pricingHudHeroTag" class="mt-1 text-[11px] text-emerald-300/80"></p>
+                <div id="pricingHudShell" class="pricing-hud-shell preview-block mt-5 rounded-2xl border border-emerald-300/35 bg-[linear-gradient(148deg,rgba(4,11,22,.97),rgba(10,18,34,.94))] p-5 card-inner shadow-[0_14px_34px_rgba(16,185,129,.14)]" data-order="4">
+                  <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_.85fr_1fr]">
+                    <button id="pricingHudHeroMetric" type="button" data-trace-metric="heroPrice" class="hud-hero-card rounded-xl border border-emerald-300/25 bg-emerald-400/[0.05] px-4 py-3 text-left">
+                      <p class="text-[10px] uppercase tracking-[0.16em] text-slate-500">Preco guia</p>
+                      <p id="pricingHudHeroValue" class="hud-hero-value mt-2 text-4xl font-semibold leading-none tracking-tight tabular-nums text-emerald-100 sm:text-[2.65rem]">-</p>
+                      <p id="pricingHudHeroTag" class="mt-2 text-[10px] text-emerald-300/70"></p>
                     </button>
-                    <button id="pricingHudRiskMetric" type="button" data-trace-metric="riskIndicator" class="rounded-xl border border-white/10 bg-white/5 p-3 text-left">
-                      <p class="text-[11px] uppercase tracking-wider text-slate-400">Risco / health</p>
+                    <button id="pricingHudRiskMetric" type="button" data-trace-metric="riskIndicator" class="hud-risk-card rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-3 text-left">
+                      <p class="text-[10px] uppercase tracking-[0.13em] text-slate-500">Risco / health</p>
                       <div class="mt-2 flex items-center gap-2">
                         <span id="pricingHudRiskDot" class="h-2.5 w-2.5 rounded-full bg-slate-500"></span>
-                        <span id="pricingHudRiskLabel" class="text-sm font-medium text-slate-200">Sem dados</span>
+                        <span id="pricingHudRiskLabel" class="text-xs font-medium text-slate-200">Sem dados</span>
                       </div>
                     </button>
-                    <div class="rounded-xl border border-white/10 bg-white/5 p-3">
-                      <p class="text-[11px] uppercase tracking-wider text-slate-400">Faixa</p>
+                    <div class="hud-band-card rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3">
+                      <p class="text-[10px] uppercase tracking-[0.13em] text-slate-500">Faixa operacional</p>
                       <div class="mt-2 grid grid-cols-3 gap-2 text-[11px] text-slate-300">
-                        <button id="pricingHudFloorMetric" type="button" data-trace-metric="floorPrice" class="rounded-lg border border-white/10 bg-ink-900/50 px-2 py-1 text-left">
+                        <button id="pricingHudFloorMetric" type="button" data-trace-metric="floorPrice" class="hud-band-cell rounded-lg border border-white/10 bg-ink-900/55 px-2 py-1.5 text-left">
                           <span class="block text-[10px] uppercase tracking-wide text-slate-500">Piso</span>
-                          <span id="pricingHudFloorValue" class="mt-1 block tabular-nums text-sm text-slate-100">-</span>
+                          <span id="pricingHudFloorValue" class="mt-1 block tabular-nums text-sm font-medium text-slate-100">-</span>
                         </button>
-                        <button id="pricingHudSustainableMetric" type="button" data-trace-metric="sustainablePrice" class="rounded-lg border border-white/10 bg-ink-900/50 px-2 py-1 text-left">
-                          <span class="block text-[10px] uppercase tracking-wide text-slate-500">Sust.</span>
-                          <span id="pricingHudSustainableValue" class="mt-1 block tabular-nums text-sm text-slate-100">-</span>
+                        <button id="pricingHudSustainableMetric" type="button" data-trace-metric="sustainablePrice" class="hud-band-cell hud-band-cell--active rounded-lg border border-emerald-300/30 bg-emerald-400/[0.08] px-2 py-1.5 text-left">
+                          <span class="block text-[10px] uppercase tracking-wide text-emerald-300/75">Sust.</span>
+                          <span id="pricingHudSustainableValue" class="mt-1 block tabular-nums text-sm font-semibold text-emerald-100">-</span>
                         </button>
-                        <div class="rounded-lg border border-white/10 bg-ink-900/50 px-2 py-1 text-left">
+                        <div class="hud-band-cell rounded-lg border border-white/10 bg-ink-900/55 px-2 py-1.5 text-left">
                           <span class="block text-[10px] uppercase tracking-wide text-slate-500">Ideal</span>
-                          <span id="pricingHudIdealValue" class="mt-1 block tabular-nums text-sm text-slate-100">-</span>
+                          <span id="pricingHudIdealValue" class="mt-1 block tabular-nums text-sm font-medium text-slate-100">-</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div id="pricingEngineV1Card" class="preview-block mt-4 rounded-2xl border border-cyan-400/30 bg-cyan-500/5 p-4 card-inner" data-order="5">
+                <div id="pricingEngineV1Card" class="preview-block mt-4 rounded-2xl border border-white/10 bg-ink-900/35 p-4 card-inner" data-order="5">
                   <div class="flex items-start justify-between gap-3">
                     <div>
-                      <p class="text-[11px] font-medium uppercase tracking-wider text-cyan-300/90">Motor v1 (contrato)</p>
-                      <p class="mt-1 text-xs text-slate-300">Exibicao fina de pricingBand, rates, economics, guardrails e explainFactors.</p>
+                      <p class="text-[11px] font-medium uppercase tracking-wider text-slate-400">Motor v1 (contrato)</p>
+                      <p class="mt-1 text-xs text-slate-400">Exibicao fina de pricingBand, rates, economics, guardrails e explainFactors.</p>
                     </div>
-                    <span id="pricingEngineV1Status" class="rounded-full border border-cyan-400/40 bg-cyan-500/10 px-2 py-0.5 text-[11px] text-cyan-200">Calculando...</span>
+                    <span id="pricingEngineV1Status" class="rounded-full border border-white/15 bg-white/[0.05] px-2 py-0.5 text-[11px] text-slate-300">Calculando...</span>
                   </div>
 
                   <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -1353,6 +1353,7 @@
     <script type="module" src="./app.js"></script>
   </body>
 </html>
+
 
 
 
