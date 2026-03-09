@@ -1,4 +1,4 @@
-﻿# Merge Policy (Governance)
+# Merge Policy (Governance)
 
 This policy is blocking for pull requests.
 
@@ -43,7 +43,11 @@ Required sections in PR body:
   - governance changelog note
 - Target metric: override rate <= 5% per month for `risk:high` PRs.
 
-## 5) Branch protection (required)
+## 5) Docs-only PRs
+- Docs-only PRs are evaluated by governance checks only.
+- Deployment status is informational; see [CI/Ruleset Hygiene](ci-ruleset-hygiene.md).
+
+## 6) Branch protection (required)
 After this policy is merged, protect `main` with:
 - Require pull request before merging
 - Require approvals
