@@ -1,32 +1,32 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-BR" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070A12" />
-    <title>Calculadora de PrecificaÃ§Ã£o para Freelancers</title>
+    <title>Calculadora de Precificação para Freelancers</title>
     <meta
       id="metaDescription"
       name="description"
-      content="Calculadora de PrecificaÃ§Ã£o para Freelancers com proposta em PDF, auditoria e governanÃ§a de dados."
+      content="Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados."
     />
     <link rel="canonical" href="" />
-    <meta property="og:title" content="Calculadora de PrecificaÃ§Ã£o para Freelancers" />
-    <meta property="og:description" content="Calculadora de PrecificaÃ§Ã£o para Freelancers com proposta em PDF, auditoria e governanÃ§a de dados." />
+    <meta property="og:title" content="Calculadora de Precificação para Freelancers" />
+    <meta property="og:description" content="Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="" />
     <meta property="og:url" content="" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Calculadora de PrecificaÃ§Ã£o para Freelancers" />
-    <meta name="twitter:description" content="Calculadora de PrecificaÃ§Ã£o para Freelancers com proposta em PDF, auditoria e governanÃ§a de dados." />
+    <meta name="twitter:title" content="Calculadora de Precificação para Freelancers" />
+    <meta name="twitter:description" content="Calculadora de Precificação para Freelancers com proposta em PDF, auditoria e governança de dados." />
     <meta name="twitter:image" content="" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';" />
     <script src="/head-init.js"></script>
     <link rel="manifest" href="/manifest.webmanifest" />
 
-    <!-- TODO: self-host fonts/CSS/JS para evitar dependÃªncia de CDNs (Google Fonts, Tailwind, cdnjs). -->
+    <!-- TODO: self-host fonts/CSS/JS para evitar dependência de CDNs (Google Fonts, Tailwind, cdnjs). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,16 +50,16 @@
       style="display: none;"
     >
       <div class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-white/10 bg-ink-900 shadow-soft">
-        <h2 id="termsTitle" class="border-b border-white/10 px-5 py-4 text-lg font-semibold text-slate-100">Antes de comeÃ§ar</h2>
+        <h2 id="termsTitle" class="border-b border-white/10 px-5 py-4 text-lg font-semibold text-slate-100">Antes de começar</h2>
         <div class="border-b border-white/10 px-5 py-4">
-          <p class="mb-3 text-sm text-slate-300">Resumo do que vocÃª estÃ¡ aceitando:</p>
+          <p class="mb-3 text-sm text-slate-300">Resumo do que você está aceitando:</p>
           <ul class="list-inside list-disc space-y-1.5 text-sm text-slate-300">
-            <li>Os nÃºmeros sÃ£o estimativas para apoiar suas decisÃµes; resultados podem variar.</li>
-            <li>Para decisÃµes fiscais, contÃ¡beis ou jurÃ­dicas, consulte um profissional.</li>
-            <li>Dados da calculadora sÃ£o salvos localmente no seu dispositivo. Este site pode carregar bibliotecas de terceiros (fontes, estilos, geraÃ§Ã£o de PDF).</li>
-            <li>VocÃª pode limpar os dados a qualquer momento nas configuraÃ§Ãµes do navegador.</li>
+            <li>Os números são estimativas para apoiar suas decisões; resultados podem variar.</li>
+            <li>Para decisões fiscais, contábeis ou jurídicas, consulte um profissional.</li>
+            <li>Dados da calculadora são salvos localmente no seu dispositivo. Este site pode carregar bibliotecas de terceiros (fontes, estilos, geração de PDF).</li>
+            <li>Você pode limpar os dados a qualquer momento nas configurações do navegador.</li>
           </ul>
-          <p class="mt-3 text-xs text-slate-400">Termos completos abaixo. Role atÃ© o fim para habilitar o botÃ£o.</p>
+          <p class="mt-3 text-xs text-slate-400">Termos completos abaixo. Role até o fim para habilitar o botão.</p>
         </div>
         <div
           id="termsScroll"
@@ -68,10 +68,10 @@
           tabindex="0"
         >
           <h3 class="font-medium text-slate-300">1. Termos de Uso (texto completo)</h3>
-          <p class="mt-2">Esta calculadora Ã© uma ferramenta de apoio Ã  estimativa. Os resultados sÃ£o projeÃ§Ãµes e nÃ£o constituem garantia de lucro ou resultado financeiro. A ferramenta nÃ£o substitui orientaÃ§Ã£o contÃ¡bil, fiscal ou jurÃ­dica. O uso dos valores gerados Ã© de sua responsabilidade.</p>
-          <h3 class="mt-4 font-medium text-slate-300">2. PolÃ­tica de Privacidade (texto completo)</h3>
-          <p class="mt-2">Dados coletados: estado da calculadora, log de aceite e trilha de cÃ¡lculos, armazenados localmente. O site pode carregar recursos de terceiros (fontes, estilos, script de PDF). NÃ£o usamos cookies de terceiros para rastreamento. Finalidade: funcionamento da ferramenta e cumprimento legal. Base legal: execuÃ§Ã£o de contrato/consentimento. RetenÃ§Ã£o: atÃ© vocÃª limpar o armazenamento (ou limite da trilha). Direitos do titular: ver pÃ¡gina de Privacidade. Incidentes de seguranÃ§a: procedimentos de notificaÃ§Ã£o conforme legislaÃ§Ã£o.</p>
-          <p class="mt-4 text-slate-500" id="termsEnd">Fim. Role atÃ© aqui para continuar.</p>
+          <p class="mt-2">Esta calculadora é uma ferramenta de apoio à estimativa. Os resultados são projeções e não constituem garantia de lucro ou resultado financeiro. A ferramenta não substitui orientação contábil, fiscal ou jurídica. O uso dos valores gerados é de sua responsabilidade.</p>
+          <h3 class="mt-4 font-medium text-slate-300">2. Política de Privacidade (texto completo)</h3>
+          <p class="mt-2">Dados coletados: estado da calculadora, log de aceite e trilha de cálculos, armazenados localmente. O site pode carregar recursos de terceiros (fontes, estilos, script de PDF). Não usamos cookies de terceiros para rastreamento. Finalidade: funcionamento da ferramenta e cumprimento legal. Base legal: execução de contrato/consentimento. Retenção: até você limpar o armazenamento (ou limite da trilha). Direitos do titular: ver página de Privacidade. Incidentes de segurança: procedimentos de notificação conforme legislação.</p>
+          <p class="mt-4 text-slate-500" id="termsEnd">Fim. Role até aqui para continuar.</p>
         </div>
         <div class="flex justify-end gap-3 border-t border-white/10 px-5 py-4">
           <button
@@ -88,18 +88,18 @@
 
     <div id="premiumLockModal" class="fixed inset-0 z-[99] hidden items-center justify-center bg-ink-950/90 p-4" role="dialog" aria-modal="true" aria-labelledby="premiumLockTitle" style="display: none;">
       <div class="w-full max-w-md rounded-2xl border border-indigo-400/30 bg-ink-900 p-6 shadow-soft">
-        <h2 id="premiumLockTitle" class="text-lg font-semibold text-indigo-100">Premium ðŸ”’</h2>
-        <p class="mt-3 text-sm text-slate-300">BenefÃ­cios do modo Premium:</p>
+        <h2 id="premiumLockTitle" class="text-lg font-semibold text-indigo-100">Premium 🔒</h2>
+        <p class="mt-3 text-sm text-slate-300">Benefícios do modo Premium:</p>
         <ul class="mt-2 list-inside list-disc space-y-1 text-sm text-slate-300">
-          <li>PatrimÃ´nio e custo de oportunidade</li>
+          <li>Patrimônio e custo de oportunidade</li>
           <li>Risco e volatilidade de escopo</li>
-          <li>Escassez e ocupaÃ§Ã£o de agenda</li>
-          <li>ExaustÃ£o e fator de burnout</li>
-          <li>Explicabilidade detalhada do preÃ§o</li>
+          <li>Escassez e ocupação de agenda</li>
+          <li>Exaustão e fator de burnout</li>
+          <li>Explicabilidade detalhada do preço</li>
         </ul>
-        <p class="mt-4 text-xs text-slate-400">Em breve. Enquanto isso, use a prÃ©via limitada.</p>
+        <p class="mt-4 text-xs text-slate-400">Em breve. Enquanto isso, use a prévia limitada.</p>
         <div class="mt-5 flex flex-wrap gap-3">
-          <button id="btnPremiumVerPrevia" type="button" class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400">Ver prÃ©via</button>
+          <button id="btnPremiumVerPrevia" type="button" class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400">Ver prévia</button>
           <button id="btnPremiumLista" type="button" class="rounded-xl border border-indigo-400/40 px-4 py-2 text-sm text-indigo-100 hover:bg-indigo-500/20">Entrar na lista</button>
           <button id="btnPremiumQuero" type="button" class="rounded-xl border border-indigo-400/40 px-4 py-2 text-sm text-indigo-100 hover:bg-indigo-500/20">Quero acesso</button>
         </div>
@@ -114,27 +114,27 @@
     <div id="clientViewContainer" class="hidden">
       <div class="mx-auto max-w-2xl px-4 py-16">
         <h1 class="font-serif text-2xl font-semibold text-slate-100">Resumo da proposta</h1>
-        <p class="mt-2 text-sm text-slate-400">Valores para aprovaÃ§Ã£o do cliente.</p>
+        <p class="mt-2 text-sm text-slate-400">Valores para aprovação do cliente.</p>
         <dl class="mt-8 space-y-4 rounded-2xl border border-white/10 bg-ink-900/70 p-6">
           <div>
             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Valor total</dt>
-            <dd id="clientViewTotal" class="mt-1 text-xl font-semibold text-slate-100 tabular-nums">â€”</dd>
+            <dd id="clientViewTotal" class="mt-1 text-xl font-semibold text-slate-100 tabular-nums">—</dd>
           </div>
           <div>
             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Prazo</dt>
-            <dd id="clientViewPrazo" class="mt-1 text-slate-200">â€”</dd>
+            <dd id="clientViewPrazo" class="mt-1 text-slate-200">—</dd>
           </div>
           <div>
             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Validade</dt>
-            <dd id="clientViewValidade" class="mt-1 text-slate-200">â€”</dd>
+            <dd id="clientViewValidade" class="mt-1 text-slate-200">—</dd>
           </div>
           <div>
             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Moeda</dt>
-            <dd id="clientViewMoeda" class="mt-1 text-slate-200">â€”</dd>
+            <dd id="clientViewMoeda" class="mt-1 text-slate-200">—</dd>
           </div>
           <div>
             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Profissional</dt>
-            <dd id="clientViewProfissional" class="mt-1 text-slate-200">â€”</dd>
+            <dd id="clientViewProfissional" class="mt-1 text-slate-200">—</dd>
           </div>
         </dl>
       </div>
@@ -325,18 +325,18 @@
                 >
                   <option value="BRL" selected>BRL (R$)</option>
                   <option value="USD">USD ($)</option>
-                  <option value="EUR">EUR (â‚¬)</option>
+                  <option value="EUR">EUR (€)</option>
                 </select>
               </div>
             </div>
 
             <p id="activeModeLabel" class="mt-3 text-xs font-medium text-slate-400">Modo ativo: Essencial</p>
             <p id="tabContextHint" class="mt-1 text-[11px] text-slate-500" aria-live="polite">Entradas base: renda, custos, impostos, margem e horas do projeto.</p>
-            <div class="mt-2 flex flex-wrap gap-1 rounded-xl border border-white/10 bg-ink-900/50 p-1" role="tablist" aria-label="SeÃ§Ãµes de configuraÃ§Ã£o">
+            <div class="mt-2 flex flex-wrap gap-1 rounded-xl border border-white/10 bg-ink-900/50 p-1" role="tablist" aria-label="Seções de configuração">
               <button type="button" id="tab-essential" role="tab" aria-selected="true" aria-controls="panel-essential" tabindex="0" data-tab-panel="panel-essential" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Essencial</button>
               <button type="button" id="tab-strategist" role="tab" aria-selected="false" aria-controls="panel-strategist" tabindex="-1" data-tab-panel="panel-strategist" class="strategist-accordion-btn tab-btn hidden rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Estrategista</button>
-              <button type="button" id="tab-scenario" role="tab" aria-selected="false" aria-controls="panel-scenario" tabindex="-1" data-tab-panel="panel-scenario" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">ComparaÃ§Ã£o</button>
-              <button type="button" id="tab-governance" role="tab" aria-selected="false" aria-controls="panel-governance" tabindex="-1" data-tab-panel="panel-governance" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">GovernanÃ§a</button>
+              <button type="button" id="tab-scenario" role="tab" aria-selected="false" aria-controls="panel-scenario" tabindex="-1" data-tab-panel="panel-scenario" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Comparação</button>
+              <button type="button" id="tab-governance" role="tab" aria-selected="false" aria-controls="panel-governance" tabindex="-1" data-tab-panel="panel-governance" class="tab-btn rounded-lg border border-transparent px-3 py-2 text-xs font-medium transition-all duration-150">Governança</button>
             </div>
 
             <div id="panel-essential" role="tabpanel" aria-labelledby="tab-essential" class="tab-panel">
@@ -346,9 +346,9 @@
               <div id="wizardStep1" class="wizard-step" data-step="1" data-current="true">
             <div id="configWrapper" class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div class="space-y-2">
-                <label class="text-sm text-slate-200" for="targetIncome">Renda lÃ­quida desejada / mÃªs</label>
+                <label class="text-sm text-slate-200" for="targetIncome">Renda líquida desejada / mês</label>
                 <input
-                  id="targetIncome" data-input-key="targetIncome"
+                  id="targetIncome"
                   type="number"
                   inputmode="decimal"
                   min="0"
@@ -356,14 +356,14 @@
                   class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 />
                 <p class="text-xs text-slate-400">
-                  Quanto vocÃª quer â€œlevar pra casaâ€ por mÃªs.
+                  Quanto você quer “levar pra casa” por mês.
                 </p>
               </div>
 
               <div class="space-y-2">
-                <label class="text-sm text-slate-200" for="monthlyCosts">Custos fixos do negÃ³cio / mÃªs</label>
+                <label class="text-sm text-slate-200" for="monthlyCosts">Custos fixos do negócio / mês</label>
                 <input
-                  id="monthlyCosts" data-input-key="monthlyCosts"
+                  id="monthlyCosts"
                   type="number"
                   inputmode="decimal"
                   min="0"
@@ -377,7 +377,7 @@
                 <label class="text-sm text-slate-200" for="taxRate">Impostos sobre faturamento</label>
                 <div class="relative">
                   <input
-                    id="taxRate" data-input-key="taxRate"
+                    id="taxRate"
                     type="number"
                     min="0"
                     max="70"
@@ -386,14 +386,14 @@
                   />
                   <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                 </div>
-                <p class="text-xs text-slate-400">Ex.: 6% (MEI), 15%â€“20% (PJ), etc.</p>
+                <p class="text-xs text-slate-400">Ex.: 6% (MEI), 15%–20% (PJ), etc.</p>
               </div>
 
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="profitMargin">Margem de lucro</label>
                 <div class="relative">
                   <input
-                    id="profitMargin" data-input-key="profitMargin"
+                    id="profitMargin"
                     type="number"
                     min="0"
                     max="200"
@@ -409,7 +409,7 @@
                 <label class="text-sm text-slate-200" for="buffer">Buffer (atrasos/imprevistos)</label>
                 <div class="relative">
                   <input
-                    id="buffer" data-input-key="buffer"
+                    id="buffer"
                     type="number"
                     min="0"
                     max="100"
@@ -418,14 +418,14 @@
                   />
                   <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                 </div>
-                <p class="text-xs text-slate-400">Protege contra retrabalho, mudanÃ§as e imprevistos.</p>
+                <p class="text-xs text-slate-400">Protege contra retrabalho, mudanças e imprevistos.</p>
               </div>
 
               <div class="space-y-2">
-                <label class="text-sm text-slate-200" for="utilization">Taxa de horas faturÃ¡veis</label>
+                <label class="text-sm text-slate-200" for="utilization">Taxa de horas faturáveis</label>
                 <div class="relative">
                   <input
-                    id="utilization" data-input-key="utilization"
+                    id="utilization"
                     type="number"
                     min="10"
                     max="100"
@@ -434,40 +434,40 @@
                   />
                   <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-300">%</span>
                 </div>
-                <p class="text-xs text-slate-400">Nem tudo Ã© faturÃ¡vel: vendas, admin, estudos, etc.</p>
+                <p class="text-xs text-slate-400">Nem tudo é faturável: vendas, admin, estudos, etc.</p>
               </div>
 
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="hoursPerDay">Horas/dia</label>
                 <input
-                  id="hoursPerDay" data-input-key="hoursPerDay"
+                  id="hoursPerDay"
                   type="number"
                   min="1"
                   max="16"
                   step="0.5"
                   class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 />
-                <p class="text-xs text-slate-400">Carga diÃ¡ria de trabalho total.</p>
+                <p class="text-xs text-slate-400">Carga diária de trabalho total.</p>
               </div>
 
               <div class="space-y-2">
                 <label class="text-sm text-slate-200" for="daysPerWeek">Dias/semana</label>
                 <input
-                  id="daysPerWeek" data-input-key="daysPerWeek"
+                  id="daysPerWeek"
                   type="number"
                   min="1"
                   max="7"
                   step="1"
                   class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                 />
-                <p class="text-xs text-slate-400">Seu ritmo semanal tÃ­pico.</p>
+                <p class="text-xs text-slate-400">Seu ritmo semanal típico.</p>
               </div>
 
               <div class="space-y-2 sm:col-span-2">
                 <label class="text-sm text-slate-200" for="vacationWeeks">Semanas de folga/ano</label>
                 <div class="relative">
                   <input
-                    id="vacationWeeks" data-input-key="vacationWeeks"
+                    id="vacationWeeks"
                     type="number"
                     min="0"
                     max="20"
@@ -476,7 +476,7 @@
                   />
                 </div>
                 <p class="text-xs text-slate-400">
-                  FÃ©rias + pausas planejadas (ex.: 4 semanas).
+                  Férias + pausas planejadas (ex.: 4 semanas).
                 </p>
               </div>
             </div>
@@ -487,7 +487,7 @@
               <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h3 class="text-sm font-semibold">Estimativa de projeto</h3>
-                  <p class="text-xs text-slate-400">Use sua taxa/hora calculada para fechar um preÃ§o.</p>
+                  <p class="text-xs text-slate-400">Use sua taxa/hora calculada para fechar um preço.</p>
                 </div>
                 <div class="flex items-center gap-2">
                   <button
@@ -520,7 +520,7 @@
                     maxlength="140"
                     class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   />
-                  <p class="text-xs text-slate-400">Esse nome aparecerÃ¡ no PDF.</p>
+                  <p class="text-xs text-slate-400">Esse nome aparecerá no PDF.</p>
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="validityDate">Data de validade da proposta</label>
@@ -537,7 +537,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="projectHours">Horas estimadas</label>
                   <input
-                    id="projectHours" data-input-key="projectHours"
+                    id="projectHours"
                     type="number"
                     min="0"
                     step="1"
@@ -548,7 +548,7 @@
                   <label class="text-sm text-slate-200" for="scopeRisk">Margem de escopo (%)</label>
                   <div class="relative">
                     <input
-                      id="scopeRisk" data-input-key="scopeRisk"
+                      id="scopeRisk"
                       type="number"
                       min="0"
                       max="100"
@@ -562,7 +562,7 @@
                   <label class="text-sm text-slate-200" for="discount">Desconto</label>
                   <div class="relative">
                     <input
-                      id="discount" data-input-key="discount"
+                      id="discount"
                       type="number"
                       min="0"
                       max="90"
@@ -578,7 +578,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="scopeClarity">Clareza de escopo</label>
                   <select
-                    id="scopeClarity" data-input-key="scopeClarity"
+                    id="scopeClarity"
                     class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   >
                     <option value="clear" selected>Claro</option>
@@ -589,7 +589,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="revisionLoad">Carga de revisoes</label>
                   <select
-                    id="revisionLoad" data-input-key="revisionLoad"
+                    id="revisionLoad"
                     class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   >
                     <option value="low" selected>Baixa</option>
@@ -600,7 +600,7 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="engagementModel">Modelo</label>
                   <select
-                    id="engagementModel" data-input-key="engagementModel"
+                    id="engagementModel"
                     class="w-full rounded-xl border border-white/10 bg-ink-900/70 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/50"
                   >
                     <option value="project" selected>Projeto fechado</option>
@@ -610,7 +610,7 @@
                 <div id="monthlyVolumeHoursWrap" class="space-y-2 hidden">
                   <label class="text-sm text-slate-200" for="monthlyVolumeHours">Volume mensal (h)</label>
                   <input
-                    id="monthlyVolumeHours" data-input-key="monthlyVolumeHours"
+                    id="monthlyVolumeHours"
                     type="number"
                     min="0"
                     step="1"
@@ -620,7 +620,7 @@
               </div>
 
               <label class="mt-3 inline-flex items-center gap-2 text-xs text-slate-300">
-                <input id="urgentDeadline" data-input-key="urgentDeadline" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
+                <input id="urgentDeadline" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
                 Prazo urgente
               </label>
 
@@ -631,13 +631,13 @@
               <p class="mt-6 text-[11px] text-slate-400">Quando fechar, gere o PDF do cliente.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
-                  <p class="text-xs text-slate-400">PreÃ§o sugerido do projeto</p>
-                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums font-result-value micro-result-value">â€”</p>
+                  <p class="text-xs text-slate-400">Preço sugerido do projeto</p>
+                  <p id="projectPrice" class="mt-1 text-xl font-semibold tracking-tight tabular-nums font-result-value micro-result-value">—</p>
                   <p id="projectHint" class="mt-1 text-xs text-slate-400">Preencha as horas para estimar.</p>
                 </div>
                 <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
-                  <p class="text-xs text-slate-400">Texto rÃ¡pido para proposta</p>
-                  <p id="proposalText" class="mt-2 text-sm text-slate-200">â€”</p>
+                  <p class="text-xs text-slate-400">Texto rápido para proposta</p>
+                  <p id="proposalText" class="mt-2 text-sm text-slate-200">—</p>
                   <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <button
                       id="btnCopyProposal"
@@ -659,9 +659,9 @@
             </div>
 
             <div id="wizardNav" class="wizard-nav mt-6 flex flex-wrap items-center gap-3">
-              <button id="btnWizardPrev" type="button" class="hidden rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-200 hover:bg-white/10">â† Voltar</button>
-              <button id="btnWizardNext" type="button" class="rounded-xl border border-indigo-400/40 bg-indigo-500/20 px-4 py-2 text-sm font-medium text-indigo-100 hover:bg-indigo-500/30">AvanÃ§ar â†’</button>
-              <a id="btnWizardAdvanced" href="#" class="text-xs text-slate-400 hover:text-slate-300 underline-offset-2 hover:underline">Ir para AvanÃ§ado</a>
+              <button id="btnWizardPrev" type="button" class="hidden rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-200 hover:bg-white/10">← Voltar</button>
+              <button id="btnWizardNext" type="button" class="rounded-xl border border-indigo-400/40 bg-indigo-500/20 px-4 py-2 text-sm font-medium text-indigo-100 hover:bg-indigo-500/30">Avançar →</button>
+              <a id="btnWizardAdvanced" href="#" class="text-xs text-slate-400 hover:text-slate-300 underline-offset-2 hover:underline">Ir para Avançado</a>
             </div>
             </div>
             </div>
@@ -670,15 +670,15 @@
             <div id="panel-premium" class="tab-panel hidden" aria-hidden="true" data-premium-panel="true">
             <div id="advancedArea" class="relative">
             <div id="premiumPreviewOverlay" class="absolute inset-0 z-10 hidden flex flex-col items-center justify-center gap-3 rounded-2xl bg-ink-950/70">
-              <p class="rounded-xl border border-indigo-400/40 bg-ink-900/95 px-4 py-2 text-sm text-indigo-100 shadow-soft">PrÃ©via limitada. Desbloqueie para editar.</p>
-              <button id="btnPremiumVoltar" type="button" class="rounded-lg border border-white/20 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/10">â† Voltar Ã s seÃ§Ãµes</button>
+              <p class="rounded-xl border border-indigo-400/40 bg-ink-900/95 px-4 py-2 text-sm text-indigo-100 shadow-soft">Prévia limitada. Desbloqueie para editar.</p>
+              <button id="btnPremiumVoltar" type="button" class="rounded-lg border border-white/20 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/10">← Voltar às seções</button>
             </div>
             <div id="advancedTeaserCard" class="mt-6 rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.18),rgba(15,23,42,.55))] p-4">
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="inline-flex items-center rounded-full border border-indigo-300/30 bg-indigo-500/20 px-2 py-1 text-[11px] font-medium text-indigo-100">Premium</p>
-                  <h3 class="mt-2 text-sm font-semibold text-indigo-100">PrecificaÃ§Ã£o AvanÃ§ada disponÃ­vel</h3>
-                  <p class="mt-1 text-xs text-indigo-200/90">Ative o modo premium para incluir patrimÃ´nio, escassez, risco e exaustÃ£o com explicaÃ§Ã£o detalhada.</p>
+                  <h3 class="mt-2 text-sm font-semibold text-indigo-100">Precificação Avançada disponível</h3>
+                  <p class="mt-1 text-xs text-indigo-200/90">Ative o modo premium para incluir patrimônio, escassez, risco e exaustão com explicação detalhada.</p>
                 </div>
                 <div class="text-xs text-indigo-200/80">Modo Essencial ativo</div>
               </div>
@@ -688,18 +688,18 @@
               <div class="flex items-center justify-between gap-2">
                 <div>
                   <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-semibold text-indigo-100">ConfiguraÃ§Ã£o Premium</h3>
-                    <button type="button" data-help-target="helpAdvancedConfig" class="rounded-full border border-indigo-300/40 bg-indigo-500/20 px-2 py-0.5 text-[11px] font-semibold text-indigo-100 hover:bg-indigo-500/30" aria-label="Ver ajuda da configuraÃ§Ã£o premium">?</button>
+                    <h3 class="text-sm font-semibold text-indigo-100">Configuração Premium</h3>
+                    <button type="button" data-help-target="helpAdvancedConfig" class="rounded-full border border-indigo-300/40 bg-indigo-500/20 px-2 py-0.5 text-[11px] font-semibold text-indigo-100 hover:bg-indigo-500/30" aria-label="Ver ajuda da configuração premium">?</button>
                   </div>
-                  <p class="text-xs text-indigo-200/85">EstratÃ©gia de preÃ§o com patrimÃ´nio, escassez, risco e exaustÃ£o.</p>
+                  <p class="text-xs text-indigo-200/85">Estratégia de preço com patrimônio, escassez, risco e exaustão.</p>
                 </div>
                 <label class="inline-flex items-center gap-2 text-xs text-indigo-100">
                   <input id="enableMonteCarlo" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
-                  Monte Carlo (quando houver histÃ³rico)
+                  Monte Carlo (quando houver histórico)
                 </label>
               </div>
               <p id="helpAdvancedConfig" class="mt-3 hidden rounded-lg border border-indigo-300/30 bg-indigo-900/30 px-3 py-2 text-xs text-indigo-100">
-                No desktop, passe o mouse sobre os botÃµes para ver dicas. No celular, use este botÃ£o "?" para abrir orientaÃ§Ãµes rÃ¡pidas sobre a seÃ§Ã£o.
+                No desktop, passe o mouse sobre os botões para ver dicas. No celular, use este botão "?" para abrir orientações rápidas sobre a seção.
               </p>
               <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="space-y-2">
@@ -707,7 +707,7 @@
                   <input id="assetValue" type="number" min="0" step="100" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm text-slate-200" for="assetUsefulLifeMonths">Vida Ãºtil dos ativos (meses)</label>
+                  <label class="text-sm text-slate-200" for="assetUsefulLifeMonths">Vida útil dos ativos (meses)</label>
                   <input id="assetUsefulLifeMonths" type="number" min="1" max="1200" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
@@ -715,7 +715,7 @@
                   <input id="opportunityRateAnnual" type="number" min="0" max="300" step="0.1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm text-slate-200" for="occupancyRate">OcupaÃ§Ã£o da agenda (%)</label>
+                  <label class="text-sm text-slate-200" for="occupancyRate">Ocupação da agenda (%)</label>
                   <input id="occupancyRate" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60" />
                 </div>
                 <div class="space-y-2">
@@ -726,12 +726,12 @@
                   <label class="text-sm text-slate-200" for="scopeVolatility">Volatilidade de escopo</label>
                   <select id="scopeVolatility" class="w-full rounded-xl border border-indigo-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60">
                     <option value="low">Baixa</option>
-                    <option value="medium" selected>MÃ©dia</option>
+                    <option value="medium" selected>Média</option>
                     <option value="high">Alta</option>
                   </select>
                 </div>
               </div>
-              <p class="mt-3 text-[11px] text-indigo-200/85">Estimativa estratÃ©gica; nÃ£o constitui consultoria fiscal, jurÃ­dica ou financeira.</p>
+              <p class="mt-3 text-[11px] text-indigo-200/85">Estimativa estratégica; não constitui consultoria fiscal, jurídica ou financeira.</p>
             </div>
             </div>
             </div>
@@ -740,9 +740,9 @@
             <div id="strategistCard" class="mt-6 rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.12),rgba(15,23,42,.55))] p-4">
               <div class="flex items-center justify-between gap-2">
                 <div>
-                  <p class="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-500/20 px-2 py-1 text-[11px] font-medium text-amber-100">PrecificaÃ§Ã£o por valor</p>
+                  <p class="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-500/20 px-2 py-1 text-[11px] font-medium text-amber-100">Precificação por valor</p>
                   <h3 class="mt-2 text-sm font-semibold text-amber-100">Modo Estrategista</h3>
-                  <p class="mt-1 text-xs text-amber-200/85">VCE, ROIx e CDO para justificar preÃ§o com base no valor entregue.</p>
+                  <p class="mt-1 text-xs text-amber-200/85">VCE, ROIx e CDO para justificar preço com base no valor entregue.</p>
                 </div>
                 <label class="inline-flex items-center gap-2 text-xs text-amber-100">
                   <input id="modoEstrategista" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />
@@ -753,12 +753,12 @@
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="valorGanhoEstimado12m">Valor ganho estimado (12 meses)</label>
                   <input id="valorGanhoEstimado12m" type="number" min="0" step="1000" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-amber-300/60" placeholder="Ex: 120000" />
-                  <p class="text-xs text-slate-400">Ganho econÃ´mico esperado pelo cliente no perÃ­odo.</p>
+                  <p class="text-xs text-slate-400">Ganho econômico esperado pelo cliente no período.</p>
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="custoOportunidadeMensal">Custo de oportunidade mensal</label>
                   <input id="custoOportunidadeMensal" type="number" min="0" step="100" class="w-full rounded-xl border border-amber-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-amber-300/60" placeholder="Ex: 0" />
-                  <p class="text-xs text-slate-400">Custo diÃ¡rio de atraso (CDO = valor/30).</p>
+                  <p class="text-xs text-slate-400">Custo diário de atraso (CDO = valor/30).</p>
                 </div>
               </div>
               <p class="mt-3 text-[11px] text-amber-200/85">Estimativa baseada nas premissas informadas; sem garantias.</p>
@@ -769,8 +769,8 @@
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-500/20 px-2 py-1 text-[11px] font-medium text-emerald-100">v2.1</p>
-                  <h3 class="mt-2 text-sm font-semibold text-emerald-100">InteligÃªncia de NegociaÃ§Ã£o</h3>
-                  <p class="mt-1 text-xs text-emerald-100/80">Blocos prontos para proposta, ancoragem de ROI, proteÃ§Ã£o de escopo, conveniÃªncia e simulador de reserva.</p>
+                  <h3 class="mt-2 text-sm font-semibold text-emerald-100">Inteligência de Negociação</h3>
+                  <p class="mt-1 text-xs text-emerald-100/80">Blocos prontos para proposta, ancoragem de ROI, proteção de escopo, conveniência e simulador de reserva.</p>
                 </div>
               </div>
               <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -778,24 +778,24 @@
                   <label class="text-sm text-slate-200" for="complexidadeProjeto">Complexidade do projeto</label>
                   <select id="complexidadeProjeto" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixa">Baixa</option>
-                    <option value="media" selected>MÃ©dia</option>
+                    <option value="media" selected>Média</option>
                     <option value="alta">Alta</option>
                   </select>
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm text-slate-200" for="prazoEntrega">Prazo de entrega</label>
                   <select id="prazoEntrega" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
-                    <option value="flexivel">FlexÃ­vel</option>
+                    <option value="flexivel">Flexível</option>
                     <option value="normal" selected>Normal</option>
                     <option value="curto">Curto</option>
                     <option value="urgente">Urgente</option>
                   </select>
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm text-slate-200" for="criticidadeNegocio">Criticidade para o negÃ³cio</label>
+                  <label class="text-sm text-slate-200" for="criticidadeNegocio">Criticidade para o negócio</label>
                   <select id="criticidadeNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixa">Baixa</option>
-                    <option value="media" selected>MÃ©dia</option>
+                    <option value="media" selected>Média</option>
                     <option value="alta">Alta</option>
                   </select>
                 </div>
@@ -803,25 +803,25 @@
                   <label class="text-sm text-slate-200" for="envolvimentoCliente">Envolvimento do cliente</label>
                   <select id="envolvimentoCliente" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixo">Baixo</option>
-                    <option value="medio" selected>MÃ©dio</option>
+                    <option value="medio" selected>Médio</option>
                     <option value="alto">Alto</option>
                   </select>
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm text-slate-200" for="impactoNoNegocio">Impacto no negÃ³cio</label>
+                  <label class="text-sm text-slate-200" for="impactoNoNegocio">Impacto no negócio</label>
                   <select id="impactoNoNegocio" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60">
                     <option value="baixo">Baixo</option>
-                    <option value="medio" selected>MÃ©dio</option>
+                    <option value="medio" selected>Médio</option>
                     <option value="alto">Alto</option>
-                    <option value="critico">CrÃ­tico</option>
+                    <option value="critico">Crítico</option>
                   </select>
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm text-slate-200" for="areaImpacto">Ãrea impactada (ROI)</label>
-                  <input id="areaImpacto" type="text" placeholder="ex.: OperaÃ§Ãµes, Vendas, Financeiro" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
+                  <label class="text-sm text-slate-200" for="areaImpacto">Área impactada (ROI)</label>
+                  <input id="areaImpacto" type="text" placeholder="ex.: Operações, Vendas, Financeiro" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm text-slate-200" for="ocupacaoAgenda">OcupaÃ§Ã£o da agenda para conveniÃªncia (%)</label>
+                  <label class="text-sm text-slate-200" for="ocupacaoAgenda">Ocupação da agenda para conveniência (%)</label>
                   <input id="ocupacaoAgenda" type="number" min="0" max="100" step="1" class="w-full rounded-xl border border-emerald-300/20 bg-ink-900/75 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60" />
                 </div>
                 <div class="space-y-2">
@@ -838,13 +838,13 @@
                 </div>
               </div>
               <div class="mt-4 rounded-xl border border-emerald-300/20 bg-black/20 p-3">
-                <p class="text-xs font-medium text-emerald-100">Checklist de risco do cliente (ProteÃ§Ã£o de Escopo)</p>
+                <p class="text-xs font-medium text-emerald-100">Checklist de risco do cliente (Proteção de Escopo)</p>
                 <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskHistoricoAlteracoes" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />histÃ³rico de muitas alteraÃ§Ãµes</label>
-                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskComunicacaoFragmentada" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />comunicaÃ§Ã£o fragmentada</label>
-                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskTomadorIndefinido" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />tomador de decisÃ£o indefinido</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskHistoricoAlteracoes" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />histórico de muitas alterações</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskComunicacaoFragmentada" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />comunicação fragmentada</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskTomadorIndefinido" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />tomador de decisão indefinido</label>
                   <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskEscopoIncompleto" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />escopo incompleto</label>
-                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskUrgenciaSemBriefing" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />urgÃªncia sem briefing adequado</label>
+                  <label class="inline-flex items-center gap-2 text-xs text-slate-200"><input id="riskUrgenciaSemBriefing" type="checkbox" class="h-3.5 w-3.5 rounded border-white/20 bg-ink-900/80" />urgência sem briefing adequado</label>
                 </div>
               </div>
             </div>
@@ -854,37 +854,37 @@
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-semibold">Comparar CenÃ¡rios</h3>
-                    <button type="button" data-help-target="helpScenarioCompare" class="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-100 hover:bg-white/20" aria-label="Ver ajuda da comparaÃ§Ã£o de cenÃ¡rios">?</button>
+                    <h3 class="text-sm font-semibold">Comparar Cenários</h3>
+                    <button type="button" data-help-target="helpScenarioCompare" class="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-100 hover:bg-white/20" aria-label="Ver ajuda da comparação de cenários">?</button>
                   </div>
-                  <p class="text-xs text-slate-400">Salve duas variaÃ§Ãµes para comparar os resultados lado a lado.</p>
+                  <p class="text-xs text-slate-400">Salve duas variações para comparar os resultados lado a lado.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                  <button id="btnSaveScenarioA" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Salvar como CenÃ¡rio A</button>
-                  <button id="btnSaveScenarioB" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Salvar como CenÃ¡rio B</button>
-                  <button id="btnClearScenarios" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Limpar comparaÃ§Ã£o</button>
+                  <button id="btnSaveScenarioA" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Salvar como Cenário A</button>
+                  <button id="btnSaveScenarioB" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Salvar como Cenário B</button>
+                  <button id="btnClearScenarios" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Limpar comparação</button>
                 </div>
               </div>
               <p id="helpScenarioCompare" class="mt-3 hidden rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300">
-                Salve A e B para capturar dois cenÃ¡rios diferentes. Depois use "Carregar A/B" para reaplicar entradas e comparar o delta automaticamente.
+                Salve A e B para capturar dois cenários diferentes. Depois use "Carregar A/B" para reaplicar entradas e comparar o delta automaticamente.
               </p>
               <div id="scenarioCompareGrid" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-xl border border-white/10 bg-white/5 p-3">
                   <div class="flex items-center justify-between">
-                    <p class="text-xs font-medium text-slate-300">CenÃ¡rio A</p>
+                    <p class="text-xs font-medium text-slate-300">Cenário A</p>
                     <button id="btnLoadScenarioA" type="button" class="rounded-lg border border-white/10 bg-ink-900/60 px-2 py-1 text-[11px] text-slate-200 hover:bg-ink-800">Carregar A</button>
                   </div>
-                  <div id="scenarioAContent" class="mt-2 text-xs text-slate-400">Ainda nÃ£o salvo.</div>
+                  <div id="scenarioAContent" class="mt-2 text-xs text-slate-400">Ainda não salvo.</div>
                 </div>
                 <div class="rounded-xl border border-white/10 bg-white/5 p-3">
                   <div class="flex items-center justify-between">
-                    <p class="text-xs font-medium text-slate-300">CenÃ¡rio B</p>
+                    <p class="text-xs font-medium text-slate-300">Cenário B</p>
                     <button id="btnLoadScenarioB" type="button" class="rounded-lg border border-white/10 bg-ink-900/60 px-2 py-1 text-[11px] text-slate-200 hover:bg-ink-800">Carregar B</button>
                   </div>
-                  <div id="scenarioBContent" class="mt-2 text-xs text-slate-400">Ainda nÃ£o salvo.</div>
+                  <div id="scenarioBContent" class="mt-2 text-xs text-slate-400">Ainda não salvo.</div>
                 </div>
               </div>
-              <div id="scenarioDelta" class="mt-3 text-xs text-slate-400">Salve os dois cenÃ¡rios para ver as diferenÃ§as.</div>
+              <div id="scenarioDelta" class="mt-3 text-xs text-slate-400">Salve os dois cenários para ver as diferenças.</div>
             </div>
             </div>
 
@@ -893,15 +893,15 @@
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-semibold">GovernanÃ§a de Dados</h3>
-                    <button type="button" data-help-target="helpIntegrations" class="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-100 hover:bg-white/20" aria-label="Ver ajuda de integraÃ§Ãµes e exportaÃ§Ã£o">?</button>
+                    <h3 class="text-sm font-semibold">Governança de Dados</h3>
+                    <button type="button" data-help-target="helpIntegrations" class="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-100 hover:bg-white/20" aria-label="Ver ajuda de integrações e exportação">?</button>
                   </div>
-                  <p class="text-xs text-slate-400">Exporte, audite e envie por endpoints prÃ³prios sem expor credenciais.</p>
+                  <p class="text-xs text-slate-400">Exporte, audite e envie por endpoints próprios sem expor credenciais.</p>
                 </div>
                 <button id="btnOpenIntegrationSettings" type="button" class="rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-xs text-slate-100 hover:bg-ink-800">Configurar endpoints</button>
               </div>
               <p id="helpIntegrations" class="mt-3 hidden rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300">
-                "Baixar CSV" e "Copiar TSV" funcionam localmente. Para "Enviar", primeiro configure endpoints prÃ³prios (Apps Script/relay) em "Configurar endpoints".
+                "Baixar CSV" e "Copiar TSV" funcionam localmente. Para "Enviar", primeiro configure endpoints próprios (Apps Script/relay) em "Configurar endpoints".
               </p>
               <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button id="btnExportCsv" type="button" class="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 hover:bg-white/10">Baixar CSV</button>
@@ -909,7 +909,7 @@
                 <button id="btnSendSheets" type="button" class="rounded-xl border border-indigo-400/30 bg-indigo-500/20 px-3 py-2 text-xs text-indigo-100 hover:bg-indigo-500/30">Enviar para Google Sheets</button>
                 <button id="btnSendNotion" type="button" class="rounded-xl border border-violet-400/30 bg-violet-500/20 px-3 py-2 text-xs text-violet-100 hover:bg-violet-500/30">Enviar para Notion</button>
               </div>
-              <p class="mt-3 text-[11px] text-slate-500">Use URL de endpoint prÃ³prio (Apps Script Web App ou relay seguro). Nunca coloque tokens direto no frontend.</p>
+              <p class="mt-3 text-[11px] text-slate-500">Use URL de endpoint próprio (Apps Script Web App ou relay seguro). Nunca coloque tokens direto no frontend.</p>
             </div>
             </div>
           </div>
@@ -924,7 +924,7 @@
                 <div class="flex items-start justify-between gap-4 preview-block" data-order="0">
                   <div>
                     <h2 class="text-base font-semibold">Resultado</h2>
-                    <p class="mt-1 text-xs text-slate-400">Atualiza automaticamente conforme vocÃª ajusta as entradas.</p>
+                    <p class="mt-1 text-xs text-slate-400">Atualiza automaticamente conforme você ajusta as entradas.</p>
                   </div>
                   <button
                     id="btnCopyHourly"
@@ -938,61 +938,28 @@
 
                 <div class="preview-block mt-5 rounded-2xl border border-white/10 bg-ink-900/40 p-4 card-inner" data-order="1">
                   <p class="text-xs text-slate-400">Taxa/hora sugerida</p>
-                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-value micro-result-value">â€”</p>
-                  <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturÃ¡vel.</p>
+                  <p id="hourlyRate" class="mt-1 text-3xl font-semibold tracking-tight tabular-nums font-result-value micro-result-value">—</p>
+                  <p id="hourlyNote" class="mt-1 text-xs text-slate-400">Baseada na sua capacidade faturável.</p>
                 </div>
 
                 <div class="preview-block grid grid-cols-2 gap-3" data-order="2">
                   <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
                     <p id="dailyLabel" class="text-xs text-slate-400">Taxa/dia</p>
-                    <p id="dailyRate" class="mt-1 text-lg font-semibold tabular-nums">â€”</p>
+                    <p id="dailyRate" class="mt-1 text-lg font-semibold tabular-nums">—</p>
                   </div>
                   <div class="rounded-2xl border border-white/10 bg-white/5 p-4 card-inner">
-                    <p class="text-xs text-slate-400">Horas faturÃ¡veis/mÃªs</p>
-                    <p id="billableHours" class="mt-1 text-lg font-semibold tabular-nums">â€”</p>
+                    <p class="text-xs text-slate-400">Horas faturáveis/mês</p>
+                    <p id="billableHours" class="mt-1 text-lg font-semibold tabular-nums">—</p>
                   </div>
                 </div>
 
                 <div class="preview-block rounded-2xl border border-white/10 bg-white/5 p-4 card-inner" data-order="3">
-                  <p class="text-xs text-slate-400">Faturamento alvo/mÃªs</p>
-                  <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums font-result-value micro-result-value">â€”</p>
-                  <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">â€”</p>
+                  <p class="text-xs text-slate-400">Faturamento alvo/mês</p>
+                  <p id="revenueTarget" class="mt-1 text-lg font-semibold tabular-nums font-result-value micro-result-value">—</p>
+                  <p id="revenueBreakdown" class="mt-1 text-xs text-slate-400">—</p>
                 </div>
 
-                <div id="pricingHudShell" class="pricing-hud-shell preview-block mt-4 rounded-2xl border border-emerald-400/30 bg-[linear-gradient(140deg,rgba(5,12,24,.96),rgba(9,18,32,.92))] p-4 card-inner" data-order="4">
-                  <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <button id="pricingHudHeroMetric" type="button" data-trace-metric="heroPrice" class="rounded-xl border border-white/10 bg-white/5 p-3 text-left">
-                      <p class="text-[11px] uppercase tracking-wider text-slate-400">Preco guia</p>
-                      <p id="pricingHudHeroValue" class="mt-1 text-2xl font-semibold tabular-nums text-emerald-200">-</p>
-                      <p id="pricingHudHeroTag" class="mt-1 text-[11px] text-emerald-300/80"></p>
-                    </button>
-                    <button id="pricingHudRiskMetric" type="button" data-trace-metric="riskIndicator" class="rounded-xl border border-white/10 bg-white/5 p-3 text-left">
-                      <p class="text-[11px] uppercase tracking-wider text-slate-400">Risco / health</p>
-                      <div class="mt-2 flex items-center gap-2">
-                        <span id="pricingHudRiskDot" class="h-2.5 w-2.5 rounded-full bg-slate-500"></span>
-                        <span id="pricingHudRiskLabel" class="text-sm font-medium text-slate-200">Sem dados</span>
-                      </div>
-                    </button>
-                    <div class="rounded-xl border border-white/10 bg-white/5 p-3">
-                      <p class="text-[11px] uppercase tracking-wider text-slate-400">Faixa</p>
-                      <div class="mt-2 grid grid-cols-3 gap-2 text-[11px] text-slate-300">
-                        <button id="pricingHudFloorMetric" type="button" data-trace-metric="floorPrice" class="rounded-lg border border-white/10 bg-ink-900/50 px-2 py-1 text-left">
-                          <span class="block text-[10px] uppercase tracking-wide text-slate-500">Piso</span>
-                          <span id="pricingHudFloorValue" class="mt-1 block tabular-nums text-sm text-slate-100">-</span>
-                        </button>
-                        <button id="pricingHudSustainableMetric" type="button" data-trace-metric="sustainablePrice" class="rounded-lg border border-white/10 bg-ink-900/50 px-2 py-1 text-left">
-                          <span class="block text-[10px] uppercase tracking-wide text-slate-500">Sust.</span>
-                          <span id="pricingHudSustainableValue" class="mt-1 block tabular-nums text-sm text-slate-100">-</span>
-                        </button>
-                        <div class="rounded-lg border border-white/10 bg-ink-900/50 px-2 py-1 text-left">
-                          <span class="block text-[10px] uppercase tracking-wide text-slate-500">Ideal</span>
-                          <span id="pricingHudIdealValue" class="mt-1 block tabular-nums text-sm text-slate-100">-</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div id="pricingEngineV1Card" class="preview-block mt-4 rounded-2xl border border-cyan-400/30 bg-cyan-500/5 p-4 card-inner" data-order="5">
+                <div id="pricingEngineV1Card" class="preview-block mt-4 rounded-2xl border border-cyan-400/30 bg-cyan-500/5 p-4 card-inner" data-order="4">
                   <div class="flex items-start justify-between gap-3">
                     <div>
                       <p class="text-[11px] font-medium uppercase tracking-wider text-cyan-300/90">Motor v1 (contrato)</p>
@@ -1051,12 +1018,12 @@
                 <div class="preview-block hidden mt-4 rounded-2xl border border-indigo-400/30 bg-[linear-gradient(135deg,rgba(99,102,241,.18),rgba(15,23,42,.4))] p-4 card-inner" data-order="5" id="agencyEquivalentBlock">
                   <div class="flex items-start justify-between gap-2">
                     <div>
-                      <p class="text-[11px] font-medium uppercase tracking-wider text-indigo-300/90">Ancoragem de AgÃªncia (AEC)</p>
-                      <p id="agencyTotalLabel" class="mt-1 text-2xl font-semibold text-white tabular-nums font-result-value micro-result-value">â€”</p>
+                      <p class="text-[11px] font-medium uppercase tracking-wider text-indigo-300/90">Ancoragem de Agência (AEC)</p>
+                      <p id="agencyTotalLabel" class="mt-1 text-2xl font-semibold text-white tabular-nums font-result-value micro-result-value">—</p>
                     </div>
-                    <span id="agencySavingsBadge" class="rounded-full bg-indigo-500/20 px-2.5 py-1 text-[11px] font-medium text-indigo-200">â€”</span>
+                    <span id="agencySavingsBadge" class="rounded-full bg-indigo-500/20 px-2.5 py-1 text-[11px] font-medium text-indigo-200">—</span>
                   </div>
-                  <p class="mt-2 text-[11px] leading-relaxed text-indigo-200/70">Custo estrutural estimado se o cliente contratasse uma consultoria ou agÃªncia tradicional para este escopo (inclui Atendimento, PMO e impostos empresariais).</p>
+                  <p class="mt-2 text-[11px] leading-relaxed text-indigo-200/70">Custo estrutural estimado se o cliente contratasse uma consultoria ou agência tradicional para este escopo (inclui Atendimento, PMO e impostos empresariais).</p>
                 </div>
 
                 <div class="preview-block hidden" data-order="6" id="resultCardsCtaBlock">
@@ -1071,15 +1038,15 @@
                 <p class="mt-1 text-xs text-slate-400 preview-block" data-order="0">Resumo para proposta comercial.</p>
                 <div id="proposalValorGanhoBlock" class="preview-block hidden rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4" data-order="1">
                   <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Valor/ganho esperado</p>
-                  <p id="resultProposalValorGanho" class="mt-1 text-xl font-semibold text-slate-100 tabular-nums">â€”</p>
+                  <p id="resultProposalValorGanho" class="mt-1 text-xl font-semibold text-slate-100 tabular-nums">—</p>
                 </div>
                 <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="3">
                   <p class="text-xs font-medium uppercase tracking-wider text-emerald-300/90">Investimento Total do Projeto</p>
-                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums font-result-value micro-result-value">â€”</p>
+                  <p id="resultProposalTotal" class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums font-result-value micro-result-value">—</p>
                 </div>
                 <div class="preview-block mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6" data-order="2">
                   <p class="text-xs font-medium uppercase tracking-wider text-slate-400">Prazo de Entrega</p>
-                  <p id="resultProposalPrazo" class="mt-1 text-xl font-semibold text-slate-100">â€”</p>
+                  <p id="resultProposalPrazo" class="mt-1 text-xl font-semibold text-slate-100">—</p>
                 </div>
                 <div class="preview-block mt-4" data-order="4">
                   <button
@@ -1094,49 +1061,49 @@
 
               <div id="trustBadgesBlock" class="mt-4 hidden" aria-live="polite">
                 <ul class="trust-badges" role="list">
-                  <li><span class="trust-badge-icon" aria-hidden="true">âœ“</span> Dados salvos no navegador</li>
-                  <li><span class="trust-badge-icon" aria-hidden="true">âœ“</span> Sem cadastro obrigatÃ³rio</li>
-                  <li><span class="trust-badge-icon" aria-hidden="true">âœ“</span> Metodologia transparente</li>
+                  <li><span class="trust-badge-icon" aria-hidden="true">✓</span> Dados salvos no navegador</li>
+                  <li><span class="trust-badge-icon" aria-hidden="true">✓</span> Sem cadastro obrigatório</li>
+                  <li><span class="trust-badge-icon" aria-hidden="true">✓</span> Metodologia transparente</li>
                 </ul>
               </div>
             </div>
 
             <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
-              <h3 class="text-sm font-semibold">ComposiÃ§Ã£o do Faturamento</h3>
-              <p class="mt-1 text-xs text-slate-400">DistribuiÃ§Ã£o estimada do faturamento alvo mensal.</p>
+              <h3 class="text-sm font-semibold">Composição do Faturamento</h3>
+              <p class="mt-1 text-xs text-slate-400">Distribuição estimada do faturamento alvo mensal.</p>
               <div class="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-                <div id="compositionChart" class="h-40 w-40 rounded-full border border-white/10 bg-ink-800" role="img" aria-label="GrÃ¡fico de composiÃ§Ã£o do faturamento"></div>
+                <div id="compositionChart" class="h-40 w-40 rounded-full border border-white/10 bg-ink-800" role="img" aria-label="Gráfico de composição do faturamento"></div>
                 <div id="compositionLegend" class="w-full space-y-2 text-xs text-slate-300"></div>
               </div>
             </div>
 
             <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
               <h3 class="text-sm font-semibold">Alertas Inteligentes</h3>
-              <p class="mt-1 text-xs text-slate-400">Sinais prÃ¡ticos para reduzir risco de sobrecarga e precificaÃ§Ã£o frÃ¡gil.</p>
+              <p class="mt-1 text-xs text-slate-400">Sinais práticos para reduzir risco de sobrecarga e precificação frágil.</p>
               <div id="alertsList" class="mt-4 space-y-2 text-sm text-slate-200"></div>
             </div>
 
             <div class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
-              <h3 class="text-sm font-semibold">Base de ConfianÃ§a</h3>
-              <p class="mt-1 text-xs text-slate-400">ReferÃªncias consultivas para decisÃµes profissionais, sem promessas absolutas.</p>
+              <h3 class="text-sm font-semibold">Base de Confiança</h3>
+              <p class="mt-1 text-xs text-slate-400">Referências consultivas para decisões profissionais, sem promessas absolutas.</p>
               <ul id="trustMicrocopyList" class="mt-3 list-disc space-y-1 pl-5 text-xs text-slate-200">
-                <li>Estimativas baseadas nos parÃ¢metros reais do seu negÃ³cio.</li>
-                <li>Seus dados ficam no navegador, sem cadastro obrigatÃ³rio.</li>
-                <li>Cada fator de preÃ§o Ã© explicado, sem caixa-preta.</li>
-                <li>Ferramenta orientada para decisÃ£o comercial informada.</li>
-                <li>Metodologia alinhada Ã  capacidade faturÃ¡vel e contexto operacional.</li>
-                <li>Ajustes de risco e escassez sÃ£o aplicados de forma transparente.</li>
-                <li>Proposta em linguagem consultiva com premissas explÃ­citas.</li>
-                <li>AtualizaÃ§Ã£o em tempo real conforme suas entradas.</li>
-                <li>ExportaÃ§Ã£o disponÃ­vel em CSV, link e PDF consultivo.</li>
-                <li>SimulaÃ§Ã£o de fÃ´lego financeiro com premissas declaradas.</li>
-                <li>Sem promessa de resultado: estimativas robustas e rastreÃ¡veis.</li>
-                <li>PrecificaÃ§Ã£o tratada como decisÃ£o estratÃ©gica, nÃ£o improviso.</li>
+                <li>Estimativas baseadas nos parâmetros reais do seu negócio.</li>
+                <li>Seus dados ficam no navegador, sem cadastro obrigatório.</li>
+                <li>Cada fator de preço é explicado, sem caixa-preta.</li>
+                <li>Ferramenta orientada para decisão comercial informada.</li>
+                <li>Metodologia alinhada à capacidade faturável e contexto operacional.</li>
+                <li>Ajustes de risco e escassez são aplicados de forma transparente.</li>
+                <li>Proposta em linguagem consultiva com premissas explícitas.</li>
+                <li>Atualização em tempo real conforme suas entradas.</li>
+                <li>Exportação disponível em CSV, link e PDF consultivo.</li>
+                <li>Simulação de fôlego financeiro com premissas declaradas.</li>
+                <li>Sem promessa de resultado: estimativas robustas e rastreáveis.</li>
+                <li>Precificação tratada como decisão estratégica, não improviso.</li>
               </ul>
             </div>
 
             <div id="explainabilityCard" class="hidden rounded-2xl border border-indigo-400/25 bg-[linear-gradient(135deg,rgba(99,102,241,.20),rgba(15,23,42,.60))] p-5 card-macro backdrop-blur">
-              <h3 class="text-sm font-semibold text-indigo-100">Como chegamos nesse preÃ§o</h3>
+              <h3 class="text-sm font-semibold text-indigo-100">Como chegamos nesse preço</h3>
               <p id="advancedModelLabel" class="mt-1 text-xs text-indigo-200/80">Modelo: estimativa por faixa</p>
               <div class="mt-3 grid grid-cols-2 gap-2">
                 <div class="rounded-xl border border-indigo-300/20 bg-ink-900/60 px-3 py-2">
@@ -1154,7 +1121,7 @@
 
             <div id="negotiationOutputCard" class="rounded-2xl border border-emerald-400/25 bg-[linear-gradient(135deg,rgba(16,185,129,.14),rgba(15,23,42,.6))] p-5 card-macro backdrop-blur">
               <div class="flex items-center justify-between gap-3">
-                <h3 class="text-sm font-semibold text-emerald-100">Pacote de NegociaÃ§Ã£o (v2.1)</h3>
+                <h3 class="text-sm font-semibold text-emerald-100">Pacote de Negociação (v2.1)</h3>
                 <div class="flex gap-2">
                   <button id="btnCopyJustification" type="button" class="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] text-slate-100 hover:bg-white/10">Copiar justificativa</button>
                   <button id="btnInsertProposalJustification" type="button" class="rounded-lg border border-emerald-300/30 bg-emerald-500/20 px-3 py-1.5 text-[11px] text-emerald-100 hover:bg-emerald-500/30">Inserir no texto da proposta</button>
@@ -1165,27 +1132,27 @@
               <div class="mt-3 space-y-2 text-xs text-slate-100">
                 <div class="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
                   <p class="text-[11px] uppercase tracking-wide text-slate-300">Resumo executivo</p>
-                  <p id="justificationExecutive" class="mt-1">â€”</p>
+                  <p id="justificationExecutive" class="mt-1">—</p>
                 </div>
                 <div class="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-                  <p class="text-[11px] uppercase tracking-wide text-slate-300">Justificativa tÃ©cnica</p>
-                  <p id="justificationTechnical" class="mt-1">â€”</p>
+                  <p class="text-[11px] uppercase tracking-wide text-slate-300">Justificativa técnica</p>
+                  <p id="justificationTechnical" class="mt-1">—</p>
                 </div>
                 <div id="justificationPriorityWrap" class="hidden rounded-lg border border-white/10 bg-black/20 px-3 py-2">
                   <p class="text-[11px] uppercase tracking-wide text-slate-300">Justificativa de prioridade/risco</p>
-                  <p id="justificationPriority" class="mt-1">â€”</p>
+                  <p id="justificationPriority" class="mt-1">—</p>
                 </div>
               </div>
               <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <div id="scopeShieldSummary" class="rounded-lg border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">â€”</div>
-                <div id="scarcitySummary" class="rounded-lg border border-indigo-300/30 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">â€”</div>
+                <div id="scopeShieldSummary" class="rounded-lg border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">—</div>
+                <div id="scarcitySummary" class="rounded-lg border border-indigo-300/30 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">—</div>
               </div>
-              <div id="runwaySummary" class="mt-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-100">â€”</div>
+              <div id="runwaySummary" class="mt-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-100">—</div>
               <div id="batnaMeterBlock" class="mt-3 hidden rounded-lg border border-white/10 bg-black/30 px-3 py-2">
                 <p class="text-[11px] uppercase tracking-wide text-slate-400">Medidor de Poder de Barganha (BATNA)</p>
                 <div class="mt-2 flex items-center gap-3">
-                  <span id="batnaLevelBadge" class="rounded px-2 py-1 text-[10px] font-bold text-white">â€”</span>
-                  <p id="batnaMessage" class="text-xs leading-relaxed text-slate-200">â€”</p>
+                  <span id="batnaLevelBadge" class="rounded px-2 py-1 text-[10px] font-bold text-white">—</span>
+                  <p id="batnaMessage" class="text-xs leading-relaxed text-slate-200">—</p>
                 </div>
               </div>
               <div class="mt-3 rounded-lg border border-emerald-300/20 bg-emerald-500/10 px-3 py-2">
@@ -1200,76 +1167,76 @@
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="rounded-xl border border-emerald-300/25 bg-black/20 p-3">
                   <p class="text-[11px] uppercase tracking-wide text-emerald-200/85">Score de Risco</p>
-                  <p id="riskScoreValue" class="font-mono text-3xl font-semibold text-emerald-100">â€”</p>
-                  <p id="riskScoreNarrative" class="mt-1 text-xs text-emerald-100/85">Ative o modo avanÃ§ado para calcular.</p>
+                  <p id="riskScoreValue" class="font-mono text-3xl font-semibold text-emerald-100">—</p>
+                  <p id="riskScoreNarrative" class="mt-1 text-xs text-emerald-100/85">Ative o modo avançado para calcular.</p>
                 </div>
                 <div class="rounded-xl border border-emerald-300/25 bg-black/20 p-3">
-                  <p class="text-[11px] uppercase tracking-wide text-emerald-200/85">Badge de ExaustÃ£o</p>
+                  <p class="text-[11px] uppercase tracking-wide text-emerald-200/85">Badge de Exaustão</p>
                   <p id="exhaustionBadgeLabel" class="mt-1 text-sm font-semibold text-emerald-100">Sem ajuste</p>
-                  <p id="exhaustionBadgeImpact" class="mt-1 text-xs text-emerald-100/85">â€”</p>
+                  <p id="exhaustionBadgeImpact" class="mt-1 text-xs text-emerald-100/85">—</p>
                 </div>
               </div>
               <div id="riskScoreBreakdown" class="mt-3 text-xs text-emerald-50/90"></div>
             </div>
 
             <div id="calcCard" class="rounded-2xl border border-white/10 bg-ink-900/70 p-5 card-macro backdrop-blur">
-              <h3 class="text-sm font-semibold">Como Ã© calculado</h3>
+              <h3 class="text-sm font-semibold">Como é calculado</h3>
               <ol class="mt-3 space-y-2 text-sm text-slate-200">
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
-                  <p class="text-xs text-slate-400">1) Custo mensal (pessoal + negÃ³cio)</p>
-                  <p id="stepCost" class="mt-1 font-medium tabular-nums">â€”</p>
+                  <p class="text-xs text-slate-400">1) Custo mensal (pessoal + negócio)</p>
+                  <p id="stepCost" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
                   <p class="text-xs text-slate-400">2) Percentual total (imposto + lucro + buffer)</p>
-                  <p id="stepTax" class="mt-1 font-medium tabular-nums">â€”</p>
+                  <p id="stepTax" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
-                  <p class="text-xs text-slate-400">3) Base Ã· (1 âˆ’ %) = Faturamento alvo</p>
-                  <p id="stepProfit" class="mt-1 font-medium tabular-nums">â€”</p>
+                  <p class="text-xs text-slate-400">3) Base ÷ (1 − %) = Faturamento alvo</p>
+                  <p id="stepProfit" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
                 <li class="rounded-xl border border-white/10 bg-ink-900/40 p-3 card-inner">
-                  <p class="text-xs text-slate-400">4) Divide pelas horas faturÃ¡veis</p>
-                  <p id="stepHours" class="mt-1 font-medium tabular-nums">â€”</p>
+                  <p class="text-xs text-slate-400">4) Divide pelas horas faturáveis</p>
+                  <p id="stepHours" class="mt-1 font-medium tabular-nums">—</p>
                 </li>
               </ol>
 
               <div class="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 card-inner text-xs text-slate-300">
-                Dica: se sua taxa/hora ficou alta, normalmente Ã© porque a taxa de horas faturÃ¡veis estÃ¡ baixa,
-                as folgas/ano sÃ£o altas, ou seus custos/impostos estÃ£o subestimados.
+                Dica: se sua taxa/hora ficou alta, normalmente é porque a taxa de horas faturáveis está baixa,
+                as folgas/ano são altas, ou seus custos/impostos estão subestimados.
               </div>
               <p class="mt-3 text-xs text-slate-500" id="calcPremises">
-                Premissas: faturamento alvo = base Ã· (1 âˆ’ total%); taxa/hora = faturamento alvo Ã· horas faturÃ¡veis; projeto = horas Ã— taxa Ã— (1 + margem escopo) Ã— (1 âˆ’ desconto).
+                Premissas: faturamento alvo = base ÷ (1 − total%); taxa/hora = faturamento alvo ÷ horas faturáveis; projeto = horas × taxa × (1 + margem escopo) × (1 − desconto).
               </p>
             </div>
 
             <div id="strategistResultsCard" class="strategist-results-card hidden rounded-2xl border border-amber-400/25 bg-[linear-gradient(135deg,rgba(245,158,11,.08),rgba(15,23,42,.55))] p-5 card-macro backdrop-blur">
-              <h3 class="text-sm font-semibold text-amber-100">Impacto EconÃ´mico Estimado</h3>
-              <p class="mt-1 text-xs text-slate-400">VCE, ROIx e CDO para precificaÃ§Ã£o por valor.</p>
+              <h3 class="text-sm font-semibold text-amber-100">Impacto Econômico Estimado</h3>
+              <p class="mt-1 text-xs text-slate-400">VCE, ROIx e CDO para precificação por valor.</p>
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div class="rounded-xl border border-amber-300/20 bg-ink-900/40 p-3">
-                  <p class="text-xs text-slate-400" title="Valor Capturado Estimado: percentual do ganho do cliente que o preÃ§o representa.">VCE</p>
-                  <p id="strategistVce" class="mt-1 text-lg font-semibold text-amber-100">â€”</p>
-                  <p id="strategistVceLabel" class="mt-1 text-[11px] text-amber-200/80">â€”</p>
+                  <p class="text-xs text-slate-400" title="Valor Capturado Estimado: percentual do ganho do cliente que o preço representa.">VCE</p>
+                  <p id="strategistVce" class="mt-1 text-lg font-semibold text-amber-100">—</p>
+                  <p id="strategistVceLabel" class="mt-1 text-[11px] text-amber-200/80">—</p>
                 </div>
                 <div class="rounded-xl border border-amber-300/20 bg-ink-900/40 p-3">
-                  <p class="text-xs text-slate-400" title="Retorno sobre investimento: ganho do cliente dividido pelo preÃ§o.">ROIx</p>
-                  <p id="strategistRoix" class="mt-1 text-lg font-semibold text-amber-100">â€”</p>
+                  <p class="text-xs text-slate-400" title="Retorno sobre investimento: ganho do cliente dividido pelo preço.">ROIx</p>
+                  <p id="strategistRoix" class="mt-1 text-lg font-semibold text-amber-100">—</p>
                 </div>
                 <div class="rounded-xl border border-amber-400/30 bg-amber-500/10 p-3">
-                  <p class="text-xs text-slate-400" title="Custo DiÃ¡rio de Oportunidade: custo de atraso por dia (custo mensal Ã· 30).">CDO</p>
-                  <p id="strategistCdo" class="mt-1 text-lg font-semibold text-amber-100">â€”</p>
+                  <p class="text-xs text-slate-400" title="Custo Diário de Oportunidade: custo de atraso por dia (custo mensal ÷ 30).">CDO</p>
+                  <p id="strategistCdo" class="mt-1 text-lg font-semibold text-amber-100">—</p>
                 </div>
                 <div class="rounded-xl border border-red-400/30 bg-red-500/10 p-3 sm:col-span-3">
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="text-xs text-slate-300" title="Custo de InaÃ§Ã£o Semanal">Sangria por Atraso (Semanal)</p>
-                      <p id="strategistCustoInacao" class="mt-1 text-xl font-semibold text-red-200">â€”</p>
+                      <p class="text-xs text-slate-300" title="Custo de Inação Semanal">Sangria por Atraso (Semanal)</p>
+                      <p id="strategistCustoInacao" class="mt-1 text-xl font-semibold text-red-200">—</p>
                     </div>
-                    <p class="text-right text-[11px] max-w-[140px] text-red-200/70">Custo estimado de inaÃ§Ã£o por semana de atraso do cliente.</p>
+                    <p class="text-right text-[11px] max-w-[140px] text-red-200/70">Custo estimado de inação por semana de atraso do cliente.</p>
                   </div>
                 </div>
               </div>
-              <p id="strategistViabilidadeAlerta" class="mt-3 hidden rounded-lg border border-amber-400/40 bg-amber-500/15 px-3 py-2 text-xs text-amber-100">Viabilidade questionÃ¡vel: ganho estimado menor que o preÃ§o.</p>
+              <p id="strategistViabilidadeAlerta" class="mt-3 hidden rounded-lg border border-amber-400/40 bg-amber-500/15 px-3 py-2 text-xs text-amber-100">Viabilidade questionável: ganho estimado menor que o preço.</p>
               <p class="mt-3 text-[11px] text-slate-500">Estimativa baseada nas premissas informadas; sem garantias.</p>
             </div>
           </div>
@@ -1280,13 +1247,13 @@
     <footer class="relative border-t border-white/10">
       <div class="mx-auto max-w-6xl px-4 py-8">
         <p class="text-xs text-slate-400">
-          Utilidade de precificaÃ§Ã£o com estimativas robustas para decisÃµes comerciais.
+          Utilidade de precificação com estimativas robustas para decisões comerciais.
         </p>
         <p class="mt-2 text-xs text-slate-500" id="legalDisclaimer">
-          Esta ferramenta fornece estimativas e nÃ£o garante resultados financeiros. Para decisÃµes fiscais, contÃ¡beis ou jurÃ­dicas, consulte um profissional qualificado.
+          Esta ferramenta fornece estimativas e não garante resultados financeiros. Para decisões fiscais, contábeis ou jurídicas, consulte um profissional qualificado.
         </p>
         <p class="mt-1 text-xs text-slate-500">
-          <a href="/privacidade" class="underline hover:text-slate-300">PolÃ­tica de Privacidade</a>
+          <a href="/privacidade" class="underline hover:text-slate-300">Política de Privacidade</a>
         </p>
       </div>
     </footer>
@@ -1295,7 +1262,7 @@
       <div class="flex items-center justify-between gap-3 px-4 py-3">
         <div>
           <p class="text-[11px] text-slate-400">Valor principal</p>
-          <p id="wizardBottomBarValue" class="text-lg font-semibold tabular-nums text-slate-100">â€”</p>
+          <p id="wizardBottomBarValue" class="text-lg font-semibold tabular-nums text-slate-100">—</p>
         </div>
         <button id="btnWizardBottomPdf" type="button" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60">
           Gerar PDF
@@ -1306,7 +1273,7 @@
       <div class="flex items-center justify-between gap-3 px-4 py-3">
         <div>
           <p class="text-[11px] text-slate-400">Valor principal</p>
-          <p id="mobileA11yBarValue" class="text-lg font-semibold tabular-nums text-slate-100">â€”</p>
+          <p id="mobileA11yBarValue" class="text-lg font-semibold tabular-nums text-slate-100">—</p>
         </div>
         <button id="btnMobileA11yPdf" type="button" class="mobile-a11y-touch rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60">
           Gerar PDF
@@ -1353,9 +1320,6 @@
     <script type="module" src="./app.js"></script>
   </body>
 </html>
-
-
-
 
 
 
